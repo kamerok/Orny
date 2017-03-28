@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
 
 repositories {
     mavenCentral()
@@ -44,6 +46,7 @@ android {
 }
 
 def support = "25.3.1"
+def playServices = "10.2.1"
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -55,7 +58,17 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     compile "com.android.support:appcompat-v7:$support"
-
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+
+    compile "com.google.android.gms:play-services-auth:$playServices"
+    compile('com.google.api-client:google-api-client-android:1.22.0') {
+        exclude group: 'org.apache.httpcomponents'
+        exclude group: 'com.google.code.findbugs', module: 'jsr305'
+    }
+    compile('com.google.apis:google-api-services-sheets:v4-rev466-1.22.0') {
+        exclude group: 'org.apache.httpcomponents'
+        exclude group: 'com.google.code.findbugs', module: 'jsr305'
+    }
+
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }

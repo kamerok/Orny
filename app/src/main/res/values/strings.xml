@@ -2,4 +2,7 @@
 
     <string name="app_name">Orny</string>
 
+    <!--Launch-->
+    <string name="launch_sign_in_button">Sign In</string>
+
 </resources>

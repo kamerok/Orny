@@ -43,6 +43,10 @@ android {
             signingConfig signingConfigs.config
         }
     }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
 }
 
 def support = "25.3.1"

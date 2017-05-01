@@ -20,6 +20,7 @@ import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.client.util.ExponentialBackOff
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.SheetsScopes
+import com.kamer.orny.app.App
 import com.kamer.orny.utils.gone
 import com.kamer.orny.utils.toast
 import com.kamer.orny.utils.visible
@@ -29,6 +30,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_launch.*
 import java.util.*
+import javax.inject.Inject
 import kotlin.collections.ArrayList
 
 
@@ -39,19 +41,21 @@ class LaunchActivity : AppCompatActivity() {
     private val REQUEST_GOOGLE_PLAY_SERVICES = 1002
     private val PREF_ACCOUNT_NAME = "accountName"
 
+    @Inject lateinit var context: Context
+
     private val SCOPES = arrayOf(SheetsScopes.SPREADSHEETS_READONLY)
 
     private val rxPermissions by lazy { RxPermissions(this) }
     private val googleApiAvailability by lazy { GoogleApiAvailability.getInstance() }
     private val credential by lazy {
         GoogleAccountCredential.usingOAuth2(
-                applicationContext, Arrays.asList<String>(*SCOPES))
+                context, Arrays.asList<String>(*SCOPES))
                 .setBackOff(ExponentialBackOff())
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        App.appComponent.inject(this)
         setContentView(R.layout.activity_launch)
         signInView.setOnClickListener { getResultsFromApi() }
     }

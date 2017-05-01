@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 
 
@@ -45,6 +46,7 @@ android {
 
 def support = "25.3.1"
 def playServices = "10.2.4"
+def dagger = "2.11-rc1"
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -73,4 +75,7 @@ dependencies {
 
     compile 'io.reactivex.rxjava2:rxkotlin:2.0.0'
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+
+    compile "com.google.dagger:dagger:$dagger"
+    kapt "com.google.dagger:dagger-compiler:$dagger"
 }

@@ -5,10 +5,10 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
-import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
+import android.util.Log
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.api.client.extensions.android.http.AndroidHttp
@@ -22,8 +22,10 @@ import com.google.api.services.sheets.v4.SheetsScopes
 import com.kamer.orny.utils.gone
 import com.kamer.orny.utils.toast
 import com.kamer.orny.utils.visible
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_launch.*
-import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -87,7 +89,7 @@ class LaunchActivity : AppCompatActivity() {
         } else if (!isDeviceOnline()) {
             toast("No network connection available.")
         } else {
-            MakeRequestTask(credential).execute()
+            makeRequest()
         }
     }
 
@@ -129,85 +131,50 @@ class LaunchActivity : AppCompatActivity() {
         return networkInfo != null && networkInfo.isConnected
     }
 
-    private inner class MakeRequestTask internal constructor(credential: GoogleAccountCredential) : AsyncTask<Void, Void, ArrayList<String>>() {
-
-        private var mService: Sheets? = null
-        private var mLastError: Exception? = null
-
-        init {
-            val transport = AndroidHttp.newCompatibleTransport()
-            val jsonFactory = JacksonFactory.getDefaultInstance()
-            mService = Sheets.Builder(
-                    transport, jsonFactory, credential)
-                    .setApplicationName("Google Sheets API Android Quickstart")
-                    .build()
-        }
-
-        /**
-         * Background task to call Google Sheets API.
-         * @param params no parameters needed for this task.
-         */
-        override fun doInBackground(vararg params: Void): ArrayList<String>? {
-            try {
-                return ArrayList(getDataFromApi())
-            } catch (e: Exception) {
-                mLastError = e
-                cancel(true)
-                return null
-            }
-
-        }
-
-        /**
-         * Fetch a list of names and majors of students in a sample spreadsheet:
-         * https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
-         * @return List of names and majors
-         * *
-         * @throws IOException
-         */
-        private fun getDataFromApi(): ArrayList<String>? {
-            val spreadsheetId = "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms"
-            val range = "Class Data!A2:E"
-            val results = ArrayList<String>()
-            val response = this.mService!!.spreadsheets().values()
-                    .get(spreadsheetId, range)
-                    .execute()
-            val values = response.getValues()
-            if (values != null) {
-                results.add("Name, Major")
-                values.mapTo(results) { it[0].toString() + ", " + it[4] }
-            }
-            return results
-        }
-
-        override fun onPreExecute() {
-            progressView.visible()
-        }
-
-        override fun onPostExecute(output: ArrayList<String>?) {
-            progressView.gone()
-            if (output == null || output.size == 0) {
-                toast("No results returned.")
-            } else {
-                output.add(0, "Data retrieved using the Google Sheets API:")
-                textView.text = TextUtils.join("\n", output)
-            }
-        }
-
-        override fun onCancelled() {
-            progressView.gone()
-            if (mLastError != null) {
-                if (mLastError is GooglePlayServicesAvailabilityIOException) {
-                    showGooglePlayServicesAvailabilityErrorDialog(
-                            (mLastError as GooglePlayServicesAvailabilityIOException).connectionStatusCode)
-                } else if (mLastError is UserRecoverableAuthIOException) {
-                    startActivityForResult((mLastError as UserRecoverableAuthIOException).intent, REQUEST_AUTHORIZATION)
-                } else {
-                    toast("The following error occurred:\n" + mLastError)
-                }
-            } else {
-                toast("Request cancelled.")
-            }
-        }
+    private fun makeRequest() {
+        Single
+                .fromCallable { ArrayList(getDataFromApi()) }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe { progressView.visible() }
+                .doFinally { progressView.gone() }
+                .subscribe(
+                        { list ->
+                            if (list == null || list.size == 0) {
+                                toast("No results returned.")
+                            } else {
+                                list.add(0, "Data retrieved using the Google Sheets API:")
+                                textView.text = TextUtils.join("\n", list)
+                            }
+                        },
+                        { error ->
+                            if (error != null) {
+                                if (error is GooglePlayServicesAvailabilityIOException) {
+                                    showGooglePlayServicesAvailabilityErrorDialog(error.connectionStatusCode)
+                                } else if (error is UserRecoverableAuthIOException) {
+                                    startActivityForResult(error.intent, REQUEST_AUTHORIZATION)
+                                } else {
+                                    Log.d("Error", error.message, error)
+                                    toast("The following error occurred:\n" + error)
+                                }
+                            } else {
+                                toast("Request cancelled.")
+                            }
+                        })
     }
+
+    private fun getDataFromApi(): ArrayList<String> {
+        val transport = AndroidHttp.newCompatibleTransport()
+        val jsonFactory = JacksonFactory.getDefaultInstance()
+        val service = Sheets.Builder(transport, jsonFactory, credential)
+                .build()
+        val results = ArrayList<String>()
+        val response = service.spreadsheets().get("1YsFrfpNzs_gjdtnqVNuAPPYl3NRjeo8GgEWAOD7BdOg")
+                .execute()
+        val values = response.values
+        values.mapTo(results, Any::toString)
+        Log.d("Results", results.toString())
+        return results
+    }
+
 }

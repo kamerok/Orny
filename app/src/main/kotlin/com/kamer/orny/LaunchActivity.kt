@@ -1,5 +1,6 @@
 package com.kamer.orny
 
+import android.Manifest
 import android.accounts.AccountManager
 import android.app.Activity
 import android.content.Context
@@ -22,6 +23,7 @@ import com.google.api.services.sheets.v4.SheetsScopes
 import com.kamer.orny.utils.gone
 import com.kamer.orny.utils.toast
 import com.kamer.orny.utils.visible
+import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -39,6 +41,7 @@ class LaunchActivity : AppCompatActivity() {
 
     private val SCOPES = arrayOf(SheetsScopes.SPREADSHEETS_READONLY)
 
+    private val rxPermissions by lazy { RxPermissions(this) }
     private val googleApiAvailability by lazy { GoogleApiAvailability.getInstance() }
     private val credential by lazy {
         GoogleAccountCredential.usingOAuth2(
@@ -94,15 +97,20 @@ class LaunchActivity : AppCompatActivity() {
     }
 
     private fun chooseAccount() {
-        //TODO: request get account permission
-        val accountName = getPreferences(Context.MODE_PRIVATE)
-                .getString(PREF_ACCOUNT_NAME, null)
-        if (accountName != null) {
-            credential.selectedAccountName = accountName
-            getResultsFromApi()
-        } else {
-            startActivityForResult(credential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER)
-        }
+        rxPermissions
+                .request(Manifest.permission.GET_ACCOUNTS)
+                .subscribe {
+                    if (it) {
+                        val accountName = getPreferences(Context.MODE_PRIVATE)
+                                .getString(PREF_ACCOUNT_NAME, null)
+                        if (accountName != null) {
+                            credential.selectedAccountName = accountName
+                            getResultsFromApi()
+                        } else {
+                            startActivityForResult(credential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER)
+                        }
+                    }
+                }
     }
 
     private fun isGooglePlayServicesAvailable(): Boolean {

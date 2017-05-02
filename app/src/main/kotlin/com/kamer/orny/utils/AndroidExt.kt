@@ -1,6 +1,7 @@
 package com.kamer.orny.utils
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.view.View
 import android.widget.Toast
@@ -21,3 +22,6 @@ fun Context.isDeviceOnline(): Boolean {
     val networkInfo = connMgr.activeNetworkInfo
     return networkInfo != null && networkInfo.isConnected
 }
+
+fun Context.hasPermisstion(permission: String): Boolean
+        = packageManager.checkPermission(permission, packageName) == PackageManager.PERMISSION_GRANTED

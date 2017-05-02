@@ -7,6 +7,7 @@ import com.kamer.orny.data.SpreadsheetRepo
 import com.kamer.orny.data.SpreadsheetRepoImpl
 import com.kamer.orny.data.google.GoogleRepo
 import com.kamer.orny.data.google.GoogleRepoImpl
+import com.kamer.orny.utils.Prefs
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -24,5 +25,5 @@ class DataModule {
 
     @Provides
     @Singleton
-    fun provideGoogleRepo(context: Context): GoogleRepo = GoogleRepoImpl(context)
+    fun provideGoogleRepo(context: Context, prefs: Prefs): GoogleRepo = GoogleRepoImpl(context, prefs)
 }

@@ -36,6 +36,12 @@ class LaunchActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         googleRepo.setActivity(this)
+        authRepo.isAuthorized()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({authorized ->
+                    authorizedView.text = if (authorized) "Authorized" else "Not authorized"
+                })
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

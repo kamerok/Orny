@@ -12,6 +12,9 @@ import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.client.util.ExponentialBackOff
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.SheetsScopes
+import com.jakewharton.rxrelay2.BehaviorRelay
+import com.kamer.orny.utils.Prefs
+import com.kamer.orny.utils.hasPermisstion
 import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -20,28 +23,45 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.lang.ref.WeakReference
 import java.util.*
+import kotlin.properties.Delegates
 
 
-class GoogleRepoImpl(private val context: Context) : GoogleRepo {
+class GoogleRepoImpl(private val context: Context, val prefs: Prefs) : GoogleRepo {
 
     companion object {
         private const val REQUEST_ACCOUNT_PICKER = 1000
-        private const val PREF_ACCOUNT_NAME = "accountName"
     }
 
     private val SCOPES = arrayOf(SheetsScopes.SPREADSHEETS_READONLY)
 
-    private val prefs = context.getSharedPreferences(javaClass.canonicalName, Context.MODE_PRIVATE)
+    private var credential: GoogleAccountCredential by Delegates.observable(createCredentials()) { _, _, _ ->
+        authorizedRelay.accept(!prefs.accountName.isEmpty())
+    }
 
-    private var credential: GoogleAccountCredential =
-            createCredentials()
+    private val authorizedRelay: BehaviorRelay<Boolean> = BehaviorRelay.create()
 
     private lateinit var activityRef: WeakReference<Activity>
 
     private var loginListener: LoginListener? = null
 
+    init {
+        authorizedRelay.accept(!prefs.accountName.isEmpty())
+    }
+
     override fun setActivity(activity: Activity) {
         activityRef = WeakReference(activity)
+        //constantly check permission
+        if (!context.hasPermisstion(Manifest.permission.ACCOUNT_MANAGER)) {
+            RxPermissions(activity)
+                    .request(Manifest.permission.GET_ACCOUNTS)
+                    .subscribeOn(AndroidSchedulers.mainThread())
+                    .observeOn(Schedulers.io())
+                    .subscribe({ granted ->
+                        if (granted) {
+                            credential = createCredentials()
+                        }
+                    })
+        }
     }
 
     override fun passActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -50,11 +70,8 @@ class GoogleRepoImpl(private val context: Context) : GoogleRepo {
                 if (resultCode == Activity.RESULT_OK && data != null && data.extras != null) {
                     val accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME)
                     if (accountName != null) {
-                        prefs
-                                .edit()
-                                .putString(PREF_ACCOUNT_NAME, accountName)
-                                .apply()
-                        credential.selectedAccountName = accountName
+                        prefs.accountName = accountName
+                        credential = createCredentials()
                         loginListener?.onSuccess()
                     }
                 } else {
@@ -63,8 +80,7 @@ class GoogleRepoImpl(private val context: Context) : GoogleRepo {
         }
     }
 
-    override fun isAuthorized(): Observable<Boolean> =
-            Observable.fromCallable { prefs.getString(PREF_ACCOUNT_NAME, null).isNullOrEmpty().not() }
+    override fun isAuthorized(): Observable<Boolean> = authorizedRelay
 
     override fun login(): Completable =
             Completable.create { e ->
@@ -79,6 +95,10 @@ class GoogleRepoImpl(private val context: Context) : GoogleRepo {
                     }
 
                 }
+                if (authorizedRelay.value) {
+                    loginListener?.onSuccess()
+                    return@create
+                }
                 val activity = activityRef.get()
                 if (activity == null) {
                     loginListener?.onError(Exception("Can't login. Activity == null"))
@@ -90,13 +110,7 @@ class GoogleRepoImpl(private val context: Context) : GoogleRepo {
                                 .observeOn(Schedulers.io())
                                 .subscribe({ granted ->
                                     if (granted) {
-                                        val accountName = prefs.getString(PREF_ACCOUNT_NAME, null)
-                                        if (!accountName.isNullOrEmpty()) {
-                                            credential.selectedAccountName = accountName
-                                            loginListener?.onSuccess()
-                                        } else {
-                                            activity.startActivityForResult(credential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER)
-                                        }
+                                        activity.startActivityForResult(credential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER)
                                     } else {
                                         loginListener?.onError(SecurityException("Account permission denied"))
                                     }
@@ -106,7 +120,7 @@ class GoogleRepoImpl(private val context: Context) : GoogleRepo {
             }
 
     override fun logout(): Completable = Completable.fromAction {
-        prefs.edit().clear().apply()
+        prefs.clear()
         credential = createCredentials()
     }
 
@@ -116,7 +130,7 @@ class GoogleRepoImpl(private val context: Context) : GoogleRepo {
         val accountCredential = GoogleAccountCredential.usingOAuth2(
                 context, Arrays.asList<String>(*SCOPES))
                 .setBackOff(ExponentialBackOff())
-        accountCredential.selectedAccountName = prefs.getString(PREF_ACCOUNT_NAME, null)
+        accountCredential.selectedAccountName = prefs.accountName
         return accountCredential
     }
 

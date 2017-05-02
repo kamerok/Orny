@@ -17,7 +17,7 @@
         android:visibility="gone"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signInView"/>
+        app:layout_constraintTop_toBottomOf="@+id/requestView"/>
 
     <TextView
         android:id="@+id/textView"
@@ -28,14 +28,34 @@
         android:layout_marginTop="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signInView"
+        app:layout_constraintTop_toBottomOf="@+id/requestView"
         tools:text="Test"/>
 
     <Button
         android:id="@+id/signInView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:text="@string/launch_sign_in_button"
+        app:layout_constraintBottom_toTopOf="@+id/signOutView"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <Button
+        android:id="@+id/signOutView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="Sign Out"
+        app:layout_constraintBottom_toTopOf="@+id/requestView"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <Button
+        android:id="@+id/requestView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Request"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

@@ -1,6 +1,7 @@
 package com.kamer.orny.utils
 
 import android.content.Context
+import android.net.ConnectivityManager
 import android.view.View
 import android.widget.Toast
 
@@ -13,4 +14,10 @@ fun View.visible() {
 
 fun View.gone() {
     visibility = View.GONE
+}
+
+fun Context.isDeviceOnline(): Boolean {
+    val connMgr = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val networkInfo = connMgr.activeNetworkInfo
+    return networkInfo != null && networkInfo.isConnected
 }

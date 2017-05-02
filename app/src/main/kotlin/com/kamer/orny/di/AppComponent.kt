@@ -1,6 +1,6 @@
 package com.kamer.orny.di
 
-import com.kamer.orny.LaunchActivity
+import com.kamer.orny.presentation.launch.LaunchActivity
 import dagger.Component
 import javax.inject.Singleton
 

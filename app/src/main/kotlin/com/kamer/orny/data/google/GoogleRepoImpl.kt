@@ -80,7 +80,7 @@ class GoogleRepoImpl(private val context: Context, val prefs: Prefs) : GoogleRep
         }
     }
 
-    override fun isAuthorized(): Observable<Boolean> = authorizedRelay
+    override fun isAuthorized(): Observable<Boolean> = authorizedRelay.distinctUntilChanged()
 
     override fun login(): Completable =
             Completable.create { e ->

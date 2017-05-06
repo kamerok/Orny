@@ -23,5 +23,5 @@ fun Context.isDeviceOnline(): Boolean {
     return networkInfo != null && networkInfo.isConnected
 }
 
-fun Context.hasPermisstion(permission: String): Boolean
+fun Context.hasPermission(permission: String): Boolean
         = packageManager.checkPermission(permission, packageName) == PackageManager.PERMISSION_GRANTED

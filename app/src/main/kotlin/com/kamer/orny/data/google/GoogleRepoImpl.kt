@@ -14,7 +14,7 @@ import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.SheetsScopes
 import com.jakewharton.rxrelay2.BehaviorRelay
 import com.kamer.orny.utils.Prefs
-import com.kamer.orny.utils.hasPermisstion
+import com.kamer.orny.utils.hasPermission
 import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -51,7 +51,7 @@ class GoogleRepoImpl(private val context: Context, val prefs: Prefs) : GoogleRep
     override fun setActivity(activity: Activity) {
         activityRef = WeakReference(activity)
         //constantly check permission
-        if (!context.hasPermisstion(Manifest.permission.ACCOUNT_MANAGER)) {
+        if (!context.hasPermission(Manifest.permission.ACCOUNT_MANAGER)) {
             RxPermissions(activity)
                     .request(Manifest.permission.GET_ACCOUNTS)
                     .subscribeOn(AndroidSchedulers.mainThread())

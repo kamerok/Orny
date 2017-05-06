@@ -15,8 +15,9 @@ android {
 
     defaultConfig {
         applicationId "com.kamer.orny"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 25
+        multiDexEnabled true
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -47,6 +48,7 @@ android {
 def support = "25.3.1"
 def playServices = "10.2.4"
 def dagger = "2.11-rc1"
+def moxy = "1.5.2"
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -61,6 +63,9 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.4@aar'
     compile 'com.jakewharton.rxrelay2:rxrelay:2.0.0'
+
+    compile "com.arello-mobile:moxy:$moxy"
+    kapt "com.arello-mobile:moxy-compiler:$moxy"
 
     compile "com.google.android.gms:play-services-auth:$playServices"
     compile('com.google.api-client:google-api-client-android:1.22.0') {
@@ -79,4 +84,8 @@ dependencies {
 
     compile "com.google.dagger:dagger:$dagger"
     kapt "com.google.dagger:dagger-compiler:$dagger"
+}
+
+kapt {
+    generateStubs = true
 }

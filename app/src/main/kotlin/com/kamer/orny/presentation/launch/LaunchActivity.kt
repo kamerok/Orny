@@ -8,6 +8,7 @@ import com.kamer.orny.R
 import com.kamer.orny.app.App
 import com.kamer.orny.data.AuthRepo
 import com.kamer.orny.data.google.GoogleRepo
+import com.kamer.orny.presentation.BaseActivity
 import com.kamer.orny.presentation.editexpense.EditExpenseActivity
 import com.kamer.orny.utils.toast
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -17,7 +18,7 @@ import kotlinx.android.synthetic.main.activity_launch.*
 import javax.inject.Inject
 
 
-class LaunchActivity : AppCompatActivity() {
+class LaunchActivity : BaseActivity() {
 
     @Inject lateinit var googleRepo: GoogleRepo
     @Inject lateinit var authRepo: AuthRepo

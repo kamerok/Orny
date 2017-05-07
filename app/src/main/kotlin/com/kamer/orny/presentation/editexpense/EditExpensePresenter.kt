@@ -2,13 +2,14 @@ package com.kamer.orny.presentation.editexpense
 
 import com.arellomobile.mvp.InjectViewState
 import com.arellomobile.mvp.MvpPresenter
+import com.kamer.orny.presentation.core.ErrorMessageParser
 
 
 @InjectViewState
-class EditExpensePresenter : MvpPresenter<EditExpenseView>() {
+class EditExpensePresenter(val errorParser: ErrorMessageParser) : MvpPresenter<EditExpenseView>() {
 
     override fun onFirstViewAttach() {
-        viewState.showError("Test")
+        viewState.showError(errorParser.getMessage(Exception("Test")))
     }
 
 }

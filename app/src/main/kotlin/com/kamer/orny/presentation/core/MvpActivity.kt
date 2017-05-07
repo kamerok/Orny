@@ -1,16 +1,12 @@
-package com.kamer.orny.presentation
-
-import android.os.Bundle
-
-import com.arellomobile.mvp.MvpDelegate
+package com.kamer.orny.presentation.core
 
 abstract class MvpActivity : BaseActivity() {
 
-    private val mvpDelegate: MvpDelegate<out MvpActivity> by lazy {
-        MvpDelegate(this)
+    private val mvpDelegate: com.arellomobile.mvp.MvpDelegate<out MvpActivity> by lazy {
+        com.arellomobile.mvp.MvpDelegate(this)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: android.os.Bundle?) {
         super.onCreate(savedInstanceState)
 
         mvpDelegate.onCreate(savedInstanceState)
@@ -28,7 +24,7 @@ abstract class MvpActivity : BaseActivity() {
         mvpDelegate.onAttach()
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
+    override fun onSaveInstanceState(outState: android.os.Bundle) {
         super.onSaveInstanceState(outState)
 
         mvpDelegate.onSaveInstanceState(outState)

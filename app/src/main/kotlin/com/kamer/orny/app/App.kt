@@ -1,9 +1,9 @@
 package com.kamer.orny.app
 
 import android.app.Application
-import com.kamer.orny.di.AppComponent
-import com.kamer.orny.di.AppModule
-import com.kamer.orny.di.DaggerAppComponent
+import com.kamer.orny.di.app.AppComponent
+import com.kamer.orny.di.app.AppModule
+import com.kamer.orny.di.app.DaggerAppComponent
 
 class App : Application() {
 

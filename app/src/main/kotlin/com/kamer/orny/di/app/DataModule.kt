@@ -1,4 +1,4 @@
-package com.kamer.orny.di
+package com.kamer.orny.di.app
 
 import android.content.Context
 import com.kamer.orny.data.AuthRepo
@@ -10,20 +10,19 @@ import com.kamer.orny.data.google.GoogleRepoImpl
 import com.kamer.orny.utils.Prefs
 import dagger.Module
 import dagger.Provides
-import javax.inject.Singleton
 
 @Module
 class DataModule {
 
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideAuthRepo(googleRepo: GoogleRepo): AuthRepo = AuthRepoImpl(googleRepo)
 
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideSpreadsheetRepo(googleRepo: GoogleRepo): SpreadsheetRepo = SpreadsheetRepoImpl(googleRepo)
 
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideGoogleRepo(context: Context, prefs: Prefs): GoogleRepo = GoogleRepoImpl(context, prefs)
 }

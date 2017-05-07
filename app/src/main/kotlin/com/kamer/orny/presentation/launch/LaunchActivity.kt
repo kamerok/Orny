@@ -2,13 +2,12 @@ package com.kamer.orny.presentation.launch
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.kamer.orny.R
 import com.kamer.orny.app.App
 import com.kamer.orny.data.AuthRepo
 import com.kamer.orny.data.google.GoogleRepo
-import com.kamer.orny.presentation.BaseActivity
+import com.kamer.orny.presentation.core.BaseActivity
 import com.kamer.orny.presentation.editexpense.EditExpenseActivity
 import com.kamer.orny.utils.toast
 import io.reactivex.android.schedulers.AndroidSchedulers

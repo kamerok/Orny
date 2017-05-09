@@ -7,9 +7,9 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.kamer.orny.R
 import com.kamer.orny.app.App
+import com.kamer.orny.data.model.Author
 import com.kamer.orny.presentation.core.MvpActivity
 import com.kamer.orny.utils.toast
-import kotlinx.android.synthetic.main.activity_edit_expense.*
 import javax.inject.Inject
 
 class EditExpenseActivity : MvpActivity(), EditExpenseView {
@@ -30,7 +30,14 @@ class EditExpenseActivity : MvpActivity(), EditExpenseView {
         super.onCreate(savedInstanceState)
         router.setActivity(this)
         setContentView(R.layout.activity_edit_expense)
-        closeView.setOnClickListener { presenter.click() }
+    }
+
+    override fun setAuthors(authors: List<Author>) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun showAmountError(error: String) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun showError(message: String) {

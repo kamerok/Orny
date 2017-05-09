@@ -5,7 +5,12 @@ import com.kamer.orny.presentation.launch.LaunchActivity
 import dagger.Component
 
 @ApplicationScope
-@Component(modules = arrayOf(AppModule::class, DataModule::class, UtilsModule::class, PresentationModule::class))
+@Component(modules = arrayOf(
+        AppModule::class,
+        UtilsModule::class,
+        DataModule::class,
+        InteractionModule:: class,
+        PresentationModule::class))
 interface AppComponent {
 
     fun presenterComponent(): PresenterComponent

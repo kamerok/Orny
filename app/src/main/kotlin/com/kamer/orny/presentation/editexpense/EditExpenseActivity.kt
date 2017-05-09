@@ -9,8 +9,12 @@ import com.kamer.orny.R
 import com.kamer.orny.app.App
 import com.kamer.orny.presentation.core.MvpActivity
 import com.kamer.orny.utils.toast
+import kotlinx.android.synthetic.main.activity_edit_expense.*
+import javax.inject.Inject
 
 class EditExpenseActivity : MvpActivity(), EditExpenseView {
+
+    @Inject lateinit var router: EditExpenseRouterImpl
 
     @InjectPresenter lateinit var presenter: EditExpensePresenter
 
@@ -22,8 +26,11 @@ class EditExpenseActivity : MvpActivity(), EditExpenseView {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        App.appComponent.inject(this)
         super.onCreate(savedInstanceState)
+        router.setActivity(this)
         setContentView(R.layout.activity_edit_expense)
+        closeView.setOnClickListener { presenter.click() }
     }
 
     override fun showError(message: String) {

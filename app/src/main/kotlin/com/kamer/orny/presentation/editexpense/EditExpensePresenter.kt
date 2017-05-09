@@ -9,6 +9,7 @@ import com.kamer.orny.presentation.core.ErrorMessageParser
 
 @InjectViewState
 class EditExpensePresenter(val errorParser: ErrorMessageParser,
+                           val editExpenseRouter: EditExpenseRouter,
                            val authorsInteractor: GetAuthorsInteractor,
                            val saveExpenseInteractor: SaveExpenseInteractor
 ) : MvpPresenter<EditExpenseView>() {
@@ -16,5 +17,7 @@ class EditExpensePresenter(val errorParser: ErrorMessageParser,
     override fun onFirstViewAttach() {
 
     }
+
+    fun click() = editExpenseRouter.closeScreen()
 
 }

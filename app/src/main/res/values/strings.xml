@@ -5,4 +5,11 @@
     <!--Launch-->
     <string name="launch_sign_in_button">Sign In</string>
 
+    <!--EditExpense-->
+    <string name="edit_expense_action_save">Save</string>
+    <string name="edit_expense_exit_dialog_title">Unsaved changes</string>
+    <string name="edit_expense_exit_dialog_message">Save changes?</string>
+    <string name="edit_expense_exit_dialog_save">Save</string>
+    <string name="edit_expense_exit_dialog_exit">Exit</string>
+
 </resources>

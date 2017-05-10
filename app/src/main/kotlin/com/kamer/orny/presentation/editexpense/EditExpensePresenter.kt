@@ -8,6 +8,7 @@ import com.kamer.orny.interaction.GetAuthorsInteractor
 import com.kamer.orny.interaction.SaveExpenseInteractor
 import com.kamer.orny.presentation.core.ErrorMessageParser
 import com.kamer.orny.presentation.editexpense.errors.GetAuthorsException
+import com.kamer.orny.presentation.editexpense.errors.NoChangesException
 import com.kamer.orny.presentation.editexpense.errors.SaveExpenseException
 import com.kamer.orny.presentation.editexpense.errors.WrongAmountFormatException
 import java.util.*
@@ -71,7 +72,7 @@ class EditExpensePresenter(val errorParser: ErrorMessageParser,
 
     fun saveExpense() {
         when (newExpense) {
-            expense -> router.closeScreen()
+            expense -> viewState.showError(errorParser.getMessage(NoChangesException()))
             else -> saveChanges()
         }
     }

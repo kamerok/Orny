@@ -5,6 +5,7 @@ import com.kamer.orny.interaction.GetAuthorsInteractor
 import com.kamer.orny.interaction.SaveExpenseInteractor
 import com.kamer.orny.presentation.core.ErrorMessageParser
 import com.kamer.orny.presentation.editexpense.errors.GetAuthorsException
+import com.kamer.orny.presentation.editexpense.errors.NoChangesException
 import com.kamer.orny.presentation.editexpense.errors.SaveExpenseException
 import com.kamer.orny.presentation.editexpense.errors.WrongAmountFormatException
 import com.nhaarman.mockito_kotlin.any
@@ -164,10 +165,15 @@ class EditExpensePresenterTest {
     }
 
     @Test
-    fun closeScreenOnSaveIfNothingChanged() {
+    fun showErrorOnSaveIfNothingChanged() {
         presenter.saveExpense()
+        val captor = argumentCaptor<Exception>()
 
-        verify(router).closeScreen()
+        verify(router, never()).closeScreen()
+
+        verify(errorParser).getMessage(captor.capture())
+        assertThat(captor.firstValue).isInstanceOf(NoChangesException::class.java)
+        verify(view).showError(PARSED_ERROR)
     }
 
     @Test

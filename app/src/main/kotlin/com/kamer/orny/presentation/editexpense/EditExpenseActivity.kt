@@ -10,6 +10,7 @@ import com.kamer.orny.app.App
 import com.kamer.orny.data.model.Author
 import com.kamer.orny.presentation.core.MvpActivity
 import com.kamer.orny.utils.toast
+import java.util.*
 import javax.inject.Inject
 
 class EditExpenseActivity : MvpActivity(), EditExpenseView {
@@ -33,6 +34,18 @@ class EditExpenseActivity : MvpActivity(), EditExpenseView {
     }
 
     override fun setAuthors(authors: List<Author>) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun setDate(capture: Date) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun setSavingProgress(isSaving: Boolean) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun showExitDialog() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

@@ -5,9 +5,13 @@ import com.kamer.orny.interaction.GetAuthorsInteractor
 import com.kamer.orny.interaction.SaveExpenseInteractor
 import com.kamer.orny.presentation.core.ErrorMessageParser
 import com.kamer.orny.presentation.editexpense.errors.GetAuthorsException
+import com.kamer.orny.presentation.editexpense.errors.SaveExpenseException
 import com.kamer.orny.presentation.editexpense.errors.WrongAmountFormatException
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.argumentCaptor
+import com.nhaarman.mockito_kotlin.inOrder
+import com.nhaarman.mockito_kotlin.never
+import io.reactivex.Completable
 import io.reactivex.Single
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
@@ -17,6 +21,7 @@ import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
+import java.util.*
 
 
 @RunWith(MockitoJUnitRunner::class)
@@ -25,7 +30,7 @@ class EditExpensePresenterTest {
     private val PARSED_ERROR = "parsed error"
 
     @Mock lateinit var errorParser: ErrorMessageParser
-    @Mock lateinit var editExpenseRouter: EditExpenseRouter
+    @Mock lateinit var router: EditExpenseRouter
     @Mock lateinit var authorsInteractor: GetAuthorsInteractor
     @Mock lateinit var saveExpenseInteractor: SaveExpenseInteractor
 
@@ -37,9 +42,9 @@ class EditExpensePresenterTest {
     fun setUp() {
         `when`(errorParser.getMessage(any())).thenReturn(PARSED_ERROR)
         `when`(authorsInteractor.getAuthors()).thenReturn(Single.just(emptyList()))
-//        `when`(saveExpenseInteractor.saveExpense(any())).thenReturn(Completable.complete())
+        `when`(saveExpenseInteractor.saveExpense(any())).thenReturn(Completable.complete())
 
-        presenter = EditExpensePresenter(errorParser, editExpenseRouter, authorsInteractor, saveExpenseInteractor)
+        presenter = EditExpensePresenter(errorParser, router, authorsInteractor, saveExpenseInteractor)
         presenter.attachedViews.add(view)
     }
 
@@ -53,6 +58,16 @@ class EditExpensePresenterTest {
         presenter.attachView(view)
 
         verify(view).setAuthors(authors)
+    }
+
+    @Test
+    fun setCurrentDateOnStart() {
+        val captor = argumentCaptor<Date>()
+
+        presenter.attachView(view)
+
+        verify(view).setDate(captor.capture())
+        assertThat(captor.firstValue).isToday()
     }
 
     @Test
@@ -87,5 +102,111 @@ class EditExpensePresenterTest {
         verify(errorParser).getMessage(captor.capture())
         assertThat(captor.firstValue).isInstanceOf(WrongAmountFormatException::class.java)
         verify(view).showAmountError(PARSED_ERROR)
+    }
+
+    @Test
+    fun closeScreenOnExitIfNothingChanged() {
+        presenter.exitScreen()
+
+        verify(router).closeScreen()
+    }
+
+    @Test
+    fun showDialogWhenExitIfAmountChanged() {
+        presenter.amountChanged("1")
+        presenter.exitScreen()
+
+        verify(router, never()).closeScreen()
+        verify(view).showExitDialog()
+    }
+
+    @Test
+    fun showDialogWhenExitIfCommentChanged() {
+        presenter.commentChanged("1")
+        presenter.exitScreen()
+
+        verify(router, never()).closeScreen()
+        verify(view).showExitDialog()
+    }
+
+    @Test
+    fun showDialogWhenExitIfAuthorChanged() {
+        presenter.authorSelected(Author("1", "", ""))
+        presenter.exitScreen()
+
+        verify(router, never()).closeScreen()
+        verify(view).showExitDialog()
+    }
+
+    @Test
+    fun showDialogWhenExitIfDateChanged() {
+        presenter.dateChanged(Date(100))
+        presenter.exitScreen()
+
+        verify(router, never()).closeScreen()
+        verify(view).showExitDialog()
+    }
+
+    @Test
+    fun showDialogWhenExitIfOffBudgetChanged() {
+        presenter.offBudgetChanged(true)
+        presenter.exitScreen()
+
+        verify(router, never()).closeScreen()
+        verify(view).showExitDialog()
+    }
+
+    @Test
+    fun closeScreenOnExitConfirmed() {
+        presenter.confirmExit()
+
+        verify(router).closeScreen()
+    }
+
+    @Test
+    fun closeScreenOnSaveIfNothingChanged() {
+        presenter.saveExpense()
+
+        verify(router).closeScreen()
+    }
+
+    @Test
+    fun saveExpense() {
+        presenter.amountChanged("1")
+        presenter.saveExpense()
+
+        verify(saveExpenseInteractor).saveExpense(any())
+    }
+
+    @Test
+    fun showSaveExpenseProgress() {
+        val inOrder = inOrder(view)
+
+        presenter.amountChanged("1")
+        presenter.saveExpense()
+
+        inOrder.verify(view).setSavingProgress(true)
+        inOrder.verify(view).setSavingProgress(false)
+    }
+
+    @Test
+    fun closeScreenAfterSaving() {
+        presenter.amountChanged("1")
+        presenter.saveExpense()
+
+        verify(router).closeScreen()
+    }
+
+    @Test
+    fun showSavingError() {
+        `when`(saveExpenseInteractor.saveExpense(any())).thenReturn(Completable.error(Exception()))
+        val captor = argumentCaptor<Exception>()
+
+        presenter.amountChanged("1")
+        presenter.saveExpense()
+
+        verify(errorParser).getMessage(captor.capture())
+        assertThat(captor.firstValue).isInstanceOf(SaveExpenseException::class.java)
+        verify(view).showError(PARSED_ERROR)
     }
 }

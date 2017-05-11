@@ -11,5 +11,9 @@
     <string name="edit_expense_exit_dialog_message">Save changes?</string>
     <string name="edit_expense_exit_dialog_save">Save</string>
     <string name="edit_expense_exit_dialog_exit">Exit</string>
+    <string name="edit_expense_exit_save_progress">Saving expense…</string>
+    <string name="edit_expense_amount_hint">Amount</string>
+    <string name="edit_expense_comment_hint">Comment</string>
+    <string name="edit_expense_off_budget">Off Budget</string>
 
 </resources>

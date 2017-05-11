@@ -5,7 +5,10 @@ import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 
 fun Context.toast(message: CharSequence) =
@@ -37,3 +40,17 @@ fun AppCompatActivity.setupToolbar(toolbarView: Toolbar) {
     }
     toolbarView.setNavigationOnClickListener { _ -> onBackPressed() }
 }
+
+fun TextView.onTextChanged(listener: (String) -> Unit) = addTextChangedListener(object : TextWatcher {
+    override fun afterTextChanged(s: Editable?) {
+        listener.invoke(s.toString())
+    }
+
+    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+    }
+
+    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+    }
+})

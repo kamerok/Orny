@@ -106,6 +106,15 @@ class EditExpensePresenterTest {
     }
 
     @Test
+    fun showDatePickerOnDateClicked() {
+        val date = Date(199)
+        presenter.dateChanged(date)
+        presenter.selectDate()
+
+        verify(view).showDatePicker(date)
+    }
+
+    @Test
     fun closeScreenOnExitIfNothingChanged() {
         presenter.exitScreen()
 

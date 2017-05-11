@@ -58,6 +58,10 @@ class EditExpensePresenter(val errorParser: ErrorMessageParser,
         newExpense.author = author
     }
 
+    fun selectDate() {
+        viewState.showDatePicker(newExpense.date)
+    }
+
     fun dateChanged(date: Date) {
         newExpense.date = date
     }

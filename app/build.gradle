@@ -70,6 +70,7 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.4@aar'
     compile 'com.jakewharton.rxrelay2:rxrelay:2.0.0'
+    compile 'com.rengwuxian.materialedittext:library:2.1.4'
 
     compile "com.arello-mobile:moxy:$moxy"
     kapt "com.arello-mobile:moxy-compiler:$moxy"

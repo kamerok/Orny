@@ -122,6 +122,21 @@ class EditExpensePresenterTest {
     }
 
     @Test
+    fun firstAuthorNotCountAsChange() {
+        val firstAuthor = Author(id = "0", name = "name1", color = "color1")
+        val authors = listOf(
+                firstAuthor,
+                Author(id = "1", name = "name2", color = "color2"))
+        `when`(authorsInteractor.getAuthors()).thenReturn(Single.just(authors))
+
+        presenter.attachView(view)
+        presenter.authorSelected(firstAuthor)
+        presenter.exitScreen()
+
+        verify(router).closeScreen()
+    }
+
+    @Test
     fun showDialogWhenExitIfAmountChanged() {
         presenter.amountChanged("1")
         presenter.exitScreen()

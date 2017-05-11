@@ -85,7 +85,10 @@ class EditExpensePresenter(val errorParser: ErrorMessageParser,
         authorsInteractor
                 .getAuthors()
                 .subscribe(
-                        { viewState.setAuthors(it) },
+                        {
+                            viewState.setAuthors(it)
+                            expense.author = it.firstOrNull()
+                        },
                         { viewState.showError(errorParser.getMessage(GetAuthorsException(it))) }
                 )
     }

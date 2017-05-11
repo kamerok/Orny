@@ -149,4 +149,8 @@ class EditExpenseActivity : MvpActivity(), EditExpenseView {
                 .setPositiveButton(android.R.string.ok) { _, _ -> }
                 .show()
     }
+
+    override fun startIntent(intent: Intent?) {
+        startActivityForResult(intent, 1001)
+    }
 }

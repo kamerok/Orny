@@ -1,7 +1,9 @@
 package com.kamer.orny.presentation.editexpense
 
+import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import com.arellomobile.mvp.MvpPresenter
+import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import com.kamer.orny.data.model.Author
 import com.kamer.orny.data.model.Expense
 import com.kamer.orny.interaction.GetAuthorsInteractor
@@ -100,7 +102,13 @@ class EditExpensePresenter(val errorParser: ErrorMessageParser,
                 .doFinally { viewState.setSavingProgress(false) }
                 .subscribe(
                         { router.closeScreen() },
-                        { viewState.showError(errorParser.getMessage(SaveExpenseException(it))) }
+                        {
+                            if (it is UserRecoverableAuthIOException) {
+                                viewState.startIntent(it.intent)
+                            } else {
+                                Log.e("Error", it.message, it)
+                                viewState.showError(errorParser.getMessage(SaveExpenseException(it)))
+                            }}
                 )
     }
 

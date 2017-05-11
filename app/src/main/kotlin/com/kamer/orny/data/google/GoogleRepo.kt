@@ -2,9 +2,9 @@ package com.kamer.orny.data.google
 
 import android.app.Activity
 import android.content.Intent
+import com.kamer.orny.data.model.Expense
 import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.Single
 
 interface GoogleRepo {
 
@@ -18,6 +18,6 @@ interface GoogleRepo {
 
     fun logout(): Completable
 
-    fun getData(): Single<List<String>>
+    fun addExpense(expense: Expense): Completable
 
 }

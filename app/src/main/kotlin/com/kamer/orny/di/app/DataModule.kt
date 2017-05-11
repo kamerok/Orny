@@ -25,7 +25,7 @@ class DataModule {
 
     @Provides
     @ApplicationScope
-    fun provideExpenseRepo(): ExpenseRepo = ExpenseRepoImpl()
+    fun provideExpenseRepo(googleRepo: GoogleRepo): ExpenseRepo = ExpenseRepoImpl(googleRepo)
 
     @Provides
     @ApplicationScope

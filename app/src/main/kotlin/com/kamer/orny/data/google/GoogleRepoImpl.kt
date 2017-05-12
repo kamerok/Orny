@@ -144,9 +144,9 @@ class GoogleRepoImpl(private val context: Context, val prefs: Prefs) : GoogleRep
         val service = Sheets.Builder(transport, jsonFactory, credential)
                 .build()
         val spreadsheetId = "1YsFrfpNzs_gjdtnqVNuAPPYl3NRjeo8GgEWAOD7BdOg"
-        val range = "Тест"
-        val writeData: MutableList<MutableList<Any>> = ArrayList<MutableList<Any>>()
-        val dataRow: MutableList<Any> = ArrayList<Any>()
+        val range = "Май"
+        val writeData: MutableList<MutableList<Any>> = ArrayList()
+        val dataRow: MutableList<Any> = ArrayList()
         dataRow.add(expense.comment)
         dataRow.add(SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(expense.date))
         dataRow.add(if (expense.isOffBudget) "1" else "0")
@@ -158,7 +158,7 @@ class GoogleRepoImpl(private val context: Context, val prefs: Prefs) : GoogleRep
         val valueRange = ValueRange()
         valueRange.setValues(writeData)
         valueRange.majorDimension = "ROWS"
-        val request = service.spreadsheets().values().append(spreadsheetId, range, valueRange).setValueInputOption("RAW")
+        val request = service.spreadsheets().values().append(spreadsheetId, range, valueRange).setValueInputOption("USER_ENTERED")
         val response = request.execute()
         Log.d("GoogleSheets", response.toString())
     }

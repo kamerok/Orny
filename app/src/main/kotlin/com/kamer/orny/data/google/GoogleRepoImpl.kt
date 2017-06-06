@@ -144,7 +144,7 @@ class GoogleRepoImpl(private val context: Context, val prefs: Prefs) : GoogleRep
         val service = Sheets.Builder(transport, jsonFactory, credential)
                 .build()
         val spreadsheetId = "1YsFrfpNzs_gjdtnqVNuAPPYl3NRjeo8GgEWAOD7BdOg"
-        val range = "Май"
+        val range = "Тест"
         val writeData: MutableList<MutableList<Any>> = ArrayList()
         val dataRow: MutableList<Any> = ArrayList()
         dataRow.add(expense.comment)

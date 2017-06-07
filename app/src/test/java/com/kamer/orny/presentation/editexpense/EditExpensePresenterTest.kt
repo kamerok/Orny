@@ -55,10 +55,13 @@ class EditExpensePresenterTest {
                 Author(id = "0", name = "name1", color = "color1"),
                 Author(id = "1", name = "name2", color = "color2"))
         `when`(authorsInteractor.getAuthors()).thenReturn(Single.just(authors))
+        val observer = TestObserver.create<List<Author>>()
 
+        presenter.getAuthors().subscribe(observer)
         presenter.attachView(view)
 
-        verify(view).setAuthors(authors)
+        observer.assertNoErrors()
+        observer.assertValues(authors)
     }
 
     @Test
@@ -210,14 +213,14 @@ class EditExpensePresenterTest {
 
     @Test
     fun showSaveExpenseProgress() {
-        val subscriber = TestObserver.create<Boolean>()
+        val observer = TestObserver.create<Boolean>()
 
-        presenter.getSavingProgress().subscribe(subscriber)
+        presenter.getSavingProgress().subscribe(observer)
         presenter.amountChanged("1")
         presenter.saveExpense()
 
-        subscriber.assertNoErrors()
-        subscriber.assertValues(false, true, false)
+        observer.assertNoErrors()
+        observer.assertValues(true, false)
     }
 
     @Test

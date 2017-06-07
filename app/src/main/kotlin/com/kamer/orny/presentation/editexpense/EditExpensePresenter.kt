@@ -28,7 +28,8 @@ class EditExpensePresenter(val errorParser: ErrorMessageParser,
     private val expense = Expense()
     private val newExpense = expense.copy()
 
-    private val savingProgress = BehaviorSubject.createDefault<Boolean>(false)
+    private val savingProgress = BehaviorSubject.create<Boolean>()
+    private val authors = BehaviorSubject.create<List<Author>>()
 
     override fun onFirstViewAttach() {
         loadAuthors()
@@ -36,6 +37,8 @@ class EditExpensePresenter(val errorParser: ErrorMessageParser,
     }
 
     override fun getSavingProgress(): Observable<Boolean> = savingProgress
+
+    override fun getAuthors(): Observable<List<Author>> = authors
 
     fun amountChanged(amountRaw: String) {
         try {
@@ -94,7 +97,7 @@ class EditExpensePresenter(val errorParser: ErrorMessageParser,
                 .getAuthors()
                 .subscribe(
                         {
-                            viewState.setAuthors(it)
+                            authors.onNext(it)
                             expense.author = it.firstOrNull()
                         },
                         { viewState.showError(errorParser.getMessage(GetAuthorsException(it))) }

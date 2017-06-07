@@ -70,20 +70,24 @@ class EditExpenseActivity : MvpActivity(), EditExpenseView {
         offBudgetView.setOnCheckedChangeListener { _, isChecked -> presenter.offBudgetChanged(isChecked) }
 
         presenter.getSavingProgress()
-                .subscribe(
-                        { isSaving ->
-                            if (isSaving) {
-                                val dialog = ProgressDialog(this)
-                                dialog.setMessage(getString(R.string.edit_expense_exit_save_progress))
-                                dialog.setCancelable(false)
-                                dialog.setCanceledOnTouchOutside(false)
-                                dialog.show()
-                                this.dialog = dialog
-                            } else {
-                                dialog?.dismiss()
-                            }
-                        }
-                )
+                .subscribe({ isSaving ->
+                    if (isSaving) {
+                        val dialog = ProgressDialog(this)
+                        dialog.setMessage(getString(R.string.edit_expense_exit_save_progress))
+                        dialog.setCancelable(false)
+                        dialog.setCanceledOnTouchOutside(false)
+                        dialog.show()
+                        this.dialog = dialog
+                    } else {
+                        dialog?.dismiss()
+                    }
+                })
+        presenter.getAuthors()
+                .subscribe({ authors ->
+                    this.authors = authors
+                    adapter.clear()
+                    adapter.addAll(authors.map { it.name })
+                })
     }
 
     override fun onBackPressed() {
@@ -103,12 +107,6 @@ class EditExpenseActivity : MvpActivity(), EditExpenseView {
             }
             else -> return false
         }
-    }
-
-    override fun setAuthors(authors: List<Author>) {
-        this.authors = authors
-        adapter.clear()
-        adapter.addAll(authors.map { it.name })
     }
 
     override fun setDate(date: Date) {

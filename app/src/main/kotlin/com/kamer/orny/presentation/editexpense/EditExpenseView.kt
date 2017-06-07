@@ -10,8 +10,6 @@ import java.util.*
 
 interface EditExpenseView : MvpView {
 
-    fun setAuthors(authors: List<Author>)
-
     fun setDate(date: Date)
 
     @StateStrategyType(SkipStrategy::class)

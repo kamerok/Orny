@@ -12,6 +12,8 @@ import com.kamer.orny.presentation.editexpense.errors.GetAuthorsException
 import com.kamer.orny.presentation.editexpense.errors.NoChangesException
 import com.kamer.orny.presentation.editexpense.errors.SaveExpenseException
 import com.kamer.orny.presentation.editexpense.errors.WrongAmountFormatException
+import io.reactivex.Observable
+import io.reactivex.subjects.BehaviorSubject
 import timber.log.Timber
 import java.util.*
 
@@ -21,15 +23,19 @@ class EditExpensePresenter(val errorParser: ErrorMessageParser,
                            val router: EditExpenseRouter,
                            val authorsInteractor: GetAuthorsInteractor,
                            val saveExpenseInteractor: SaveExpenseInteractor
-) : MvpPresenter<EditExpenseView>() {
+) : MvpPresenter<EditExpenseView>(), EditExpenseViewModel {
 
     private val expense = Expense()
     private val newExpense = expense.copy()
+
+    private val savingProgress = BehaviorSubject.createDefault<Boolean>(false)
 
     override fun onFirstViewAttach() {
         loadAuthors()
         viewState.setDate(Date())
     }
+
+    override fun getSavingProgress(): Observable<Boolean> = savingProgress
 
     fun amountChanged(amountRaw: String) {
         try {
@@ -98,8 +104,8 @@ class EditExpensePresenter(val errorParser: ErrorMessageParser,
     private fun saveChanges() {
         saveExpenseInteractor
                 .saveExpense(newExpense)
-                .doOnSubscribe { viewState.setSavingProgress(true) }
-                .doFinally { viewState.setSavingProgress(false) }
+                .doOnSubscribe { savingProgress.onNext(true) }
+                .doFinally { savingProgress.onNext(false) }
                 .subscribe(
                         { router.closeScreen() },
                         {

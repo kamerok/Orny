@@ -14,8 +14,6 @@ interface EditExpenseView : MvpView {
 
     fun setDate(date: Date)
 
-    fun setSavingProgress(isSaving: Boolean)
-
     @StateStrategyType(SkipStrategy::class)
     fun showDatePicker(date: Date)
 

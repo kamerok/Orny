@@ -10,10 +10,10 @@ import com.kamer.orny.presentation.editexpense.errors.SaveExpenseException
 import com.kamer.orny.presentation.editexpense.errors.WrongAmountFormatException
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.argumentCaptor
-import com.nhaarman.mockito_kotlin.inOrder
 import com.nhaarman.mockito_kotlin.never
 import io.reactivex.Completable
 import io.reactivex.Single
+import io.reactivex.observers.TestObserver
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -210,13 +210,14 @@ class EditExpensePresenterTest {
 
     @Test
     fun showSaveExpenseProgress() {
-        val inOrder = inOrder(view)
+        val subscriber = TestObserver.create<Boolean>()
 
+        presenter.getSavingProgress().subscribe(subscriber)
         presenter.amountChanged("1")
         presenter.saveExpense()
 
-        inOrder.verify(view).setSavingProgress(true)
-        inOrder.verify(view).setSavingProgress(false)
+        subscriber.assertNoErrors()
+        subscriber.assertValues(false, true, false)
     }
 
     @Test

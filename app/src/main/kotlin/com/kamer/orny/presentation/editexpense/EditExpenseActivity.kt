@@ -68,6 +68,22 @@ class EditExpenseActivity : MvpActivity(), EditExpenseView {
         authorsSpinnerView.adapter = adapter
         dateView.setOnClickListener { presenter.selectDate() }
         offBudgetView.setOnCheckedChangeListener { _, isChecked -> presenter.offBudgetChanged(isChecked) }
+
+        presenter.getSavingProgress()
+                .subscribe(
+                        { isSaving ->
+                            if (isSaving) {
+                                val dialog = ProgressDialog(this)
+                                dialog.setMessage(getString(R.string.edit_expense_exit_save_progress))
+                                dialog.setCancelable(false)
+                                dialog.setCanceledOnTouchOutside(false)
+                                dialog.show()
+                                this.dialog = dialog
+                            } else {
+                                dialog?.dismiss()
+                            }
+                        }
+                )
     }
 
     override fun onBackPressed() {
@@ -114,19 +130,6 @@ class EditExpenseActivity : MvpActivity(), EditExpenseView {
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH)).show()
-    }
-
-    override fun setSavingProgress(isSaving: Boolean) {
-        if (isSaving) {
-            val dialog = ProgressDialog(this)
-            dialog.setMessage(getString(R.string.edit_expense_exit_save_progress))
-            dialog.setCancelable(false)
-            dialog.setCanceledOnTouchOutside(false)
-            dialog.show()
-            this.dialog = dialog
-        } else {
-            dialog?.dismiss()
-        }
     }
 
     override fun showExitDialog() {

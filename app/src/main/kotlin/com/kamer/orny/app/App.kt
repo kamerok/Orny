@@ -4,6 +4,7 @@ import android.app.Application
 import com.kamer.orny.di.app.AppComponent
 import com.kamer.orny.di.app.AppModule
 import com.kamer.orny.di.app.DaggerAppComponent
+import timber.log.Timber
 
 class App : Application() {
 
@@ -15,6 +16,7 @@ class App : Application() {
         super.onCreate()
 
         appComponent = DaggerAppComponent.builder().appModule(AppModule(this)).build()
+        Timber.plant(Timber.DebugTree())
     }
 
 }

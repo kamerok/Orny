@@ -5,7 +5,6 @@ import android.accounts.AccountManager
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import com.google.api.client.extensions.android.http.AndroidHttp
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.json.jackson2.JacksonFactory
@@ -22,6 +21,7 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 import java.util.*
@@ -160,7 +160,7 @@ class GoogleRepoImpl(private val context: Context, val prefs: Prefs) : GoogleRep
         valueRange.majorDimension = "ROWS"
         val request = service.spreadsheets().values().append(spreadsheetId, range, valueRange).setValueInputOption("USER_ENTERED")
         val response = request.execute()
-        Log.d("GoogleSheets", response.toString())
+        Timber.d(response.toString())
     }
 
     private interface LoginListener {

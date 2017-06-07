@@ -92,6 +92,7 @@ dependencies {
 
     compile 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.4@aar'
     compile 'com.jakewharton.rxrelay2:rxrelay:2.0.0'
+    compile 'com.jakewharton.timber:timber:4.5.1'
     compile 'com.rengwuxian.materialedittext:library:2.1.4'
 }
 

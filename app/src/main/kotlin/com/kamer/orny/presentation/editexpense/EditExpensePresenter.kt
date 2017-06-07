@@ -1,6 +1,5 @@
 package com.kamer.orny.presentation.editexpense
 
-import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import com.arellomobile.mvp.MvpPresenter
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
@@ -13,6 +12,7 @@ import com.kamer.orny.presentation.editexpense.errors.GetAuthorsException
 import com.kamer.orny.presentation.editexpense.errors.NoChangesException
 import com.kamer.orny.presentation.editexpense.errors.SaveExpenseException
 import com.kamer.orny.presentation.editexpense.errors.WrongAmountFormatException
+import timber.log.Timber
 import java.util.*
 
 
@@ -106,7 +106,7 @@ class EditExpensePresenter(val errorParser: ErrorMessageParser,
                             if (it is UserRecoverableAuthIOException) {
                                 viewState.startIntent(it.intent)
                             } else {
-                                Log.e("Error", it.message, it)
+                                Timber.e(it.message, it)
                                 viewState.showError(errorParser.getMessage(SaveExpenseException(it)))
                             }}
                 )

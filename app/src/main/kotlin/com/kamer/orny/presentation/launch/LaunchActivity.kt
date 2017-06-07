@@ -2,7 +2,6 @@ package com.kamer.orny.presentation.launch
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import com.kamer.orny.R
 import com.kamer.orny.app.App
 import com.kamer.orny.data.AuthRepo
@@ -14,6 +13,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_launch.*
+import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -64,7 +64,7 @@ class LaunchActivity : BaseActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({}, { error ->
-                    Log.d("Error", error.message, error)
+                    Timber.e(error.message, error)
                     toast("The following error occurred:\n" + error)
                 })
     }

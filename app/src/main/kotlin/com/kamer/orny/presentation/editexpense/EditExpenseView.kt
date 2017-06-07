@@ -10,8 +10,6 @@ import java.util.*
 
 interface EditExpenseView : MvpView {
 
-    fun setDate(date: Date)
-
     @StateStrategyType(SkipStrategy::class)
     fun showDatePicker(date: Date)
 

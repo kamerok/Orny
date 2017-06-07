@@ -30,15 +30,17 @@ class EditExpensePresenter(val errorParser: ErrorMessageParser,
 
     private val savingProgress = BehaviorSubject.create<Boolean>()
     private val authors = BehaviorSubject.create<List<Author>>()
+    private val date = BehaviorSubject.createDefault<Date>(Date())
 
     override fun onFirstViewAttach() {
         loadAuthors()
-        viewState.setDate(Date())
     }
 
     override fun getSavingProgress(): Observable<Boolean> = savingProgress
 
     override fun getAuthors(): Observable<List<Author>> = authors
+
+    override fun getDate(): Observable<Date> = date
 
     fun amountChanged(amountRaw: String) {
         try {

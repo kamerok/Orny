@@ -66,12 +66,14 @@ class EditExpensePresenterTest {
 
     @Test
     fun setCurrentDateOnStart() {
-        val captor = argumentCaptor<Date>()
+        val observer = TestObserver.create<Date>()
 
+        presenter.getDate().subscribe(observer)
         presenter.attachView(view)
 
-        verify(view).setDate(captor.capture())
-        assertThat(captor.firstValue).isToday()
+        observer.assertNoErrors()
+        observer.assertValueCount(1)
+        assertThat(observer.values().first()).isToday()
     }
 
     @Test

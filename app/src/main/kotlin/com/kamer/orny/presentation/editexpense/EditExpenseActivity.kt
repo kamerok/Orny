@@ -69,25 +69,7 @@ class EditExpenseActivity : MvpActivity(), EditExpenseView {
         dateView.setOnClickListener { presenter.selectDate() }
         offBudgetView.setOnCheckedChangeListener { _, isChecked -> presenter.offBudgetChanged(isChecked) }
 
-        presenter.getSavingProgress()
-                .subscribe({ isSaving ->
-                    if (isSaving) {
-                        val dialog = ProgressDialog(this)
-                        dialog.setMessage(getString(R.string.edit_expense_exit_save_progress))
-                        dialog.setCancelable(false)
-                        dialog.setCanceledOnTouchOutside(false)
-                        dialog.show()
-                        this.dialog = dialog
-                    } else {
-                        dialog?.dismiss()
-                    }
-                })
-        presenter.getAuthors()
-                .subscribe({ authors ->
-                    this.authors = authors
-                    adapter.clear()
-                    adapter.addAll(authors.map { it.name })
-                })
+        bindViewModel()
     }
 
     override fun onBackPressed() {
@@ -107,10 +89,6 @@ class EditExpenseActivity : MvpActivity(), EditExpenseView {
             }
             else -> return false
         }
-    }
-
-    override fun setDate(date: Date) {
-        dateView.text = DATE_FORMAT.format(date)
     }
 
     override fun showDatePicker(date: Date) {
@@ -153,5 +131,34 @@ class EditExpenseActivity : MvpActivity(), EditExpenseView {
 
     override fun startIntent(intent: Intent?) {
         startActivityForResult(intent, 1001)
+    }
+
+    private fun bindViewModel() {
+        presenter.getAuthors().subscribe { setAuthors(it) }
+        presenter.getDate().subscribe { setDate(it) }
+        presenter.getSavingProgress().subscribe { setSavingProgress(it) }
+    }
+
+    private fun setAuthors(authors: List<Author>) {
+        this.authors = authors
+        adapter.clear()
+        adapter.addAll(authors.map { it.name })
+    }
+
+    private fun setDate(date: Date) {
+        dateView.text = DATE_FORMAT.format(date)
+    }
+
+    private fun setSavingProgress(isSaving: Boolean) {
+        if (isSaving) {
+            val dialog = ProgressDialog(this)
+            dialog.setMessage(getString(R.string.edit_expense_exit_save_progress))
+            dialog.setCancelable(false)
+            dialog.setCanceledOnTouchOutside(false)
+            dialog.show()
+            this.dialog = dialog
+        } else {
+            dialog?.dismiss()
+        }
     }
 }

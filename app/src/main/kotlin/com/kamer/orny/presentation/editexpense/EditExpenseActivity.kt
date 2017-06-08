@@ -91,23 +91,6 @@ class EditExpenseActivity : MvpActivity(), EditExpenseView {
         }
     }
 
-    override fun showDatePicker(date: Date) {
-        val calendar = Calendar.getInstance()
-        calendar.timeInMillis = date.time
-        DatePickerDialog(
-                this,
-                { _, year, month, dayOfMonth ->
-                    val newCalendar = Calendar.getInstance()
-                    newCalendar.set(year, month, dayOfMonth)
-                    val newDate = Date(newCalendar.timeInMillis)
-                    setDate(newDate)
-                    presenter.dateChanged(newDate)
-                },
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)).show()
-    }
-
     override fun showExitDialog() {
         AlertDialog.Builder(this)
                 .setTitle(R.string.edit_expense_exit_dialog_title)
@@ -134,9 +117,10 @@ class EditExpenseActivity : MvpActivity(), EditExpenseView {
     }
 
     private fun bindViewModel() {
-        presenter.getAuthors().subscribe { setAuthors(it) }
-        presenter.getDate().subscribe { setDate(it) }
-        presenter.getSavingProgress().subscribe { setSavingProgress(it) }
+        presenter.bindAuthors().subscribe { setAuthors(it) }
+        presenter.bindDate().subscribe { setDate(it) }
+        presenter.bindSavingProgress().subscribe { setSavingProgress(it) }
+        presenter.bindShowDatePicker().subscribe { showDatePicker(it) }
     }
 
     private fun setAuthors(authors: List<Author>) {
@@ -160,5 +144,22 @@ class EditExpenseActivity : MvpActivity(), EditExpenseView {
         } else {
             dialog?.dismiss()
         }
+    }
+
+    private fun showDatePicker(date: Date) {
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = date.time
+        DatePickerDialog(
+                this,
+                { _, year, month, dayOfMonth ->
+                    val newCalendar = Calendar.getInstance()
+                    newCalendar.set(year, month, dayOfMonth)
+                    val newDate = Date(newCalendar.timeInMillis)
+                    setDate(newDate)
+                    presenter.dateChanged(newDate)
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)).show()
     }
 }

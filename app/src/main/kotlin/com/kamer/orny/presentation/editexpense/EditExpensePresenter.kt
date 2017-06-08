@@ -31,18 +31,21 @@ class EditExpensePresenter(val errorParser: ErrorMessageParser,
     private val savingProgress = BehaviorSubject.create<Boolean>()
     private val authors = BehaviorSubject.create<List<Author>>()
     private val date = BehaviorSubject.createDefault<Date>(Date())
+    private val showPicker = BehaviorSubject.create<Date>()
 
     override fun onFirstViewAttach() {
         loadAuthors()
     }
 
-    override fun getSavingProgress(): Observable<Boolean> = savingProgress
+    override fun bindSavingProgress(): Observable<Boolean> = savingProgress
 
-    override fun getAuthors(): Observable<List<Author>> = authors
+    override fun bindAuthors(): Observable<List<Author>> = authors
 
-    override fun getDate(): Observable<Date> = date
+    override fun bindDate(): Observable<Date> = date
 
-    fun amountChanged(amountRaw: String) {
+    override fun bindShowDatePicker(): Observable<Date> = showPicker
+
+    override fun amountChanged(amountRaw: String) {
         try {
             val amount = amountRaw.toDouble()
             if (amount < 0) {
@@ -56,38 +59,38 @@ class EditExpensePresenter(val errorParser: ErrorMessageParser,
         }
     }
 
-    fun exitScreen() {
+    override fun exitScreen() {
         when (newExpense) {
             expense -> router.closeScreen()
             else -> viewState.showExitDialog()
         }
     }
 
-    fun commentChanged(comment: String) {
+    override fun commentChanged(comment: String) {
         newExpense.comment = comment
     }
 
-    fun authorSelected(author: Author) {
+    override fun authorSelected(author: Author) {
         newExpense.author = author
     }
 
-    fun selectDate() {
-        viewState.showDatePicker(newExpense.date)
+    override fun selectDate() {
+        showPicker.onNext(newExpense.date)
     }
 
-    fun dateChanged(date: Date) {
+    override fun dateChanged(date: Date) {
         newExpense.date = date
     }
 
-    fun offBudgetChanged(isOffBudget: Boolean) {
+    override fun offBudgetChanged(isOffBudget: Boolean) {
         newExpense.isOffBudget = isOffBudget
     }
 
-    fun confirmExit() {
+    override fun confirmExit() {
         router.closeScreen()
     }
 
-    fun saveExpense() {
+    override fun saveExpense() {
         when (newExpense) {
             expense -> viewState.showError(errorParser.getMessage(NoChangesException()))
             else -> saveChanges()

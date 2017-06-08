@@ -7,10 +7,19 @@ import java.util.*
 
 interface EditExpenseViewModel {
 
-    fun getAuthors(): Observable<List<Author>>
+    fun bindAuthors(): Observable<List<Author>>
+    fun bindDate(): Observable<Date>
+    fun bindSavingProgress(): Observable<Boolean>
+    fun bindShowDatePicker(): Observable<Date>
 
-    fun getDate(): Observable<Date>
-
-    fun getSavingProgress(): Observable<Boolean>
+    fun amountChanged(amountRaw: String)
+    fun exitScreen()
+    fun commentChanged(comment: String)
+    fun authorSelected(author: Author)
+    fun selectDate()
+    fun dateChanged(date: Date)
+    fun offBudgetChanged(isOffBudget: Boolean)
+    fun confirmExit()
+    fun saveExpense()
 
 }

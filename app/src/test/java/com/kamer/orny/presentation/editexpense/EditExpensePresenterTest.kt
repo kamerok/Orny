@@ -57,7 +57,7 @@ class EditExpensePresenterTest {
         `when`(authorsInteractor.getAuthors()).thenReturn(Single.just(authors))
         val observer = TestObserver.create<List<Author>>()
 
-        presenter.getAuthors().subscribe(observer)
+        presenter.bindAuthors().subscribe(observer)
         presenter.attachView(view)
 
         observer.assertNoErrors()
@@ -68,7 +68,7 @@ class EditExpensePresenterTest {
     fun setCurrentDateOnStart() {
         val observer = TestObserver.create<Date>()
 
-        presenter.getDate().subscribe(observer)
+        presenter.bindDate().subscribe(observer)
         presenter.attachView(view)
 
         observer.assertNoErrors()
@@ -112,11 +112,16 @@ class EditExpensePresenterTest {
 
     @Test
     fun showDatePickerOnDateClicked() {
-        val date = Date(199)
-        presenter.dateChanged(date)
+        val observer = TestObserver.create<Date>()
+        val time = 199L
+
+        presenter.bindShowDatePicker().subscribe(observer)
+        presenter.dateChanged(Date(time))
         presenter.selectDate()
 
-        verify(view).showDatePicker(date)
+        observer.assertNoErrors()
+        observer.assertValueCount(1)
+        assertThat(observer.values().first()).isEqualTo(Date(time))
     }
 
     @Test
@@ -217,7 +222,7 @@ class EditExpensePresenterTest {
     fun showSaveExpenseProgress() {
         val observer = TestObserver.create<Boolean>()
 
-        presenter.getSavingProgress().subscribe(observer)
+        presenter.bindSavingProgress().subscribe(observer)
         presenter.amountChanged("1")
         presenter.saveExpense()
 

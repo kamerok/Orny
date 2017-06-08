@@ -4,14 +4,9 @@ import android.content.Intent
 import com.arellomobile.mvp.MvpView
 import com.arellomobile.mvp.viewstate.strategy.SkipStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
-import com.kamer.orny.data.model.Author
-import java.util.*
 
 
 interface EditExpenseView : MvpView {
-
-    @StateStrategyType(SkipStrategy::class)
-    fun showDatePicker(date: Date)
 
     @StateStrategyType(SkipStrategy::class)
     fun showExitDialog()

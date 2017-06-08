@@ -9,9 +9,6 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
 interface EditExpenseView : MvpView {
 
     @StateStrategyType(SkipStrategy::class)
-    fun showExitDialog()
-
-    @StateStrategyType(SkipStrategy::class)
     fun showAmountError(error: String)
 
     @StateStrategyType(SkipStrategy::class)

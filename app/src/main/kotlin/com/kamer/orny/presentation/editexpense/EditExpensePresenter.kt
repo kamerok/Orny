@@ -12,8 +12,10 @@ import com.kamer.orny.presentation.editexpense.errors.GetAuthorsException
 import com.kamer.orny.presentation.editexpense.errors.NoChangesException
 import com.kamer.orny.presentation.editexpense.errors.SaveExpenseException
 import com.kamer.orny.presentation.editexpense.errors.WrongAmountFormatException
+import com.kamer.orny.utils.onNext
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.PublishSubject
 import timber.log.Timber
 import java.util.*
 
@@ -31,7 +33,8 @@ class EditExpensePresenter(val errorParser: ErrorMessageParser,
     private val savingProgress = BehaviorSubject.create<Boolean>()
     private val authors = BehaviorSubject.create<List<Author>>()
     private val date = BehaviorSubject.createDefault<Date>(Date())
-    private val showPicker = BehaviorSubject.create<Date>()
+    private val showPicker = PublishSubject.create<Date>()
+    private val showExitDialog = PublishSubject.create<Any>()
 
     override fun onFirstViewAttach() {
         loadAuthors()
@@ -44,6 +47,8 @@ class EditExpensePresenter(val errorParser: ErrorMessageParser,
     override fun bindDate(): Observable<Date> = date
 
     override fun bindShowDatePicker(): Observable<Date> = showPicker
+
+    override fun bindShowExitDialog(): Observable<Any> = showExitDialog
 
     override fun amountChanged(amountRaw: String) {
         try {
@@ -62,7 +67,7 @@ class EditExpensePresenter(val errorParser: ErrorMessageParser,
     override fun exitScreen() {
         when (newExpense) {
             expense -> router.closeScreen()
-            else -> viewState.showExitDialog()
+            else -> showExitDialog.onNext()
         }
     }
 
@@ -122,7 +127,8 @@ class EditExpensePresenter(val errorParser: ErrorMessageParser,
                             } else {
                                 Timber.e(it.message, it)
                                 viewState.showError(errorParser.getMessage(SaveExpenseException(it)))
-                            }}
+                            }
+                        }
                 )
     }
 

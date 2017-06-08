@@ -11,6 +11,7 @@ interface EditExpenseViewModel {
     fun bindDate(): Observable<Date>
     fun bindSavingProgress(): Observable<Boolean>
     fun bindShowDatePicker(): Observable<Date>
+    fun bindShowExitDialog(): Observable<Any>
 
     fun amountChanged(amountRaw: String)
     fun exitScreen()

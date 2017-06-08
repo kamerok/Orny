@@ -148,11 +148,15 @@ class EditExpensePresenterTest {
 
     @Test
     fun showDialogWhenExitIfAmountChanged() {
+        val observer = TestObserver.create<Any>()
+
+        presenter.bindShowExitDialog().subscribe(observer)
         presenter.amountChanged("1")
         presenter.exitScreen()
 
         verify(router, never()).closeScreen()
-        verify(view).showExitDialog()
+        observer.assertNoErrors()
+        observer.assertValueCount(1)
     }
 
     @Test
@@ -161,7 +165,7 @@ class EditExpensePresenterTest {
         presenter.exitScreen()
 
         verify(router, never()).closeScreen()
-        verify(view).showExitDialog()
+//        verify(view).showExitDialog()
     }
 
     @Test
@@ -170,7 +174,7 @@ class EditExpensePresenterTest {
         presenter.exitScreen()
 
         verify(router, never()).closeScreen()
-        verify(view).showExitDialog()
+//        verify(view).showExitDialog()
     }
 
     @Test
@@ -179,7 +183,7 @@ class EditExpensePresenterTest {
         presenter.exitScreen()
 
         verify(router, never()).closeScreen()
-        verify(view).showExitDialog()
+//        verify(view).showExitDialog()
     }
 
     @Test
@@ -188,7 +192,7 @@ class EditExpensePresenterTest {
         presenter.exitScreen()
 
         verify(router, never()).closeScreen()
-        verify(view).showExitDialog()
+//        verify(view).showExitDialog()
     }
 
     @Test

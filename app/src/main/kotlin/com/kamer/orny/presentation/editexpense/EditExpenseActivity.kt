@@ -91,15 +91,6 @@ class EditExpenseActivity : MvpActivity(), EditExpenseView {
         }
     }
 
-    override fun showExitDialog() {
-        AlertDialog.Builder(this)
-                .setTitle(R.string.edit_expense_exit_dialog_title)
-                .setMessage(R.string.edit_expense_exit_dialog_message)
-                .setPositiveButton(R.string.edit_expense_exit_dialog_save) { _, _ -> presenter.saveExpense() }
-                .setNegativeButton(R.string.edit_expense_exit_dialog_exit) { _, _ -> presenter.confirmExit() }
-                .show()
-    }
-
     override fun showAmountError(error: String) {
         amountView.error = error
     }
@@ -117,10 +108,11 @@ class EditExpenseActivity : MvpActivity(), EditExpenseView {
     }
 
     private fun bindViewModel() {
-        presenter.bindAuthors().subscribe { setAuthors(it) }
-        presenter.bindDate().subscribe { setDate(it) }
-        presenter.bindSavingProgress().subscribe { setSavingProgress(it) }
-        presenter.bindShowDatePicker().subscribe { showDatePicker(it) }
+        presenter.bindAuthors().subscribe { this::setAuthors }
+        presenter.bindDate().subscribe { this::setDate }
+        presenter.bindSavingProgress().subscribe { this::setSavingProgress }
+        presenter.bindShowDatePicker().subscribe { this::showDatePicker }
+        presenter.bindShowExitDialog().subscribe { this::showExitDialog }
     }
 
     private fun setAuthors(authors: List<Author>) {
@@ -161,5 +153,14 @@ class EditExpenseActivity : MvpActivity(), EditExpenseView {
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH)).show()
+    }
+
+    private fun showExitDialog() {
+        AlertDialog.Builder(this)
+                .setTitle(R.string.edit_expense_exit_dialog_title)
+                .setMessage(R.string.edit_expense_exit_dialog_message)
+                .setPositiveButton(R.string.edit_expense_exit_dialog_save) { _, _ -> presenter.saveExpense() }
+                .setNegativeButton(R.string.edit_expense_exit_dialog_exit) { _, _ -> presenter.confirmExit() }
+                .show()
     }
 }

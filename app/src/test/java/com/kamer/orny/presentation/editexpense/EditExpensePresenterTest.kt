@@ -60,7 +60,6 @@ class EditExpensePresenterTest {
         presenter.bindAuthors().subscribe(observer)
         presenter.attachView(view)
 
-        observer.assertNoErrors()
         observer.assertValues(authors)
     }
 
@@ -71,7 +70,6 @@ class EditExpensePresenterTest {
         presenter.bindDate().subscribe(observer)
         presenter.attachView(view)
 
-        observer.assertNoErrors()
         observer.assertValueCount(1)
         assertThat(observer.values().first()).isToday()
     }
@@ -91,23 +89,27 @@ class EditExpensePresenterTest {
     @Test
     fun showWrongAmountFormatErrorOnNonDouble() {
         val captor = argumentCaptor<Exception>()
+        val observer = TestObserver.create<String>()
 
+        presenter.bindShowAmountError().subscribe(observer)
         presenter.amountChanged("Wrong")
 
         verify(errorParser).getMessage(captor.capture())
         assertThat(captor.firstValue).isInstanceOf(WrongAmountFormatException::class.java)
-        verify(view).showAmountError(PARSED_ERROR)
+        observer.assertValue(PARSED_ERROR)
     }
 
     @Test
     fun showWrongAmountFormatErrorOnNegative() {
         val captor = argumentCaptor<Exception>()
+        val observer = TestObserver.create<String>()
 
+        presenter.bindShowAmountError().subscribe(observer)
         presenter.amountChanged("-1")
 
         verify(errorParser).getMessage(captor.capture())
         assertThat(captor.firstValue).isInstanceOf(WrongAmountFormatException::class.java)
-        verify(view).showAmountError(PARSED_ERROR)
+        observer.assertValue(PARSED_ERROR)
     }
 
     @Test
@@ -119,7 +121,6 @@ class EditExpensePresenterTest {
         presenter.dateChanged(Date(time))
         presenter.selectDate()
 
-        observer.assertNoErrors()
         observer.assertValueCount(1)
         assertThat(observer.values().first()).isEqualTo(Date(time))
     }
@@ -155,44 +156,55 @@ class EditExpensePresenterTest {
         presenter.exitScreen()
 
         verify(router, never()).closeScreen()
-        observer.assertNoErrors()
         observer.assertValueCount(1)
     }
 
     @Test
     fun showDialogWhenExitIfCommentChanged() {
+        val observer = TestObserver.create<Any>()
+
+        presenter.bindShowExitDialog().subscribe(observer)
         presenter.commentChanged("1")
         presenter.exitScreen()
 
         verify(router, never()).closeScreen()
-//        verify(view).showExitDialog()
+        observer.assertValueCount(1)
     }
 
     @Test
     fun showDialogWhenExitIfAuthorChanged() {
+        val observer = TestObserver.create<Any>()
+
+        presenter.bindShowExitDialog().subscribe(observer)
         presenter.authorSelected(Author("1", "", ""))
         presenter.exitScreen()
 
         verify(router, never()).closeScreen()
-//        verify(view).showExitDialog()
+        observer.assertValueCount(1)
     }
 
     @Test
     fun showDialogWhenExitIfDateChanged() {
+        val observer = TestObserver.create<Any>()
+
+        presenter.bindShowExitDialog().subscribe(observer)
         presenter.dateChanged(Date(100))
         presenter.exitScreen()
 
         verify(router, never()).closeScreen()
-//        verify(view).showExitDialog()
+        observer.assertValueCount(1)
     }
 
     @Test
     fun showDialogWhenExitIfOffBudgetChanged() {
+        val observer = TestObserver.create<Any>()
+
+        presenter.bindShowExitDialog().subscribe(observer)
         presenter.offBudgetChanged(true)
         presenter.exitScreen()
 
         verify(router, never()).closeScreen()
-//        verify(view).showExitDialog()
+        observer.assertValueCount(1)
     }
 
     @Test
@@ -230,7 +242,6 @@ class EditExpensePresenterTest {
         presenter.amountChanged("1")
         presenter.saveExpense()
 
-        observer.assertNoErrors()
         observer.assertValues(true, false)
     }
 

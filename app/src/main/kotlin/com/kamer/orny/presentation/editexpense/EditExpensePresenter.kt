@@ -35,6 +35,7 @@ class EditExpensePresenter(val errorParser: ErrorMessageParser,
     private val date = BehaviorSubject.createDefault<Date>(Date())
     private val showPicker = PublishSubject.create<Date>()
     private val showExitDialog = PublishSubject.create<Any>()
+    private val showAmountError = PublishSubject.create<String>()
 
     override fun onFirstViewAttach() {
         loadAuthors()
@@ -50,17 +51,19 @@ class EditExpensePresenter(val errorParser: ErrorMessageParser,
 
     override fun bindShowExitDialog(): Observable<Any> = showExitDialog
 
+    override fun bindShowAmountError(): Observable<String> = showAmountError
+
     override fun amountChanged(amountRaw: String) {
         try {
             val amount = amountRaw.toDouble()
             if (amount < 0) {
-                viewState.showAmountError(errorParser.getMessage(
+                showAmountError.onNext(errorParser.getMessage(
                         WrongAmountFormatException(Exception("Amount can't be negative"))))
             } else {
                 newExpense.amount = amount
             }
         } catch(e: NumberFormatException) {
-            viewState.showAmountError(errorParser.getMessage(WrongAmountFormatException(e)))
+            showAmountError.onNext(errorParser.getMessage(WrongAmountFormatException(e)))
         }
     }
 

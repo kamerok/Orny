@@ -91,10 +91,6 @@ class EditExpenseActivity : MvpActivity(), EditExpenseView {
         }
     }
 
-    override fun showAmountError(error: String) {
-        amountView.error = error
-    }
-
     override fun showError(message: String) {
         AlertDialog.Builder(this)
                 .setTitle(R.string.app_name)
@@ -108,11 +104,12 @@ class EditExpenseActivity : MvpActivity(), EditExpenseView {
     }
 
     private fun bindViewModel() {
-        presenter.bindAuthors().subscribe { this::setAuthors }
-        presenter.bindDate().subscribe { this::setDate }
-        presenter.bindSavingProgress().subscribe { this::setSavingProgress }
-        presenter.bindShowDatePicker().subscribe { this::showDatePicker }
-        presenter.bindShowExitDialog().subscribe { this::showExitDialog }
+        presenter.bindAuthors().subscribe { setAuthors(it) }
+        presenter.bindDate().subscribe { setDate(it) }
+        presenter.bindSavingProgress().subscribe { setSavingProgress(it) }
+        presenter.bindShowDatePicker().subscribe { showDatePicker(it) }
+        presenter.bindShowExitDialog().subscribe { showExitDialog() }
+        presenter.bindShowAmountError().subscribe { showAmountError(it) }
     }
 
     private fun setAuthors(authors: List<Author>) {
@@ -162,5 +159,9 @@ class EditExpenseActivity : MvpActivity(), EditExpenseView {
                 .setPositiveButton(R.string.edit_expense_exit_dialog_save) { _, _ -> presenter.saveExpense() }
                 .setNegativeButton(R.string.edit_expense_exit_dialog_exit) { _, _ -> presenter.confirmExit() }
                 .show()
+    }
+
+    fun showAmountError(error: String) {
+        amountView.error = error
     }
 }

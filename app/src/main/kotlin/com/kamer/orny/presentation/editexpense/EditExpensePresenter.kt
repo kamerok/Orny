@@ -36,6 +36,7 @@ class EditExpensePresenter(val errorParser: ErrorMessageParser,
     private val showPicker = PublishSubject.create<Date>()
     private val showExitDialog = PublishSubject.create<Any>()
     private val showAmountError = PublishSubject.create<String>()
+    private val showError = PublishSubject.create<String>()
 
     override fun onFirstViewAttach() {
         loadAuthors()
@@ -52,6 +53,8 @@ class EditExpensePresenter(val errorParser: ErrorMessageParser,
     override fun bindShowExitDialog(): Observable<Any> = showExitDialog
 
     override fun bindShowAmountError(): Observable<String> = showAmountError
+
+    override fun bindShowError(): Observable<String> = showError
 
     override fun amountChanged(amountRaw: String) {
         try {
@@ -100,7 +103,7 @@ class EditExpensePresenter(val errorParser: ErrorMessageParser,
 
     override fun saveExpense() {
         when (newExpense) {
-            expense -> viewState.showError(errorParser.getMessage(NoChangesException()))
+            expense -> showError.onNext(errorParser.getMessage(NoChangesException()))
             else -> saveChanges()
         }
     }
@@ -113,7 +116,7 @@ class EditExpensePresenter(val errorParser: ErrorMessageParser,
                             authors.onNext(it)
                             expense.author = it.firstOrNull()
                         },
-                        { viewState.showError(errorParser.getMessage(GetAuthorsException(it))) }
+                        { showError.onNext(errorParser.getMessage(GetAuthorsException(it))) }
                 )
     }
 
@@ -129,7 +132,7 @@ class EditExpensePresenter(val errorParser: ErrorMessageParser,
                                 viewState.startIntent(it.intent)
                             } else {
                                 Timber.e(it.message, it)
-                                viewState.showError(errorParser.getMessage(SaveExpenseException(it)))
+                                showError.onNext(errorParser.getMessage(SaveExpenseException(it)))
                             }
                         }
                 )

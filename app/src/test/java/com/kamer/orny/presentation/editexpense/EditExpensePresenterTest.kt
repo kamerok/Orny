@@ -78,12 +78,14 @@ class EditExpensePresenterTest {
     fun showGetAuthorsError() {
         `when`(authorsInteractor.getAuthors()).thenReturn(Single.error(Exception()))
         val captor = argumentCaptor<Exception>()
+        val observer = TestObserver.create<String>()
 
+        presenter.bindShowError().subscribe(observer)
         presenter.attachView(view)
 
         verify(errorParser).getMessage(captor.capture())
         assertThat(captor.firstValue).isInstanceOf(GetAuthorsException::class.java)
-        verify(view).showError(PARSED_ERROR)
+        observer.assertValue(PARSED_ERROR)
     }
 
     @Test
@@ -216,14 +218,16 @@ class EditExpensePresenterTest {
 
     @Test
     fun showErrorOnSaveIfNothingChanged() {
-        presenter.saveExpense()
         val captor = argumentCaptor<Exception>()
+        val observer = TestObserver.create<String>()
+
+        presenter.bindShowError().subscribe(observer)
+        presenter.saveExpense()
 
         verify(router, never()).closeScreen()
-
         verify(errorParser).getMessage(captor.capture())
         assertThat(captor.firstValue).isInstanceOf(NoChangesException::class.java)
-        verify(view).showError(PARSED_ERROR)
+        observer.assertValue(PARSED_ERROR)
     }
 
     @Test
@@ -257,12 +261,14 @@ class EditExpensePresenterTest {
     fun showSavingError() {
         `when`(saveExpenseInteractor.saveExpense(any())).thenReturn(Completable.error(Exception()))
         val captor = argumentCaptor<Exception>()
+        val observer = TestObserver.create<String>()
 
+        presenter.bindShowError().subscribe(observer)
         presenter.amountChanged("1")
         presenter.saveExpense()
 
         verify(errorParser).getMessage(captor.capture())
         assertThat(captor.firstValue).isInstanceOf(SaveExpenseException::class.java)
-        verify(view).showError(PARSED_ERROR)
+        observer.assertValue(PARSED_ERROR)
     }
 }

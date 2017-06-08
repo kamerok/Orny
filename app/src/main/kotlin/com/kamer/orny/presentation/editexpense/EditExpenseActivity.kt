@@ -91,14 +91,6 @@ class EditExpenseActivity : MvpActivity(), EditExpenseView {
         }
     }
 
-    override fun showError(message: String) {
-        AlertDialog.Builder(this)
-                .setTitle(R.string.app_name)
-                .setMessage(message)
-                .setPositiveButton(android.R.string.ok) { _, _ -> }
-                .show()
-    }
-
     override fun startIntent(intent: Intent?) {
         startActivityForResult(intent, 1001)
     }
@@ -110,6 +102,7 @@ class EditExpenseActivity : MvpActivity(), EditExpenseView {
         presenter.bindShowDatePicker().subscribe { showDatePicker(it) }
         presenter.bindShowExitDialog().subscribe { showExitDialog() }
         presenter.bindShowAmountError().subscribe { showAmountError(it) }
+        presenter.bindShowError().subscribe { showError(it) }
     }
 
     private fun setAuthors(authors: List<Author>) {
@@ -161,7 +154,15 @@ class EditExpenseActivity : MvpActivity(), EditExpenseView {
                 .show()
     }
 
-    fun showAmountError(error: String) {
+    private fun showAmountError(error: String) {
         amountView.error = error
+    }
+
+    private fun showError(message: String) {
+        AlertDialog.Builder(this)
+                .setTitle(R.string.app_name)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok) { _, _ -> }
+                .show()
     }
 }

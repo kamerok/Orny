@@ -129,7 +129,8 @@ class EditExpensePresenter(val errorParser: ErrorMessageParser,
                         { router.closeScreen() },
                         {
                             if (it is UserRecoverableAuthIOException) {
-                                viewState.startIntent(it.intent)
+                                //todo auth app in google
+//                                viewState.startIntent(it.intent)
                             } else {
                                 Timber.e(it.message, it)
                                 showError.onNext(errorParser.getMessage(SaveExpenseException(it)))

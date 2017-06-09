@@ -91,9 +91,10 @@ class EditExpenseActivity : MvpActivity(), EditExpenseView {
         }
     }
 
-    override fun startIntent(intent: Intent?) {
+    //todo deal with it
+    /*override fun startIntent(intent: Intent?) {
         startActivityForResult(intent, 1001)
-    }
+    }*/
 
     private fun bindViewModel() {
         presenter.bindAuthors().subscribe { setAuthors(it) }

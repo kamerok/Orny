@@ -16,12 +16,12 @@ interface EditExpenseViewModel {
     fun bindShowError(): Observable<String>
 
     fun amountChanged(amountRaw: String)
-    fun exitScreen()
     fun commentChanged(comment: String)
     fun authorSelected(author: Author)
-    fun selectDate()
     fun dateChanged(date: Date)
     fun offBudgetChanged(isOffBudget: Boolean)
+    fun selectDate()
+    fun exitScreen()
     fun confirmExit()
     fun saveExpense()
 

@@ -26,7 +26,7 @@ import java.util.*
 
 
 @RunWith(MockitoJUnitRunner::class)
-class EditExpensePresenterTest {
+class EditExpenseViewModelTest {
 
     private val PARSED_ERROR = "parsed error"
 
@@ -35,9 +35,7 @@ class EditExpensePresenterTest {
     @Mock lateinit var authorsInteractor: GetAuthorsInteractor
     @Mock lateinit var saveExpenseInteractor: SaveExpenseInteractor
 
-    @Mock lateinit var view: EditExpenseView
-
-    private lateinit var presenter: EditExpensePresenter
+    private lateinit var viewModel: EditExpenseViewModel
 
     @Before
     fun setUp() {
@@ -45,8 +43,7 @@ class EditExpensePresenterTest {
         `when`(authorsInteractor.getAuthors()).thenReturn(Single.just(emptyList()))
         `when`(saveExpenseInteractor.saveExpense(any())).thenReturn(Completable.complete())
 
-        presenter = EditExpensePresenter(errorParser, router, authorsInteractor, saveExpenseInteractor)
-        presenter.attachedViews.add(view)
+        createViewModel()
     }
 
     @Test
@@ -57,8 +54,8 @@ class EditExpensePresenterTest {
         `when`(authorsInteractor.getAuthors()).thenReturn(Single.just(authors))
         val observer = TestObserver.create<List<Author>>()
 
-        presenter.bindAuthors().subscribe(observer)
-        presenter.attachView(view)
+        createViewModel()
+        viewModel.bindAuthors().subscribe(observer)
 
         observer.assertValues(authors)
     }
@@ -67,8 +64,7 @@ class EditExpensePresenterTest {
     fun setCurrentDateOnStart() {
         val observer = TestObserver.create<Date>()
 
-        presenter.bindDate().subscribe(observer)
-        presenter.attachView(view)
+        viewModel.bindDate().subscribe(observer)
 
         observer.assertValueCount(1)
         assertThat(observer.values().first()).isToday()
@@ -80,8 +76,8 @@ class EditExpensePresenterTest {
         val captor = argumentCaptor<Exception>()
         val observer = TestObserver.create<String>()
 
-        presenter.bindShowError().subscribe(observer)
-        presenter.attachView(view)
+        createViewModel()
+        viewModel.bindShowError().subscribe(observer)
 
         verify(errorParser).getMessage(captor.capture())
         assertThat(captor.firstValue).isInstanceOf(GetAuthorsException::class.java)
@@ -93,8 +89,8 @@ class EditExpensePresenterTest {
         val captor = argumentCaptor<Exception>()
         val observer = TestObserver.create<String>()
 
-        presenter.bindShowAmountError().subscribe(observer)
-        presenter.amountChanged("Wrong")
+        viewModel.bindShowAmountError().subscribe(observer)
+        viewModel.amountChanged("Wrong")
 
         verify(errorParser).getMessage(captor.capture())
         assertThat(captor.firstValue).isInstanceOf(WrongAmountFormatException::class.java)
@@ -106,8 +102,8 @@ class EditExpensePresenterTest {
         val captor = argumentCaptor<Exception>()
         val observer = TestObserver.create<String>()
 
-        presenter.bindShowAmountError().subscribe(observer)
-        presenter.amountChanged("-1")
+        viewModel.bindShowAmountError().subscribe(observer)
+        viewModel.amountChanged("-1")
 
         verify(errorParser).getMessage(captor.capture())
         assertThat(captor.firstValue).isInstanceOf(WrongAmountFormatException::class.java)
@@ -119,9 +115,9 @@ class EditExpensePresenterTest {
         val observer = TestObserver.create<Date>()
         val time = 199L
 
-        presenter.bindShowDatePicker().subscribe(observer)
-        presenter.dateChanged(Date(time))
-        presenter.selectDate()
+        viewModel.bindShowDatePicker().subscribe(observer)
+        viewModel.dateChanged(Date(time))
+        viewModel.selectDate()
 
         observer.assertValueCount(1)
         assertThat(observer.values().first()).isEqualTo(Date(time))
@@ -129,7 +125,7 @@ class EditExpensePresenterTest {
 
     @Test
     fun closeScreenOnExitIfNothingChanged() {
-        presenter.exitScreen()
+        viewModel.exitScreen()
 
         verify(router).closeScreen()
     }
@@ -142,9 +138,9 @@ class EditExpensePresenterTest {
                 Author(id = "1", name = "name2", color = "color2"))
         `when`(authorsInteractor.getAuthors()).thenReturn(Single.just(authors))
 
-        presenter.attachView(view)
-        presenter.authorSelected(firstAuthor)
-        presenter.exitScreen()
+        createViewModel()
+        viewModel.authorSelected(firstAuthor)
+        viewModel.exitScreen()
 
         verify(router).closeScreen()
     }
@@ -153,9 +149,9 @@ class EditExpensePresenterTest {
     fun showDialogWhenExitIfAmountChanged() {
         val observer = TestObserver.create<Any>()
 
-        presenter.bindShowExitDialog().subscribe(observer)
-        presenter.amountChanged("1")
-        presenter.exitScreen()
+        viewModel.bindShowExitDialog().subscribe(observer)
+        viewModel.amountChanged("1")
+        viewModel.exitScreen()
 
         verify(router, never()).closeScreen()
         observer.assertValueCount(1)
@@ -165,9 +161,9 @@ class EditExpensePresenterTest {
     fun showDialogWhenExitIfCommentChanged() {
         val observer = TestObserver.create<Any>()
 
-        presenter.bindShowExitDialog().subscribe(observer)
-        presenter.commentChanged("1")
-        presenter.exitScreen()
+        viewModel.bindShowExitDialog().subscribe(observer)
+        viewModel.commentChanged("1")
+        viewModel.exitScreen()
 
         verify(router, never()).closeScreen()
         observer.assertValueCount(1)
@@ -177,9 +173,9 @@ class EditExpensePresenterTest {
     fun showDialogWhenExitIfAuthorChanged() {
         val observer = TestObserver.create<Any>()
 
-        presenter.bindShowExitDialog().subscribe(observer)
-        presenter.authorSelected(Author("1", "", ""))
-        presenter.exitScreen()
+        viewModel.bindShowExitDialog().subscribe(observer)
+        viewModel.authorSelected(Author("1", "", ""))
+        viewModel.exitScreen()
 
         verify(router, never()).closeScreen()
         observer.assertValueCount(1)
@@ -189,9 +185,9 @@ class EditExpensePresenterTest {
     fun showDialogWhenExitIfDateChanged() {
         val observer = TestObserver.create<Any>()
 
-        presenter.bindShowExitDialog().subscribe(observer)
-        presenter.dateChanged(Date(100))
-        presenter.exitScreen()
+        viewModel.bindShowExitDialog().subscribe(observer)
+        viewModel.dateChanged(Date(100))
+        viewModel.exitScreen()
 
         verify(router, never()).closeScreen()
         observer.assertValueCount(1)
@@ -201,9 +197,9 @@ class EditExpensePresenterTest {
     fun showDialogWhenExitIfOffBudgetChanged() {
         val observer = TestObserver.create<Any>()
 
-        presenter.bindShowExitDialog().subscribe(observer)
-        presenter.offBudgetChanged(true)
-        presenter.exitScreen()
+        viewModel.bindShowExitDialog().subscribe(observer)
+        viewModel.offBudgetChanged(true)
+        viewModel.exitScreen()
 
         verify(router, never()).closeScreen()
         observer.assertValueCount(1)
@@ -211,7 +207,7 @@ class EditExpensePresenterTest {
 
     @Test
     fun closeScreenOnExitConfirmed() {
-        presenter.confirmExit()
+        viewModel.confirmExit()
 
         verify(router).closeScreen()
     }
@@ -221,8 +217,8 @@ class EditExpensePresenterTest {
         val captor = argumentCaptor<Exception>()
         val observer = TestObserver.create<String>()
 
-        presenter.bindShowError().subscribe(observer)
-        presenter.saveExpense()
+        viewModel.bindShowError().subscribe(observer)
+        viewModel.saveExpense()
 
         verify(router, never()).closeScreen()
         verify(errorParser).getMessage(captor.capture())
@@ -232,8 +228,8 @@ class EditExpensePresenterTest {
 
     @Test
     fun saveExpense() {
-        presenter.amountChanged("1")
-        presenter.saveExpense()
+        viewModel.amountChanged("1")
+        viewModel.saveExpense()
 
         verify(saveExpenseInteractor).saveExpense(any())
     }
@@ -242,17 +238,17 @@ class EditExpensePresenterTest {
     fun showSaveExpenseProgress() {
         val observer = TestObserver.create<Boolean>()
 
-        presenter.bindSavingProgress().subscribe(observer)
-        presenter.amountChanged("1")
-        presenter.saveExpense()
+        viewModel.bindSavingProgress().subscribe(observer)
+        viewModel.amountChanged("1")
+        viewModel.saveExpense()
 
         observer.assertValues(true, false)
     }
 
     @Test
     fun closeScreenAfterSaving() {
-        presenter.amountChanged("1")
-        presenter.saveExpense()
+        viewModel.amountChanged("1")
+        viewModel.saveExpense()
 
         verify(router).closeScreen()
     }
@@ -263,12 +259,16 @@ class EditExpensePresenterTest {
         val captor = argumentCaptor<Exception>()
         val observer = TestObserver.create<String>()
 
-        presenter.bindShowError().subscribe(observer)
-        presenter.amountChanged("1")
-        presenter.saveExpense()
+        viewModel.bindShowError().subscribe(observer)
+        viewModel.amountChanged("1")
+        viewModel.saveExpense()
 
         verify(errorParser).getMessage(captor.capture())
         assertThat(captor.firstValue).isInstanceOf(SaveExpenseException::class.java)
         observer.assertValue(PARSED_ERROR)
+    }
+
+    private fun createViewModel() {
+        viewModel = EditExpenseViewModelImpl(errorParser, router, authorsInteractor, saveExpenseInteractor)
     }
 }

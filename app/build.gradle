@@ -50,6 +50,7 @@ android {
 }
 
 def support = "25.3.1"
+def arch = "1.0.0-alpha2"
 def playServices = "10.2.6"
 def dagger = "2.11-rc1"
 def moxy = "1.5.2"
@@ -71,6 +72,10 @@ dependencies {
     compile "com.android.support:appcompat-v7:$support"
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
 
+    compile "android.arch.lifecycle:runtime:$arch"
+    compile "android.arch.lifecycle:extensions:$arch"
+    kapt "android.arch.lifecycle:compiler:$arch"
+
     compile "com.google.dagger:dagger:$dagger"
     kapt "com.google.dagger:dagger-compiler:$dagger"
 
@@ -86,9 +91,6 @@ dependencies {
         exclude group: 'org.apache.httpcomponents'
         exclude group: 'com.google.code.findbugs', module: 'jsr305'
     }
-
-    compile "com.arello-mobile:moxy:$moxy"
-    kapt "com.arello-mobile:moxy-compiler:$moxy"
 
     compile 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.4@aar'
     compile 'com.jakewharton.rxrelay2:rxrelay:2.0.0'

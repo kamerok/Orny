@@ -1,8 +1,8 @@
 package com.kamer.orny.di.app
 
-import com.kamer.orny.di.presenter.PresenterComponent
 import com.kamer.orny.presentation.editexpense.EditExpenseActivity
 import com.kamer.orny.presentation.launch.LaunchActivity
+import com.kamer.orny.presentation.main.MainActivity
 import dagger.Component
 
 @ApplicationScope
@@ -12,12 +12,12 @@ import dagger.Component
         NavigationModule::class,
         DataModule::class,
         InteractionModule:: class,
-        PresentationModule::class))
+        PresentationModule::class,
+        ViewModelModule::class))
 interface AppComponent {
-
-    fun presenterComponent(): PresenterComponent
 
     fun inject(launchActivity: LaunchActivity)
     fun inject(editExpenseActivity: EditExpenseActivity)
+    fun inject(mainActivity: MainActivity)
 
 }

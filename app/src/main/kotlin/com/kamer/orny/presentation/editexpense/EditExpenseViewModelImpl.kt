@@ -1,7 +1,6 @@
 package com.kamer.orny.presentation.editexpense
 
-import com.arellomobile.mvp.InjectViewState
-import com.arellomobile.mvp.MvpPresenter
+import android.arch.lifecycle.ViewModel
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import com.kamer.orny.data.model.Author
 import com.kamer.orny.data.model.Expense
@@ -20,12 +19,11 @@ import timber.log.Timber
 import java.util.*
 
 
-@InjectViewState
-class EditExpensePresenter(val errorParser: ErrorMessageParser,
-                           val router: EditExpenseRouter,
-                           val authorsInteractor: GetAuthorsInteractor,
-                           val saveExpenseInteractor: SaveExpenseInteractor
-) : MvpPresenter<EditExpenseView>(), EditExpenseViewModel {
+class EditExpenseViewModelImpl(val errorParser: ErrorMessageParser,
+                               val router: EditExpenseRouter,
+                               val authorsInteractor: GetAuthorsInteractor,
+                               val saveExpenseInteractor: SaveExpenseInteractor
+) : ViewModel(), EditExpenseViewModel {
 
     private val expense = Expense()
     private val newExpense = expense.copy()
@@ -36,9 +34,9 @@ class EditExpensePresenter(val errorParser: ErrorMessageParser,
     private val showPicker = PublishSubject.create<Date>()
     private val showExitDialog = PublishSubject.create<Any>()
     private val showAmountError = PublishSubject.create<String>()
-    private val showError = PublishSubject.create<String>()
+    private val showError = BehaviorSubject.create<String>()
 
-    override fun onFirstViewAttach() {
+    init {
         loadAuthors()
     }
 

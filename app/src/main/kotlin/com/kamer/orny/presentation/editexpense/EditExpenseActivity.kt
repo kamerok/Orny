@@ -2,6 +2,8 @@ package com.kamer.orny.presentation.editexpense
 
 import android.app.DatePickerDialog
 import android.app.ProgressDialog
+import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -11,12 +13,11 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.kamer.orny.R
 import com.kamer.orny.app.App
 import com.kamer.orny.data.model.Author
-import com.kamer.orny.presentation.core.MvpActivity
+import com.kamer.orny.di.app.ViewModelModule
+import com.kamer.orny.presentation.core.BaseActivity
 import com.kamer.orny.utils.onTextChanged
 import com.kamer.orny.utils.setupToolbar
 import kotlinx.android.synthetic.main.activity_edit_expense.*
@@ -24,19 +25,17 @@ import kotlinx.android.synthetic.main.layout_toolbar.*
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
+import javax.inject.Named
 
 
-class EditExpenseActivity : MvpActivity(), EditExpenseView {
+class EditExpenseActivity : BaseActivity() {
 
     @Inject lateinit var router: EditExpenseRouterImpl
+    @field:[Inject Named(ViewModelModule.EDIT_EXPENSE)] lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    @InjectPresenter lateinit var presenter: EditExpensePresenter
-
-    @ProvidePresenter
-    fun providePresenter() = App.appComponent.presenterComponent().editExpensePresenter()
+    lateinit var viewModel: EditExpenseViewModel
 
     companion object {
-
         fun getIntent(context: Context) = Intent(context, EditExpenseActivity::class.java)
 
         private val DATE_FORMAT = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
@@ -52,28 +51,13 @@ class EditExpenseActivity : MvpActivity(), EditExpenseView {
         super.onCreate(savedInstanceState)
         router.setActivity(this)
         setContentView(R.layout.activity_edit_expense)
-        setupToolbar(toolbarView)
-        amountView.onTextChanged { presenter.amountChanged(it) }
-        commentView.onTextChanged { presenter.commentChanged(it) }
-
-        authorsSpinnerView.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-
-            }
-
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                presenter.authorSelected(authors[position])
-            }
-        }
-        authorsSpinnerView.adapter = adapter
-        dateView.setOnClickListener { presenter.selectDate() }
-        offBudgetView.setOnCheckedChangeListener { _, isChecked -> presenter.offBudgetChanged(isChecked) }
-
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(EditExpenseViewModelImpl::class.java)
+        initViews()
         bindViewModel()
     }
 
     override fun onBackPressed() {
-        presenter.exitScreen()
+        viewModel.exitScreen()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -84,7 +68,7 @@ class EditExpenseActivity : MvpActivity(), EditExpenseView {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.action_save -> {
-                presenter.saveExpense()
+                viewModel.saveExpense()
                 return true
             }
             else -> return false
@@ -96,14 +80,33 @@ class EditExpenseActivity : MvpActivity(), EditExpenseView {
         startActivityForResult(intent, 1001)
     }*/
 
+    private fun initViews() {
+        setupToolbar(toolbarView)
+        amountView.onTextChanged { viewModel.amountChanged(it) }
+        commentView.onTextChanged { viewModel.commentChanged(it) }
+
+        authorsSpinnerView.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                viewModel.authorSelected(authors[position])
+            }
+        }
+        authorsSpinnerView.adapter = adapter
+        dateView.setOnClickListener { viewModel.selectDate() }
+        offBudgetView.setOnCheckedChangeListener { _, isChecked -> viewModel.offBudgetChanged(isChecked) }
+    }
+
     private fun bindViewModel() {
-        presenter.bindAuthors().subscribe { setAuthors(it) }
-        presenter.bindDate().subscribe { setDate(it) }
-        presenter.bindSavingProgress().subscribe { setSavingProgress(it) }
-        presenter.bindShowDatePicker().subscribe { showDatePicker(it) }
-        presenter.bindShowExitDialog().subscribe { showExitDialog() }
-        presenter.bindShowAmountError().subscribe { showAmountError(it) }
-        presenter.bindShowError().subscribe { showError(it) }
+        viewModel.bindAuthors().subscribe { setAuthors(it) }
+        viewModel.bindDate().subscribe { setDate(it) }
+        viewModel.bindSavingProgress().subscribe { setSavingProgress(it) }
+        viewModel.bindShowDatePicker().subscribe { showDatePicker(it) }
+        viewModel.bindShowExitDialog().subscribe { showExitDialog() }
+        viewModel.bindShowAmountError().subscribe { showAmountError(it) }
+        viewModel.bindShowError().subscribe { showError(it) }
     }
 
     private fun setAuthors(authors: List<Author>) {
@@ -139,7 +142,7 @@ class EditExpenseActivity : MvpActivity(), EditExpenseView {
                     newCalendar.set(year, month, dayOfMonth)
                     val newDate = Date(newCalendar.timeInMillis)
                     setDate(newDate)
-                    presenter.dateChanged(newDate)
+                    viewModel.dateChanged(newDate)
                 },
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
@@ -150,8 +153,8 @@ class EditExpenseActivity : MvpActivity(), EditExpenseView {
         AlertDialog.Builder(this)
                 .setTitle(R.string.edit_expense_exit_dialog_title)
                 .setMessage(R.string.edit_expense_exit_dialog_message)
-                .setPositiveButton(R.string.edit_expense_exit_dialog_save) { _, _ -> presenter.saveExpense() }
-                .setNegativeButton(R.string.edit_expense_exit_dialog_exit) { _, _ -> presenter.confirmExit() }
+                .setPositiveButton(R.string.edit_expense_exit_dialog_save) { _, _ -> viewModel.saveExpense() }
+                .setNegativeButton(R.string.edit_expense_exit_dialog_exit) { _, _ -> viewModel.confirmExit() }
                 .show()
     }
 

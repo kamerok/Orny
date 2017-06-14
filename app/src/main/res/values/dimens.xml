@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--Edit Expense-->
+    <dimen name="edit_expense_item_height">32dp</dimen>
+    <dimen name="edit_expense_text">18sp</dimen>
+
+</resources>

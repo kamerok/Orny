@@ -42,7 +42,7 @@ class EditExpenseActivity : BaseActivity() {
     }
 
     private var authors = emptyList<Author>()
-    private val adapter by lazy { ArrayAdapter<String>(this, android.R.layout.simple_spinner_item) }
+    private val adapter by lazy { ArrayAdapter<String>(this, R.layout.item_edit_expense_author) }
 
     private var dialog: ProgressDialog? = null
 
@@ -95,6 +95,15 @@ class EditExpenseActivity : BaseActivity() {
             }
         }
         authorsSpinnerView.adapter = adapter
+        changeAuthorView.setOnClickListener {
+            authorsSpinnerView.apply {
+                var newSelected = selectedItemPosition + 1
+                if (newSelected >= count) {
+                    newSelected = 0
+                }
+                setSelection(newSelected)
+            }
+        }
         dateView.setOnClickListener { viewModel.selectDate() }
         offBudgetView.setOnCheckedChangeListener { _, isChecked -> viewModel.offBudgetChanged(isChecked) }
     }

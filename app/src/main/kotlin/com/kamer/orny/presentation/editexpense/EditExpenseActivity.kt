@@ -11,6 +11,7 @@ import android.support.v7.app.AlertDialog
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import com.kamer.orny.R
@@ -84,6 +85,15 @@ class EditExpenseActivity : BaseActivity() {
         setupToolbar(toolbarView)
         amountView.onTextChanged { viewModel.amountChanged(it) }
         commentView.onTextChanged { viewModel.commentChanged(it) }
+        commentView.setOnEditorActionListener { _, actionId, _ ->
+            when (actionId) {
+                EditorInfo.IME_ACTION_DONE -> {
+                    viewModel.saveExpense()
+                    true
+                }
+                else -> false
+            }
+        }
 
         authorsSpinnerView.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {

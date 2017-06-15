@@ -55,6 +55,10 @@ class EditExpenseViewModelImpl(val errorParser: ErrorMessageParser,
     override fun bindShowError(): Observable<String> = showError
 
     override fun amountChanged(amountRaw: String) {
+        if (amountRaw.isNullOrEmpty()) {
+            newExpense.amount = 0.0
+            return
+        }
         try {
             val amount = amountRaw.toDouble()
             if (amount < 0) {

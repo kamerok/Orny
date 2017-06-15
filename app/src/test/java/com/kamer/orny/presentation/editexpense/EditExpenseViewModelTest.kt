@@ -131,6 +131,20 @@ class EditExpenseViewModelTest {
     }
 
     @Test
+    fun closeScreenOnExitWhenAmountSetAndDeleted() {
+        val observer = TestObserver.create<String>()
+
+        viewModel.bindShowAmountError().subscribe(observer)
+        viewModel.amountChanged("1")
+        viewModel.amountChanged("")
+        viewModel.exitScreen()
+
+        observer.assertNoValues()
+        observer.assertNoErrors()
+        verify(router).closeScreen()
+    }
+
+    @Test
     fun firstAuthorNotCountAsChange() {
         val firstAuthor = Author(id = "0", name = "name1", color = "color1")
         val authors = listOf(

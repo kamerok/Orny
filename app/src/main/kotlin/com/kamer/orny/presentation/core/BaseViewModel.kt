@@ -1,12 +1,13 @@
 package com.kamer.orny.presentation.core
 
-import android.support.v7.app.AppCompatActivity
+import android.arch.lifecycle.ViewModel
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 
-abstract class BaseActivity : AppCompatActivity() {
+
+abstract class BaseViewModel : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
 
@@ -14,9 +15,7 @@ abstract class BaseActivity : AppCompatActivity() {
     protected fun <T> Observable<T>.disposeOnDestroy(): Observable<T> = doOnSubscribe { compositeDisposable.add(it) }
     protected fun Completable.disposeOnDestroy(): Completable = doOnSubscribe { compositeDisposable.add(it) }
 
-    override fun onDestroy() {
+    override fun onCleared() {
         compositeDisposable.dispose()
-        super.onDestroy()
     }
-
 }

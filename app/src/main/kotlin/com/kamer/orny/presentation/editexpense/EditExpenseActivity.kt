@@ -119,13 +119,13 @@ class EditExpenseActivity : BaseActivity() {
     }
 
     private fun bindViewModel() {
-        viewModel.bindAuthors().subscribe { setAuthors(it) }
-        viewModel.bindDate().subscribe { setDate(it) }
-        viewModel.bindSavingProgress().subscribe { setSavingProgress(it) }
-        viewModel.bindShowDatePicker().subscribe { showDatePicker(it) }
-        viewModel.bindShowExitDialog().subscribe { showExitDialog() }
-        viewModel.bindShowAmountError().subscribe { showAmountError(it) }
-        viewModel.bindShowError().subscribe { showError(it) }
+        viewModel.bindAuthors().disposeOnDestroy().subscribe(this::setAuthors)
+        viewModel.bindDate().disposeOnDestroy().subscribe(this::setDate)
+        viewModel.bindSavingProgress().disposeOnDestroy().subscribe(this::setSavingProgress)
+        viewModel.bindShowDatePicker().disposeOnDestroy().subscribe(this::showDatePicker)
+        viewModel.bindShowExitDialog().disposeOnDestroy().subscribe { showExitDialog() }
+        viewModel.bindShowAmountError().disposeOnDestroy().subscribe(this::showAmountError)
+        viewModel.bindShowError().disposeOnDestroy().subscribe(this::showError)
     }
 
     private fun setAuthors(authors: List<Author>) {

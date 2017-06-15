@@ -1,11 +1,11 @@
 package com.kamer.orny.presentation.editexpense
 
-import android.arch.lifecycle.ViewModel
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import com.kamer.orny.data.model.Author
 import com.kamer.orny.data.model.Expense
 import com.kamer.orny.interaction.GetAuthorsInteractor
 import com.kamer.orny.interaction.SaveExpenseInteractor
+import com.kamer.orny.presentation.core.BaseViewModel
 import com.kamer.orny.presentation.core.ErrorMessageParser
 import com.kamer.orny.presentation.editexpense.errors.GetAuthorsException
 import com.kamer.orny.presentation.editexpense.errors.NoChangesException
@@ -23,7 +23,7 @@ class EditExpenseViewModelImpl(val errorParser: ErrorMessageParser,
                                val router: EditExpenseRouter,
                                val authorsInteractor: GetAuthorsInteractor,
                                val saveExpenseInteractor: SaveExpenseInteractor
-) : ViewModel(), EditExpenseViewModel {
+) : BaseViewModel(), EditExpenseViewModel {
 
     private val expense = Expense()
     private val newExpense = expense.copy()
@@ -113,6 +113,7 @@ class EditExpenseViewModelImpl(val errorParser: ErrorMessageParser,
     private fun loadAuthors() {
         authorsInteractor
                 .getAuthors()
+                .disposeOnDestroy()
                 .subscribe(
                         {
                             authors.onNext(it)
@@ -125,6 +126,7 @@ class EditExpenseViewModelImpl(val errorParser: ErrorMessageParser,
     private fun saveChanges() {
         saveExpenseInteractor
                 .saveExpense(newExpense)
+                .disposeOnDestroy()
                 .doOnSubscribe { savingProgress.onNext(true) }
                 .doFinally { savingProgress.onNext(false) }
                 .subscribe(

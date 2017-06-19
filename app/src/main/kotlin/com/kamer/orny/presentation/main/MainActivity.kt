@@ -6,6 +6,7 @@ import com.kamer.orny.app.App
 import com.kamer.orny.data.google.GoogleRepo
 import com.kamer.orny.presentation.core.BaseActivity
 import com.kamer.orny.presentation.editexpense.EditExpenseActivity
+import com.kamer.orny.utils.toast
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
@@ -30,9 +31,11 @@ class MainActivity : BaseActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .disposeOnDestroy()
-                .subscribe { list ->
+                .subscribe ({ list ->
                     textView.text = list.size.toString()
-                }
+                }, {
+                    toast(it.message.toString())
+                })
     }
 
 }

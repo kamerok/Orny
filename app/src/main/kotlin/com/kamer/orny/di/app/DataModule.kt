@@ -4,6 +4,8 @@ import android.content.Context
 import com.kamer.orny.data.*
 import com.kamer.orny.data.android.ActivityHolder
 import com.kamer.orny.data.android.ActivityHolderImpl
+import com.kamer.orny.data.google.GoogleAuthHolder
+import com.kamer.orny.data.google.GoogleAuthHolderImpl
 import com.kamer.orny.data.google.GoogleRepo
 import com.kamer.orny.data.google.GoogleRepoImpl
 import com.kamer.orny.utils.Prefs
@@ -19,12 +21,17 @@ class DataModule {
 
     @Provides
     @ApplicationScope
-    fun provideGoogleRepo(context: Context, prefs: Prefs, activityHolder: ActivityHolder): GoogleRepo
-            = GoogleRepoImpl(context, prefs, activityHolder)
+    fun provideGoogleAuthHolder(context: Context, prefs: Prefs, activityHolder: ActivityHolder): GoogleAuthHolder
+            = GoogleAuthHolderImpl(context, prefs, activityHolder)
 
     @Provides
     @ApplicationScope
-    fun provideAuthRepo(googleRepo: GoogleRepo): AuthRepo = AuthRepoImpl(googleRepo)
+    fun provideGoogleRepo(googleAuthHolder: GoogleAuthHolder): GoogleRepo
+            = GoogleRepoImpl(googleAuthHolder)
+
+    @Provides
+    @ApplicationScope
+    fun provideAuthRepo(googleAuthHolder: GoogleAuthHolder): AuthRepo = AuthRepoImpl(googleAuthHolder)
 
     @Provides
     @ApplicationScope

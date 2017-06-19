@@ -31,16 +31,16 @@ import javax.inject.Named
 
 class EditExpenseActivity : BaseActivity() {
 
+    companion object {
+        private val DATE_FORMAT = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+
+        fun getIntent(context: Context) = Intent(context, EditExpenseActivity::class.java)
+    }
+
     @Inject lateinit var router: EditExpenseRouterImpl
     @field:[Inject Named(ViewModelModule.EDIT_EXPENSE)] lateinit var viewModelFactory: ViewModelProvider.Factory
 
     lateinit var viewModel: EditExpenseViewModel
-
-    companion object {
-        fun getIntent(context: Context) = Intent(context, EditExpenseActivity::class.java)
-
-        private val DATE_FORMAT = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-    }
 
     private var authors = emptyList<Author>()
     private val adapter by lazy { ArrayAdapter<String>(this, R.layout.item_edit_expense_author) }

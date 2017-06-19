@@ -1,5 +1,7 @@
 package com.kamer.orny.presentation.launch
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import com.kamer.orny.R
 import com.kamer.orny.app.App
@@ -14,6 +16,10 @@ import javax.inject.Inject
 
 
 class LaunchActivity : BaseActivity() {
+
+    companion object {
+        fun getIntent(context: Context) = Intent(context, LaunchActivity::class.java)
+    }
 
     @Inject lateinit var authRepo: AuthRepo
 

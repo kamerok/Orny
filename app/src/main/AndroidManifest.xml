@@ -17,20 +17,26 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
 
-        <activity android:name=".presentation.launch.LaunchActivity">
+        <activity
+            android:name=".presentation.launch.LaunchActivity"/>
+
+        <activity
+            android:name=".presentation.editexpense.EditExpenseActivity"
+            android:label="Add Expense"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysVisible">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-
         </activity>
 
-        <activity
-            android:name=".presentation.editexpense.EditExpenseActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateAlwaysVisible"/>
-
-        <activity android:name=".presentation.main.MainActivity"/>
+        <activity android:name=".presentation.main.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
 
     </application>
 

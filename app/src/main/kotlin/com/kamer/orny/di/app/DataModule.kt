@@ -2,6 +2,8 @@ package com.kamer.orny.di.app
 
 import android.content.Context
 import com.kamer.orny.data.*
+import com.kamer.orny.data.android.ActivityHolder
+import com.kamer.orny.data.android.ActivityHolderImpl
 import com.kamer.orny.data.google.GoogleRepo
 import com.kamer.orny.data.google.GoogleRepoImpl
 import com.kamer.orny.utils.Prefs
@@ -13,7 +15,12 @@ class DataModule {
 
     @Provides
     @ApplicationScope
-    fun provideGoogleRepo(context: Context, prefs: Prefs): GoogleRepo = GoogleRepoImpl(context, prefs)
+    fun provideActivityHolder(): ActivityHolder = ActivityHolderImpl()
+
+    @Provides
+    @ApplicationScope
+    fun provideGoogleRepo(context: Context, prefs: Prefs, activityHolder: ActivityHolder): GoogleRepo
+            = GoogleRepoImpl(context, prefs, activityHolder)
 
     @Provides
     @ApplicationScope

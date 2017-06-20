@@ -1,6 +1,5 @@
 package com.kamer.orny.presentation.editexpense
 
-import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import com.kamer.orny.data.model.Author
 import com.kamer.orny.data.model.Expense
 import com.kamer.orny.interaction.GetAuthorsInteractor
@@ -132,13 +131,8 @@ class EditExpenseViewModelImpl(val errorParser: ErrorMessageParser,
                 .subscribe(
                         { router.closeScreen() },
                         {
-                            if (it is UserRecoverableAuthIOException) {
-                                //todo auth app in google
-//                                viewState.startIntent(it.intent)
-                            } else {
-                                Timber.e(it.message, it)
-                                showError.onNext(errorParser.getMessage(SaveExpenseException(it)))
-                            }
+                            Timber.e(it.message, it)
+                            showError.onNext(errorParser.getMessage(SaveExpenseException(it)))
                         }
                 )
     }

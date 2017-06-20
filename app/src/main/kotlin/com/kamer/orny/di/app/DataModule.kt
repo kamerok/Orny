@@ -26,8 +26,8 @@ class DataModule {
 
     @Provides
     @ApplicationScope
-    fun provideGoogleRepo(googleAuthHolder: GoogleAuthHolder): GoogleRepo
-            = GoogleRepoImpl(googleAuthHolder)
+    fun provideGoogleRepo(googleAuthHolder: GoogleAuthHolder, activityHolder: ActivityHolder): GoogleRepo
+            = GoogleRepoImpl(googleAuthHolder, activityHolder)
 
     @Provides
     @ApplicationScope

@@ -1,7 +1,9 @@
 package com.kamer.orny.data.google
 
+import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.ValueRange
+import com.kamer.orny.data.android.ActivityHolder
 import com.kamer.orny.data.model.Author
 import com.kamer.orny.data.model.Expense
 import io.reactivex.Completable
@@ -13,7 +15,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class GoogleRepoImpl(val googleAuthHolder: GoogleAuthHolder) : GoogleRepo {
+class GoogleRepoImpl(val googleAuthHolder: GoogleAuthHolder, val activityHolder: ActivityHolder) : GoogleRepo {
 
     companion object {
         private const val SPREADSHEET_ID = "1YsFrfpNzs_gjdtnqVNuAPPYl3NRjeo8GgEWAOD7BdOg"
@@ -25,10 +27,21 @@ class GoogleRepoImpl(val googleAuthHolder: GoogleAuthHolder) : GoogleRepo {
     override fun getAllExpenses(): Single<List<Expense>> = googleAuthHolder
             .getSheetsService()
             .map { getAllExpensesFromApi(it) }
+            .doOnError {
+                if (it is UserRecoverableAuthIOException) {
+                    activityHolder.getActivity()?.startActivity(it.intent)
+                }
+            }
+            .map { it }
 
     override fun addExpense(expense: Expense): Completable = googleAuthHolder
             .getSheetsService()
             .map { addExpenseToApi(it, expense) }
+            .doOnError {
+                if (it is UserRecoverableAuthIOException) {
+                    activityHolder.getActivity()?.startActivity(it.intent)
+                }
+            }
             .toCompletable()
 
 

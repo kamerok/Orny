@@ -76,11 +76,6 @@ class EditExpenseActivity : BaseActivity() {
         }
     }
 
-    //todo deal with it
-    /*override fun startIntent(intent: Intent?) {
-        startActivityForResult(intent, 1001)
-    }*/
-
     private fun initViews() {
         setupToolbar(toolbarView)
         amountView.onTextChanged { viewModel.amountChanged(it) }

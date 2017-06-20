@@ -7,9 +7,8 @@ import com.kamer.orny.R
 import com.kamer.orny.app.App
 import com.kamer.orny.data.AuthRepo
 import com.kamer.orny.presentation.core.BaseActivity
+import com.kamer.orny.utils.defaultBackgroundSchedulers
 import com.kamer.orny.utils.toast
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_launch.*
 import timber.log.Timber
 import javax.inject.Inject
@@ -34,8 +33,7 @@ class LoginActivity : BaseActivity() {
         authRepo
                 .login()
                 .disposeOnDestroy()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .defaultBackgroundSchedulers()
                 .subscribe({
                     finish()
                 }, { error ->

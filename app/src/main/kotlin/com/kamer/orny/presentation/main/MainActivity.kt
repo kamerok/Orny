@@ -6,9 +6,8 @@ import com.kamer.orny.app.App
 import com.kamer.orny.data.google.GoogleRepo
 import com.kamer.orny.presentation.core.BaseActivity
 import com.kamer.orny.presentation.editexpense.EditExpenseActivity
+import com.kamer.orny.utils.defaultBackgroundSchedulers
 import com.kamer.orny.utils.toast
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
@@ -28,9 +27,8 @@ class MainActivity : BaseActivity() {
         super.onResume()
         googleRepo
                 .getAllExpenses()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
                 .disposeOnDestroy()
+                .defaultBackgroundSchedulers()
                 .subscribe ({ list ->
                     textView.text = list.size.toString()
                 }, {

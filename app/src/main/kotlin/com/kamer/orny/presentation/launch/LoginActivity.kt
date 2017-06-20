@@ -15,10 +15,10 @@ import timber.log.Timber
 import javax.inject.Inject
 
 
-class LaunchActivity : BaseActivity() {
+class LoginActivity : BaseActivity() {
 
     companion object {
-        fun getIntent(context: Context) = Intent(context, LaunchActivity::class.java)
+        fun getIntent(context: Context) = Intent(context, LoginActivity::class.java)
     }
 
     @Inject lateinit var authRepo: AuthRepo

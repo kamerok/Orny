@@ -13,7 +13,7 @@ import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.SheetsScopes
 import com.jakewharton.rxrelay2.BehaviorRelay
 import com.kamer.orny.data.android.ActivityHolder
-import com.kamer.orny.presentation.launch.LaunchActivity
+import com.kamer.orny.presentation.launch.LoginActivity
 import com.kamer.orny.utils.Prefs
 import com.kamer.orny.utils.hasPermission
 import com.tbruyelle.rxpermissions2.RxPermissions
@@ -152,7 +152,7 @@ class GoogleAuthHolderImpl(
 
     private fun launchSignInActivity() {
         val activity = activityHolder.getActivity()
-        activity?.startActivity(LaunchActivity.getIntent(activity))
+        activity?.startActivity(LoginActivity.getIntent(activity))
     }
 
 

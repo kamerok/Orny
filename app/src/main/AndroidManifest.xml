@@ -18,7 +18,7 @@
         tools:ignore="GoogleAppIndexingWarning">
 
         <activity
-            android:name=".presentation.launch.LaunchActivity"/>
+            android:name=".presentation.launch.LoginActivity"/>
 
         <activity
             android:name=".presentation.editexpense.EditExpenseActivity"

@@ -1,7 +1,7 @@
 package com.kamer.orny.di.app
 
 import com.kamer.orny.presentation.editexpense.EditExpenseActivity
-import com.kamer.orny.presentation.launch.LaunchActivity
+import com.kamer.orny.presentation.launch.LoginActivity
 import com.kamer.orny.presentation.main.MainActivity
 import dagger.Component
 
@@ -16,7 +16,7 @@ import dagger.Component
         ViewModelModule::class))
 interface AppComponent {
 
-    fun inject(launchActivity: LaunchActivity)
+    fun inject(loginActivity: LoginActivity)
     fun inject(editExpenseActivity: EditExpenseActivity)
     fun inject(mainActivity: MainActivity)
 

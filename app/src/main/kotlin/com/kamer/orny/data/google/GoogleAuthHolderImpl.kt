@@ -20,8 +20,6 @@ import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import java.util.*
 import kotlin.properties.Delegates
@@ -79,8 +77,6 @@ class GoogleAuthHolderImpl(
                     activity.runOnUiThread {
                         RxPermissions(activity)
                                 .request(Manifest.permission.GET_ACCOUNTS)
-                                .subscribeOn(AndroidSchedulers.mainThread())
-                                .observeOn(Schedulers.io())
                                 .subscribe({ granted ->
                                     if (granted) {
                                         activity.startActivityForResult(credential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER)

@@ -1,19 +1,17 @@
 package com.kamer.orny.data.google
 
-import android.app.Activity
-import android.content.Intent
 import com.google.api.client.extensions.android.http.AndroidHttp
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.ValueRange
-import com.kamer.orny.data.android.ActivityHolder
+import com.kamer.orny.data.android.ReactiveActivities
 import com.kamer.orny.data.model.Author
 import com.kamer.orny.data.model.Expense
 import io.reactivex.Completable
+import io.reactivex.Flowable
 import io.reactivex.Single
-import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -21,64 +19,40 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class GoogleRepoImpl(val googleAuthHolder: GoogleAuthHolder, val activityHolder: ActivityHolder)
-    : GoogleRepo, ActivityHolder.ActivityResultHandler {
+class GoogleRepoImpl(val googleAuthHolder: GoogleAuthHolder, val reactiveActivities: ReactiveActivities)
+    : GoogleRepo {
 
     companion object {
-        private const val REQUEST_RECOVER_AUTH = 1001
-
         private const val SPREADSHEET_ID = "1YsFrfpNzs_gjdtnqVNuAPPYl3NRjeo8GgEWAOD7BdOg"
         private const val SHEET_NAME = "Тест"
 
         private val DATE_FORMAT = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     }
 
-    private var recoverGoogleAuthListener: RecoverGoogleAuthListener? = null
-
-    init {
-        activityHolder.addActivityResultHandler(this)
-    }
-
     override fun getAllExpenses(): Single<List<Expense>> = getSheetsService()
-            .map { getAllExpensesFromApi(it) }
-            .onErrorResumeNext {
-                Timber.e(it)
-                if (it is UserRecoverableAuthIOException) {
-                    requestGooglePermission(it)
-                            .andThen(getSheetsService())
-                            .map { getAllExpensesFromApi(it) }
-                } else {
-                    Single.error(it)
-                }
+            .flatMap { service ->
+                Single
+                        .fromCallable { getAllExpensesFromApi(service) }
+                        .retryWhen(this::recoverFromGoogleError)
             }
-            .map { it }
 
     override fun addExpense(expense: Expense): Completable = getSheetsService()
-            .map { addExpenseToApi(it, expense) }
-            .toCompletable()
-            .onErrorResumeNext {
-                Timber.e(it)
-                if (it is UserRecoverableAuthIOException) {
-                    requestGooglePermission(it)
-                            .andThen(getSheetsService())
-                            .map { addExpenseToApi(it, expense) }
-                            .toCompletable()
-                } else {
-                    Completable.error(it)
-                }
+            .flatMapCompletable { service ->
+                Completable
+                        .fromAction { addExpenseToApi(service, expense) }
+                        .retryWhen(this::recoverFromGoogleError)
             }
 
-    override fun handleActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean =
-            when (requestCode) {
-                REQUEST_RECOVER_AUTH -> {
-                    if (resultCode == Activity.RESULT_OK) {
-                        recoverGoogleAuthListener?.onSuccess()
-                    } else {
-                        recoverGoogleAuthListener?.onError(Exception("No permission"))
-                    }
-                    true
+    private fun recoverFromGoogleError(attempts: Flowable<Throwable>) = attempts
+            .flatMap { error ->
+                if (error is UserRecoverableAuthIOException) {
+                    reactiveActivities.recoverGoogleAuthException(error)
+                            //emit item to resubscribe
+                            .toSingle { "" }
+                            .toFlowable()
+                } else {
+                    Flowable.error<Any>(error)
                 }
-                else -> false
             }
 
     private fun getSheetsService(): Single<Sheets> = googleAuthHolder.getActiveCredentials()
@@ -89,17 +63,6 @@ class GoogleRepoImpl(val googleAuthHolder: GoogleAuthHolder, val activityHolder:
         val jsonFactory = JacksonFactory.getDefaultInstance()
         return Sheets.Builder(transport, jsonFactory, credential).build()
     }
-
-    private fun requestGooglePermission(recoverableException: UserRecoverableAuthIOException) = Completable
-            .create { e ->
-                recoverGoogleAuthListener = object : RecoverGoogleAuthListener {
-                    override fun onError(t: Throwable) = e.onError(t)
-
-                    override fun onSuccess() = e.onComplete()
-                }
-                activityHolder.getActivity()?.startActivityForResult(recoverableException.intent, REQUEST_RECOVER_AUTH)
-            }
-            .observeOn(Schedulers.io())
 
     private fun getAllExpensesFromApi(service: Sheets): MutableList<Expense> {
         val response = service.spreadsheets().values()
@@ -159,14 +122,6 @@ class GoogleRepoImpl(val googleAuthHolder: GoogleAuthHolder, val activityHolder:
                 author = Author(id = authorId, name = if (authorId == "0") "Лена" else "Макс", color = ""),
                 amount = amount
         )
-    }
-
-    private interface RecoverGoogleAuthListener {
-
-        fun onError(t: Throwable)
-
-        fun onSuccess()
-
     }
 
 }

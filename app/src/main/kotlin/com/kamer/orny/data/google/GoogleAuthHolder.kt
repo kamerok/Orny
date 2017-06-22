@@ -1,6 +1,6 @@
 package com.kamer.orny.data.google
 
-import com.google.api.services.sheets.v4.Sheets
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -14,6 +14,6 @@ interface GoogleAuthHolder {
 
     fun logout(): Completable
 
-    fun getSheetsService(): Single<Sheets>
+    fun getActiveCredentials(): Single<GoogleAccountCredential>
 
 }

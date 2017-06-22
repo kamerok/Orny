@@ -20,20 +20,18 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         App.appComponent.inject(this)
         setContentView(R.layout.activity_main)
-        buttonView.setOnClickListener { startActivity(EditExpenseActivity.getIntent(this)) }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        googleRepo
-                .getAllExpenses()
-                .disposeOnDestroy()
-                .defaultBackgroundSchedulers()
-                .subscribe ({ list ->
-                    textView.text = list.size.toString()
-                }, {
-                    toast(it.message.toString())
-                })
+        loadButtonView.setOnClickListener {
+            googleRepo
+                    .getAllExpenses()
+                    .disposeOnDestroy()
+                    .defaultBackgroundSchedulers()
+                    .subscribe({ list ->
+                        textView.text = list.size.toString()
+                    }, {
+                        toast(it.message.toString())
+                    })
+        }
+        openButtonView.setOnClickListener { startActivity(EditExpenseActivity.getIntent(this)) }
     }
 
 }

@@ -5,11 +5,8 @@ import android.accounts.AccountManager
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import com.google.api.client.extensions.android.http.AndroidHttp
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
-import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.client.util.ExponentialBackOff
-import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.SheetsScopes
 import com.jakewharton.rxrelay2.BehaviorRelay
 import com.kamer.orny.data.android.ActivityHolder
@@ -20,6 +17,7 @@ import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import java.util.*
 import kotlin.properties.Delegates
@@ -93,7 +91,10 @@ class GoogleAuthHolderImpl(
         credential = createCredentials()
     }
 
-    override fun getSheetsService(): Single<Sheets> = getActiveCredentials().map(this::createSheetsService)
+    override fun getActiveCredentials(): Single<GoogleAccountCredential> =
+            checkAuth()
+                    .andThen(checkPermission())
+                    .toSingle { createCredentials() }
 
     override fun handleActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean =
             when (requestCode) {
@@ -124,39 +125,52 @@ class GoogleAuthHolderImpl(
         return accountCredential
     }
 
-    private fun getActiveCredentials(): Single<GoogleAccountCredential> = Completable
+    private fun launchSignInActivity() {
+        val activity = activityHolder.getActivity()
+        activity?.startActivity(LoginActivity.getIntent(activity))
+    }
+
+    private fun checkAuth(): Completable = Completable
             .fromAction {
                 if (prefs.accountName.isEmpty()) {
                     launchSignInActivity()
                     throw Exception("Not logged")
                 }
             }
-            .andThen(
-                    Completable.fromAction {
-                        val activity = activityHolder.getActivity()
-                        if (activity != null && !activity.hasPermission(Manifest.permission.GET_ACCOUNTS)) {
-                            activity.runOnUiThread {
-                                RxPermissions(activity)
-                                        .request(Manifest.permission.GET_ACCOUNTS)
-                                        .subscribe()
+
+    private fun checkPermission() = Completable
+            .fromAction {
+                if (!context.hasPermission(Manifest.permission.GET_ACCOUNTS)) {
+                    throw SecurityException()
+                }
+            }
+            .onErrorResumeNext { throwable ->
+                when (throwable) {
+                    is SecurityException -> {
+                        Completable.create { emitter ->
+                            val activity = activityHolder.getActivity()
+                            if (activity != null) {
+                                activity.runOnUiThread {
+                                    RxPermissions(activity)
+                                            .request(Manifest.permission.GET_ACCOUNTS)
+                                            .observeOn(Schedulers.io())
+                                            .subscribe({ granted ->
+                                                if (granted)
+                                                    emitter.onComplete()
+                                                else
+                                                    emitter.onError(Exception("Permission rejected"))
+                                            }, {
+                                                emitter.onError(it)
+                                            })
+                                }
+                            } else {
+                                emitter.onError(Exception("Can't request permission, activity == null"))
                             }
-                            throw Exception("No permission")
                         }
                     }
-            )
-            .toSingle { createCredentials() }
-
-    private fun launchSignInActivity() {
-        val activity = activityHolder.getActivity()
-        activity?.startActivity(LoginActivity.getIntent(activity))
-    }
-
-
-    private fun createSheetsService(credential: GoogleAccountCredential): Sheets {
-        val transport = AndroidHttp.newCompatibleTransport()
-        val jsonFactory = JacksonFactory.getDefaultInstance()
-        return Sheets.Builder(transport, jsonFactory, credential).build()
-    }
+                    else -> Completable.error(throwable)
+                }
+            }
 
     private interface LoginListener {
 

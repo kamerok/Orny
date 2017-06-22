@@ -1,6 +1,9 @@
 package com.kamer.orny.data.google
 
+import com.google.api.client.extensions.android.http.AndroidHttp
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
+import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.ValueRange
 import com.kamer.orny.data.android.ActivityHolder
@@ -24,18 +27,17 @@ class GoogleRepoImpl(val googleAuthHolder: GoogleAuthHolder, val activityHolder:
         private val DATE_FORMAT = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     }
 
-    override fun getAllExpenses(): Single<List<Expense>> = googleAuthHolder
-            .getSheetsService()
+    override fun getAllExpenses(): Single<List<Expense>> = getSheetsService()
             .map { getAllExpensesFromApi(it) }
             .doOnError {
+                Timber.e(it)
                 if (it is UserRecoverableAuthIOException) {
                     activityHolder.getActivity()?.startActivity(it.intent)
                 }
             }
             .map { it }
 
-    override fun addExpense(expense: Expense): Completable = googleAuthHolder
-            .getSheetsService()
+    override fun addExpense(expense: Expense): Completable = getSheetsService()
             .map { addExpenseToApi(it, expense) }
             .doOnError {
                 if (it is UserRecoverableAuthIOException) {
@@ -44,6 +46,15 @@ class GoogleRepoImpl(val googleAuthHolder: GoogleAuthHolder, val activityHolder:
             }
             .toCompletable()
 
+
+    private fun getSheetsService(): Single<Sheets> = googleAuthHolder.getActiveCredentials()
+            .map(this::createSheetsService)
+
+    private fun createSheetsService(credential: GoogleAccountCredential): Sheets {
+        val transport = AndroidHttp.newCompatibleTransport()
+        val jsonFactory = JacksonFactory.getDefaultInstance()
+        return Sheets.Builder(transport, jsonFactory, credential).build()
+    }
 
     private fun getAllExpensesFromApi(service: Sheets): MutableList<Expense> {
         val response = service.spreadsheets().values()

@@ -7,7 +7,7 @@ import io.reactivex.Observable
 
 class AuthRepoImpl(private val googleAuthHolder: GoogleAuthHolder) : AuthRepo {
 
-    override fun isAuthorized(): Observable<Boolean> = googleAuthHolder.isAuthorized()
+//    override fun isAuthorized(): Observable<Boolean> = googleAuthHolder.isAuthorized()
 
     override fun login(): Completable = googleAuthHolder.login()
 

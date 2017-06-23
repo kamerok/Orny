@@ -5,7 +5,6 @@ import android.content.Context
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.util.ExponentialBackOff
 import com.google.api.services.sheets.v4.SheetsScopes
-import com.jakewharton.rxrelay2.BehaviorRelay
 import com.kamer.orny.data.android.ActivityHolder
 import com.kamer.orny.data.android.ReactiveActivities
 import com.kamer.orny.presentation.launch.LoginActivity
@@ -13,12 +12,10 @@ import com.kamer.orny.utils.Prefs
 import com.kamer.orny.utils.hasPermission
 import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.Completable
-import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import java.util.*
-import kotlin.properties.Delegates
 
 
 class GoogleAuthHolderImpl(
@@ -32,36 +29,21 @@ class GoogleAuthHolderImpl(
         private val SCOPES = arrayOf(SheetsScopes.SPREADSHEETS)
     }
 
-    private var credential: GoogleAccountCredential
-            by Delegates.observable(createCredentials()) { _, _, _ ->
-                authorizedRelay.accept(!prefs.accountName.isEmpty())
-            }
-
-    private val authorizedRelay: BehaviorRelay<Boolean> = BehaviorRelay.create()
-
-    init {
-        authorizedRelay.accept(!prefs.accountName.isEmpty())
-    }
-
-    override fun isAuthorized(): Observable<Boolean> = authorizedRelay.distinctUntilChanged()
-
     override fun login(): Completable {
-        if (authorizedRelay.value) {
+        if (prefs.accountName.isNotEmpty()) {
             return Completable.complete()
         }
         return checkPermission()
-                .andThen(reactiveActivities.chooseGoogleAccount(credential))
+                .andThen(reactiveActivities.chooseGoogleAccount(createCredentials()))
                 .flatMapCompletable { accountName ->
                     Completable.fromAction {
                         prefs.accountName = accountName
-                        credential = createCredentials()
                     }
                 }
     }
 
     override fun logout(): Completable = Completable.fromAction {
-        prefs.clear()
-        credential = createCredentials()
+        prefs.accountName = ""
     }
 
     override fun getActiveCredentials(): Single<GoogleAccountCredential> =
@@ -100,9 +82,8 @@ class GoogleAuthHolderImpl(
     private fun checkIfAccountExist(credential: GoogleAccountCredential): Completable = Completable
             .fromAction {
                 if (context.hasPermission(Manifest.permission.GET_ACCOUNTS) && credential.selectedAccountName.isNullOrEmpty()) {
+                    prefs.accountName = ""
                     launchSignInActivity()
-                    prefs.clear()
-                    this.credential = createCredentials()
                     throw Exception("Account not exist")
                 }
             }

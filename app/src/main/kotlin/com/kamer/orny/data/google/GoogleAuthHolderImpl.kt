@@ -68,6 +68,10 @@ class GoogleAuthHolderImpl(
             checkAuth()
                     .andThen(checkPermission())
                     .toSingle { createCredentials() }
+                    .flatMap { credential ->
+                        checkIfAccountExist(credential)
+                                .toSingle { credential }
+                    }
 
     private fun createCredentials(): GoogleAccountCredential {
         val accountCredential = GoogleAccountCredential.usingOAuth2(
@@ -90,6 +94,16 @@ class GoogleAuthHolderImpl(
                 if (prefs.accountName.isEmpty()) {
                     launchSignInActivity()
                     throw Exception("Not logged")
+                }
+            }
+
+    private fun checkIfAccountExist(credential: GoogleAccountCredential): Completable = Completable
+            .fromAction {
+                if (context.hasPermission(Manifest.permission.GET_ACCOUNTS) && credential.selectedAccountName.isNullOrEmpty()) {
+                    launchSignInActivity()
+                    prefs.clear()
+                    this.credential = createCredentials()
+                    throw Exception("Account not exist")
                 }
             }
 

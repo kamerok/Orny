@@ -14,7 +14,6 @@ import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
-import timber.log.Timber
 import java.util.*
 
 
@@ -34,7 +33,8 @@ class GoogleAuthHolderImpl(
             return Completable.complete()
         }
         return checkPermission()
-                .andThen(reactiveActivities.chooseGoogleAccount(createCredentials()))
+                .andThen(createCredentials())
+                .flatMap { reactiveActivities.chooseGoogleAccount(it) }
                 .flatMapCompletable { accountName ->
                     Completable.fromAction {
                         prefs.accountName = accountName
@@ -49,21 +49,18 @@ class GoogleAuthHolderImpl(
     override fun getActiveCredentials(): Single<GoogleAccountCredential> =
             checkAuth()
                     .andThen(checkPermission())
-                    .toSingle { createCredentials() }
+                    .andThen(createCredentials())
                     .flatMap { credential ->
                         checkIfAccountExist(credential)
                                 .toSingle { credential }
                     }
 
-    private fun createCredentials(): GoogleAccountCredential {
+    private fun createCredentials(): Single<GoogleAccountCredential> = Single.fromCallable {
         val accountCredential = GoogleAccountCredential.usingOAuth2(
                 context, Arrays.asList<String>(*SCOPES))
                 .setBackOff(ExponentialBackOff())
         accountCredential.selectedAccountName = prefs.accountName
-        if (accountCredential.selectedAccountName == null) {
-            Timber.e("no account permission")
-        }
-        return accountCredential
+        return@fromCallable accountCredential
     }
 
     private fun launchSignInActivity() {

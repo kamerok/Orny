@@ -12,6 +12,7 @@ import com.kamer.orny.utils.Prefs
 import com.kamer.orny.utils.hasPermission
 import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.Completable
+import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import java.util.*
@@ -85,37 +86,22 @@ class GoogleAuthHolderImpl(
                 }
             }
 
-    private fun checkPermission() = Completable
-            .fromAction {
-                if (!context.hasPermission(Manifest.permission.GET_ACCOUNTS)) {
-                    throw SecurityException()
-                }
-            }
-            .onErrorResumeNext { throwable ->
-                when (throwable) {
-                    is SecurityException -> {
-                        Completable.create { emitter ->
-                            val activity = activityHolder.getActivity()
-                            if (activity != null) {
-                                activity.runOnUiThread {
-                                    RxPermissions(activity)
-                                            .request(Manifest.permission.GET_ACCOUNTS)
-                                            .observeOn(Schedulers.io())
-                                            .subscribe({ granted ->
-                                                if (granted)
-                                                    emitter.onComplete()
-                                                else
-                                                    emitter.onError(Exception("Permission rejected"))
-                                            }, {
-                                                emitter.onError(it)
-                                            })
-                                }
-                            } else {
-                                emitter.onError(Exception("Can't request permission, activity == null"))
-                            }
+    private fun checkPermission(): Completable {
+        val activity = activityHolder.getActivity()
+        return when {
+            activity != null -> Observable
+                    .just("")
+                    .compose(RxPermissions(activity).ensure(Manifest.permission.GET_ACCOUNTS))
+                    .observeOn(Schedulers.io())
+                    .flatMapCompletable { granted ->
+                        if (granted) {
+                            Completable.complete()
+                        } else {
+                            Completable.error(SecurityException("Permission denied"))
                         }
                     }
-                    else -> Completable.error(throwable)
-                }
-            }
+            context.hasPermission(Manifest.permission.GET_ACCOUNTS) -> Completable.complete()
+            else -> Completable.error(Exception("No activity to check permission"))
+        }
+    }
 }

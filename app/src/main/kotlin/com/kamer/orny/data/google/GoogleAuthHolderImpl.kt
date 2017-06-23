@@ -1,15 +1,13 @@
 package com.kamer.orny.data.google
 
 import android.Manifest
-import android.accounts.AccountManager
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.util.ExponentialBackOff
 import com.google.api.services.sheets.v4.SheetsScopes
 import com.jakewharton.rxrelay2.BehaviorRelay
 import com.kamer.orny.data.android.ActivityHolder
+import com.kamer.orny.data.android.ReactiveActivities
 import com.kamer.orny.presentation.launch.LoginActivity
 import com.kamer.orny.utils.Prefs
 import com.kamer.orny.utils.hasPermission
@@ -26,12 +24,11 @@ import kotlin.properties.Delegates
 class GoogleAuthHolderImpl(
         private val context: Context,
         private val prefs: Prefs,
-        private val activityHolder: ActivityHolder)
-    : GoogleAuthHolder, ActivityHolder.ActivityResultHandler {
+        private val activityHolder: ActivityHolder,
+        private val reactiveActivities: ReactiveActivities)
+    : GoogleAuthHolder {
 
     companion object {
-        private const val REQUEST_ACCOUNT_PICKER = 1000
-
         private val SCOPES = arrayOf(SheetsScopes.SPREADSHEETS)
     }
 
@@ -42,49 +39,25 @@ class GoogleAuthHolderImpl(
 
     private val authorizedRelay: BehaviorRelay<Boolean> = BehaviorRelay.create()
 
-    private var loginListener: LoginListener? = null
-
     init {
-        activityHolder.addActivityResultHandler(this)
         authorizedRelay.accept(!prefs.accountName.isEmpty())
     }
 
     override fun isAuthorized(): Observable<Boolean> = authorizedRelay.distinctUntilChanged()
 
-    override fun login(): Completable =
-            Completable.create { e ->
-                loginListener = object : LoginListener {
-
-                    override fun onError(t: Throwable) {
-                        e.onError(t)
-                    }
-
-                    override fun onSuccess() {
-                        e.onComplete()
-                    }
-
-                }
-                if (authorizedRelay.value) {
-                    loginListener?.onSuccess()
-                    return@create
-                }
-                val activity = activityHolder.getActivity()
-                if (activity == null) {
-                    loginListener?.onError(Exception("Can't login. Activity == null"))
-                } else {
-                    activity.runOnUiThread {
-                        RxPermissions(activity)
-                                .request(Manifest.permission.GET_ACCOUNTS)
-                                .subscribe({ granted ->
-                                    if (granted) {
-                                        activity.startActivityForResult(credential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER)
-                                    } else {
-                                        loginListener?.onError(SecurityException("Account permission denied"))
-                                    }
-                                })
+    override fun login(): Completable {
+        if (authorizedRelay.value) {
+            return Completable.complete()
+        }
+        return checkPermission()
+                .andThen(reactiveActivities.chooseGoogleAccount(credential))
+                .flatMapCompletable { accountName ->
+                    Completable.fromAction {
+                        prefs.accountName = accountName
+                        credential = createCredentials()
                     }
                 }
-            }
+    }
 
     override fun logout(): Completable = Completable.fromAction {
         prefs.clear()
@@ -95,24 +68,6 @@ class GoogleAuthHolderImpl(
             checkAuth()
                     .andThen(checkPermission())
                     .toSingle { createCredentials() }
-
-    override fun handleActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean =
-            when (requestCode) {
-                REQUEST_ACCOUNT_PICKER -> {
-                    if (resultCode == Activity.RESULT_OK && data != null && data.extras != null) {
-                        val accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME)
-                        if (accountName != null) {
-                            prefs.accountName = accountName
-                            credential = createCredentials()
-                            loginListener?.onSuccess()
-                        }
-                    } else {
-                        loginListener?.onError(Exception("Pick account failed"))
-                    }
-                    true
-                }
-                else -> false
-            }
 
     private fun createCredentials(): GoogleAccountCredential {
         val accountCredential = GoogleAccountCredential.usingOAuth2(
@@ -171,12 +126,4 @@ class GoogleAuthHolderImpl(
                     else -> Completable.error(throwable)
                 }
             }
-
-    private interface LoginListener {
-
-        fun onError(t: Throwable)
-
-        fun onSuccess()
-
-    }
 }

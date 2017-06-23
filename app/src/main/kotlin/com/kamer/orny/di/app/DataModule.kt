@@ -28,8 +28,8 @@ class DataModule {
 
     @Provides
     @ApplicationScope
-    fun provideGoogleAuthHolder(context: Context, prefs: Prefs, activityHolder: ActivityHolder): GoogleAuthHolder
-            = GoogleAuthHolderImpl(context, prefs, activityHolder)
+    fun provideGoogleAuthHolder(context: Context, prefs: Prefs, activityHolder: ActivityHolder, reactiveActivities: ReactiveActivities): GoogleAuthHolder
+            = GoogleAuthHolderImpl(context, prefs, activityHolder, reactiveActivities)
 
     @Provides
     @ApplicationScope

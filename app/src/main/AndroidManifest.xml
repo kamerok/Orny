@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT"/>
 
     <application
         android:name=".app.App"
@@ -21,15 +22,21 @@
             android:name=".presentation.launch.LoginActivity"/>
 
         <activity
-            android:name=".presentation.editexpense.EditExpenseActivity"
-            android:label="Add Expense"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateAlwaysVisible">
+            android:name=".presentation.shortcut.ShortcutActivity"
+            android:label="@string/edit_expense_add_title"
+            android:icon="@mipmap/ic_add_expense">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.CREATE_SHORTCUT"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".presentation.editexpense.EditExpenseActivity"
+            android:exported="true"
+            android:label="@string/edit_expense_add_title"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysVisible"/>
 
         <activity android:name=".presentation.main.MainActivity">
             <intent-filter>

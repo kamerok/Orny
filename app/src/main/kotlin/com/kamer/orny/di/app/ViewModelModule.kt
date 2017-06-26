@@ -7,6 +7,7 @@ import com.kamer.orny.interaction.SaveExpenseInteractor
 import com.kamer.orny.presentation.core.ErrorMessageParser
 import com.kamer.orny.presentation.editexpense.EditExpenseRouter
 import com.kamer.orny.presentation.editexpense.EditExpenseViewModelImpl
+import com.kamer.orny.presentation.statistics.StatisticsViewModelImpl
 import dagger.Module
 import dagger.Provides
 import javax.inject.Named
@@ -16,6 +17,7 @@ class ViewModelModule {
 
     companion object {
         const val EDIT_EXPENSE = "EditExpense"
+        const val STATISTICS = "Statistics"
     }
 
     @Named(EDIT_EXPENSE)
@@ -28,6 +30,16 @@ class ViewModelModule {
             object : ViewModelProvider.Factory {
                 override fun <T : ViewModel?> create(modelClass: Class<T>): T {
                     return EditExpenseViewModelImpl(errorMessageParser, editExpenseRouter, getAuthorsInteractor, saveExpenseInteractor) as T
+                }
+            }
+
+    @Named(STATISTICS)
+    @Provides
+    @ApplicationScope
+    fun provideStatisticsViewModelFactory(): ViewModelProvider.Factory =
+            object : ViewModelProvider.Factory {
+                override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                    return StatisticsViewModelImpl() as T
                 }
             }
 

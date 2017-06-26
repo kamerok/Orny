@@ -37,7 +37,6 @@ class EditExpenseActivity : BaseActivity() {
         fun getIntent(context: Context) = Intent(context, EditExpenseActivity::class.java)
     }
 
-    @Inject lateinit var router: EditExpenseRouterImpl
     @field:[Inject Named(ViewModelModule.EDIT_EXPENSE)] lateinit var viewModelFactory: ViewModelProvider.Factory
 
     lateinit var viewModel: EditExpenseViewModel
@@ -50,7 +49,6 @@ class EditExpenseActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         App.appComponent.inject(this)
         super.onCreate(savedInstanceState)
-        router.setActivity(this)
         setContentView(R.layout.activity_edit_expense)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(EditExpenseViewModelImpl::class.java)
         initViews()

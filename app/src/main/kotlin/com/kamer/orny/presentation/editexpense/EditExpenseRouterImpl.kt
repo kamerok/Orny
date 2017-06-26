@@ -1,20 +1,11 @@
 package com.kamer.orny.presentation.editexpense
 
-import android.app.Activity
-import java.lang.ref.WeakReference
+import com.kamer.orny.data.android.ActivityHolder
 
 
-class EditExpenseRouterImpl : EditExpenseRouter {
-
-    private lateinit var activityRef: WeakReference<Activity>
-
-    fun setActivity(activity: Activity) {
-        activityRef = WeakReference(activity)
-    }
+class EditExpenseRouterImpl(val activityHolder: ActivityHolder) : EditExpenseRouter {
 
     override fun closeScreen() {
-        activityRef.get()?.apply {
-            finish()
-        }
+        activityHolder.getActivity()?.finish()
     }
 }

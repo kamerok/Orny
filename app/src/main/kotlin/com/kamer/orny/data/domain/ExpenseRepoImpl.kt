@@ -1,7 +1,7 @@
-package com.kamer.orny.data
+package com.kamer.orny.data.domain
 
+import com.kamer.orny.data.domain.model.Expense
 import com.kamer.orny.data.google.GoogleRepo
-import com.kamer.orny.data.model.Expense
 import io.reactivex.Completable
 
 

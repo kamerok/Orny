@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import com.kamer.orny.R
 import com.kamer.orny.app.App
-import com.kamer.orny.data.AuthRepo
+import com.kamer.orny.data.domain.AuthRepo
 import com.kamer.orny.presentation.core.BaseActivity
 import com.kamer.orny.utils.defaultBackgroundSchedulers
 import com.kamer.orny.utils.toast

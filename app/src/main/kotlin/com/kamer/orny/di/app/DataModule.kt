@@ -1,11 +1,11 @@
 package com.kamer.orny.di.app
 
 import android.content.Context
-import com.kamer.orny.data.*
 import com.kamer.orny.data.android.ActivityHolder
 import com.kamer.orny.data.android.ActivityHolderImpl
 import com.kamer.orny.data.android.ReactiveActivities
 import com.kamer.orny.data.android.ReactiveActivitiesImpl
+import com.kamer.orny.data.domain.*
 import com.kamer.orny.data.google.GoogleAuthHolder
 import com.kamer.orny.data.google.GoogleAuthHolderImpl
 import com.kamer.orny.data.google.GoogleRepo

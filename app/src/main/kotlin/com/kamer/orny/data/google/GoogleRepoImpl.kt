@@ -9,7 +9,7 @@ import com.google.api.services.sheets.v4.model.ValueRange
 import com.kamer.orny.data.android.ReactiveActivities
 import com.kamer.orny.data.mapping.toExpense
 import com.kamer.orny.data.mapping.toList
-import com.kamer.orny.data.model.Expense
+import com.kamer.orny.data.domain.model.Expense
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single

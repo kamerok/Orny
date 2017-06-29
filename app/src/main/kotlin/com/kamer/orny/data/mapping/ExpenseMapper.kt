@@ -1,7 +1,7 @@
 package com.kamer.orny.data.mapping
 
-import com.kamer.orny.data.model.Author
-import com.kamer.orny.data.model.Expense
+import com.kamer.orny.data.domain.model.Author
+import com.kamer.orny.data.domain.model.Expense
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*

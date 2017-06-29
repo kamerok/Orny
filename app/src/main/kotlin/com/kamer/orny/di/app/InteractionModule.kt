@@ -1,7 +1,7 @@
 package com.kamer.orny.di.app
 
-import com.kamer.orny.data.ExpenseRepo
-import com.kamer.orny.data.PageRepo
+import com.kamer.orny.data.domain.ExpenseRepo
+import com.kamer.orny.data.domain.PageRepo
 import com.kamer.orny.interaction.GetAuthorsInteractor
 import com.kamer.orny.interaction.GetAuthorsInteractorImpl
 import com.kamer.orny.interaction.SaveExpenseInteractor

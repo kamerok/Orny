@@ -1,4 +1,4 @@
-package com.kamer.orny.data.model
+package com.kamer.orny.data.domain.model
 
 import java.util.*
 

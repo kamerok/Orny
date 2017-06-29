@@ -1,6 +1,6 @@
 package com.kamer.orny.presentation.editexpense
 
-import com.kamer.orny.data.model.Author
+import com.kamer.orny.data.domain.model.Author
 import io.reactivex.Observable
 import java.util.*
 

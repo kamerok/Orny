@@ -16,7 +16,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import com.kamer.orny.R
 import com.kamer.orny.app.App
-import com.kamer.orny.data.model.Author
+import com.kamer.orny.data.domain.model.Author
 import com.kamer.orny.di.app.ViewModelModule
 import com.kamer.orny.presentation.core.BaseActivity
 import com.kamer.orny.utils.onTextChanged

@@ -1,6 +1,6 @@
 package com.kamer.orny.presentation.editexpense
 
-import com.kamer.orny.data.model.Author
+import com.kamer.orny.data.domain.model.Author
 import com.kamer.orny.interaction.GetAuthorsInteractor
 import com.kamer.orny.interaction.SaveExpenseInteractor
 import com.kamer.orny.presentation.core.ErrorMessageParser

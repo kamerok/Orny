@@ -80,12 +80,14 @@ class GoogleRepoImpl(val googleAuthHolder: GoogleAuthHolder, val reactiveActivit
         val writeData: MutableList<MutableList<Any>> = ArrayList()
         writeData.add(expense.toList())
         val valueRange = ValueRange()
-        valueRange.majorDimension = "ROWS"
         valueRange.setValues(writeData)
-        val request = service.spreadsheets().values().append(SPREADSHEET_ID, SHEET_NAME, valueRange).setValueInputOption("USER_ENTERED")
-        Timber.d(request.toString())
+        val request = service.spreadsheets().values()
+                .append(SPREADSHEET_ID, SHEET_NAME+"!A11", valueRange)
+                .setValueInputOption("USER_ENTERED")
+                .setInsertDataOption("INSERT_ROWS")
+        Timber.d("$request $valueRange")
         val response = request.execute()
-        Timber.d(response.toString())
+        Timber.d("$response ${response.updates}")
     }
 
 }

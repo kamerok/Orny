@@ -5,11 +5,14 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.services.sheets.v4.Sheets
-import com.google.api.services.sheets.v4.model.ValueRange
+import com.google.api.services.sheets.v4.model.AppendCellsRequest
+import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest
+import com.google.api.services.sheets.v4.model.Request
+import com.google.api.services.sheets.v4.model.RowData
 import com.kamer.orny.data.android.ReactiveActivities
 import com.kamer.orny.data.google.model.GoogleExpense
+import com.kamer.orny.data.google.model.toCells
 import com.kamer.orny.data.google.model.toExpense
-import com.kamer.orny.data.google.model.toList
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
@@ -22,6 +25,7 @@ class GoogleRepoImpl(val googleAuthHolder: GoogleAuthHolder, val reactiveActivit
     companion object {
         private const val SPREADSHEET_ID = "1YsFrfpNzs_gjdtnqVNuAPPYl3NRjeo8GgEWAOD7BdOg"
         private const val SHEET_NAME = "Тест"
+        private const val SHEET_ID = 1549946213
     }
 
     override fun getAllExpenses(): Single<List<GoogleExpense>> = getSheetsService()
@@ -77,17 +81,23 @@ class GoogleRepoImpl(val googleAuthHolder: GoogleAuthHolder, val reactiveActivit
     }
 
     private fun addExpenseToApi(service: Sheets, expense: GoogleExpense) {
-        val writeData: MutableList<MutableList<Any>> = ArrayList()
-        writeData.add(expense.toList())
-        val valueRange = ValueRange()
-        valueRange.setValues(writeData)
-        val request = service.spreadsheets().values()
-                .append(SPREADSHEET_ID, SHEET_NAME+"!A11", valueRange)
-                .setValueInputOption("USER_ENTERED")
-                .setInsertDataOption("INSERT_ROWS")
-        Timber.d("$request $valueRange")
+        val rowData = listOf<RowData>(RowData().setValues(expense.toCells()))
+
+        val appendCellRequest = AppendCellsRequest().apply {
+            sheetId = SHEET_ID
+            rows = rowData
+            fields = "userEnteredValue,userEnteredFormat.numberFormat"
+        }
+
+        val batchRequests = BatchUpdateSpreadsheetRequest().apply {
+            requests = listOf(Request().setAppendCells(appendCellRequest))
+        }
+
+        val request = service.spreadsheets().batchUpdate(SPREADSHEET_ID, batchRequests)
+        Timber.d("$request")
+
         val response = request.execute()
-        Timber.d("$response ${response.updates}")
+        Timber.d("$response")
     }
 
 }

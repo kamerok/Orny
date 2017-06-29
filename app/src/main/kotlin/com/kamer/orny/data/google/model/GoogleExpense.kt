@@ -1,22 +1,44 @@
 package com.kamer.orny.data.google.model
 
+import android.text.format.DateUtils
+import com.google.api.services.sheets.v4.model.CellData
+import com.google.api.services.sheets.v4.model.CellFormat
+import com.google.api.services.sheets.v4.model.ExtendedValue
+import com.google.api.services.sheets.v4.model.NumberFormat
 import java.util.*
 
 
-data class GoogleExpense(val comment: String?, val date: String?, val isOffBudget: Boolean, val values: List<Double>)
+data class GoogleExpense(val comment: String?, val date: Date?, val isOffBudget: Boolean, val values: List<Double>)
 
-fun GoogleExpense.toList(): MutableList<Any> {
-    val dataRow: MutableList<Any> = ArrayList()
-    dataRow.add(comment ?: "")
-    dataRow.add(date ?: "")
-    dataRow.add(if (isOffBudget) "1" else "")
-    values.forEach { dataRow.add(if (it != 0.0) it.toString() else "") }
-    return dataRow
+fun GoogleExpense.toCells(): MutableList<CellData> {
+    val cellsData: MutableList<CellData> = mutableListOf()
+    cellsData.add(CellData().apply { userEnteredValue = ExtendedValue().setStringValue(comment ?: "") })
+    if (date == null) {
+        cellsData.add(CellData().apply { userEnteredValue = ExtendedValue().setStringValue("") })
+    } else {
+        val startCalendar = Calendar.getInstance().apply { set(1899, 12, 30) }
+        val current = Calendar.getInstance().apply { timeInMillis = date.time }
+        val days: Double = ((current.timeInMillis - startCalendar.timeInMillis) / DateUtils.DAY_IN_MILLIS).toDouble() + 1
+        cellsData.add(CellData().apply {
+            userEnteredValue = ExtendedValue().setNumberValue(days)
+            userEnteredFormat = CellFormat().setNumberFormat(NumberFormat().setType("DATE"))
+        })
+    }
+    cellsData.add(CellData().apply { userEnteredValue = ExtendedValue().setNumberValue(if (isOffBudget) 1.0 else 0.0) })
+    values.forEach { value ->
+        if (value == 0.0) {
+            cellsData.add(CellData().apply { userEnteredValue = ExtendedValue().setStringValue("") })
+        } else {
+            cellsData.add(CellData().apply { userEnteredValue = ExtendedValue().setNumberValue(value) })
+        }
+    }
+    return cellsData
 }
 
 fun MutableList<Any>.toExpense(): GoogleExpense {
     val comment = this[0].toString()
-    val date = this[1].toString()
+    //todo set date
+//    val date = this[1].toString()
     val isOffBudget = this[2].toString() == "1"
     val values = this
             .takeLast(size - 3)
@@ -24,7 +46,7 @@ fun MutableList<Any>.toExpense(): GoogleExpense {
             .map { it.toDoubleOrNull() ?: 0.0 }
     return GoogleExpense(
             comment = comment,
-            date = date,
+            date = null,
             isOffBudget = isOffBudget,
             values = values
     )

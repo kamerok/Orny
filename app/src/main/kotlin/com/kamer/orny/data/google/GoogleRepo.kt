@@ -1,13 +1,13 @@
 package com.kamer.orny.data.google
 
-import com.kamer.orny.data.domain.model.Expense
+import com.kamer.orny.data.google.model.GoogleExpense
 import io.reactivex.Completable
 import io.reactivex.Single
 
 interface GoogleRepo {
 
-    fun getAllExpenses(): Single<List<Expense>>
+    fun getAllExpenses(): Single<List<GoogleExpense>>
 
-    fun addExpense(expense: Expense): Completable
+    fun addExpense(googleExpense: GoogleExpense): Completable
 
 }

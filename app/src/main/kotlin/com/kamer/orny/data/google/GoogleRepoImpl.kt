@@ -7,9 +7,9 @@ import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.ValueRange
 import com.kamer.orny.data.android.ReactiveActivities
-import com.kamer.orny.data.mapping.toExpense
-import com.kamer.orny.data.mapping.toList
-import com.kamer.orny.data.domain.model.Expense
+import com.kamer.orny.data.google.model.GoogleExpense
+import com.kamer.orny.data.google.model.toExpense
+import com.kamer.orny.data.google.model.toList
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
@@ -24,17 +24,17 @@ class GoogleRepoImpl(val googleAuthHolder: GoogleAuthHolder, val reactiveActivit
         private const val SHEET_NAME = "Тест"
     }
 
-    override fun getAllExpenses(): Single<List<Expense>> = getSheetsService()
+    override fun getAllExpenses(): Single<List<GoogleExpense>> = getSheetsService()
             .flatMap { service ->
                 Single
                         .fromCallable { getAllExpensesFromApi(service) }
                         .retryWhen(this::recoverFromGoogleError)
             }
 
-    override fun addExpense(expense: Expense): Completable = getSheetsService()
+    override fun addExpense(googleExpense: GoogleExpense): Completable = getSheetsService()
             .flatMapCompletable { service ->
                 Completable
-                        .fromAction { addExpenseToApi(service, expense) }
+                        .fromAction { addExpenseToApi(service, googleExpense) }
                         .retryWhen(this::recoverFromGoogleError)
             }
 
@@ -59,11 +59,11 @@ class GoogleRepoImpl(val googleAuthHolder: GoogleAuthHolder, val reactiveActivit
         return Sheets.Builder(transport, jsonFactory, credential).build()
     }
 
-    private fun getAllExpensesFromApi(service: Sheets): MutableList<Expense> {
+    private fun getAllExpensesFromApi(service: Sheets): List<GoogleExpense> {
         val response = service.spreadsheets().values()
                 .get(SPREADSHEET_ID, SHEET_NAME + "!A11:E")
                 .execute()
-        val list = mutableListOf<Expense>()
+        val list = mutableListOf<GoogleExpense>()
         for (value in response.getValues()) {
             Timber.d(value.toString())
             if (value.isNotEmpty()) {
@@ -76,7 +76,7 @@ class GoogleRepoImpl(val googleAuthHolder: GoogleAuthHolder, val reactiveActivit
         return list
     }
 
-    private fun addExpenseToApi(service: Sheets, expense: Expense) {
+    private fun addExpenseToApi(service: Sheets, expense: GoogleExpense) {
         val writeData: MutableList<MutableList<Any>> = ArrayList()
         writeData.add(expense.toList())
         val valueRange = ValueRange()

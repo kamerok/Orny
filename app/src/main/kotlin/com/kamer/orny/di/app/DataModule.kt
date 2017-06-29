@@ -6,6 +6,8 @@ import com.kamer.orny.data.android.ActivityHolderImpl
 import com.kamer.orny.data.android.ReactiveActivities
 import com.kamer.orny.data.android.ReactiveActivitiesImpl
 import com.kamer.orny.data.domain.*
+import com.kamer.orny.data.domain.mapper.ExpenseMapper
+import com.kamer.orny.data.domain.mapper.ExpenseMapperImpl
 import com.kamer.orny.data.google.GoogleAuthHolder
 import com.kamer.orny.data.google.GoogleAuthHolderImpl
 import com.kamer.orny.data.google.GoogleRepo
@@ -17,6 +19,8 @@ import dagger.Provides
 @Module
 class DataModule {
 
+    //Android
+
     @Provides
     @ApplicationScope
     fun provideActivityHolder(): ActivityHolder = ActivityHolderImpl()
@@ -25,6 +29,8 @@ class DataModule {
     @ApplicationScope
     fun provideReactiveActivities(activityHolder: ActivityHolder): ReactiveActivities
             = ReactiveActivitiesImpl(activityHolder)
+
+    //Google
 
     @Provides
     @ApplicationScope
@@ -36,6 +42,8 @@ class DataModule {
     fun provideGoogleRepo(googleAuthHolder: GoogleAuthHolder, reactiveActivities: ReactiveActivities): GoogleRepo
             = GoogleRepoImpl(googleAuthHolder, reactiveActivities)
 
+    //Domain
+
     @Provides
     @ApplicationScope
     fun provideAuthRepo(googleAuthHolder: GoogleAuthHolder): AuthRepo = AuthRepoImpl(googleAuthHolder)
@@ -46,9 +54,16 @@ class DataModule {
 
     @Provides
     @ApplicationScope
-    fun provideExpenseRepo(googleRepo: GoogleRepo): ExpenseRepo = ExpenseRepoImpl(googleRepo)
+    fun provideExpenseRepo(googleRepo: GoogleRepo, expenseMapper: ExpenseMapper): ExpenseRepo
+            = ExpenseRepoImpl(googleRepo, expenseMapper)
 
     @Provides
     @ApplicationScope
     fun provideSpreadsheetRepo(googleRepo: GoogleRepo): SpreadsheetRepo = SpreadsheetRepoImpl(googleRepo)
+
+    //Mapping
+
+    @Provides
+    @ApplicationScope
+    fun provideExpenseMapper(): ExpenseMapper = ExpenseMapperImpl()
 }

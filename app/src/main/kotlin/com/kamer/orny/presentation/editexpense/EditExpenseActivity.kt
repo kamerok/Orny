@@ -2,6 +2,7 @@ package com.kamer.orny.presentation.editexpense
 
 import android.app.DatePickerDialog
 import android.app.ProgressDialog
+import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
@@ -29,7 +30,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 
-class EditExpenseActivity : BaseActivity() {
+class EditExpenseActivity : BaseActivity(), LifecycleOwner {
 
     companion object {
         private val DATE_FORMAT = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
@@ -112,8 +113,8 @@ class EditExpenseActivity : BaseActivity() {
     }
 
     private fun bindViewModel() {
-        viewModel.bindAuthors().disposeOnDestroy().subscribe(this::setAuthors)
-        viewModel.bindDate().disposeOnDestroy().subscribe(this::setDate)
+        viewModel.bindAuthors().observe(this, android.arch.lifecycle.Observer {  if (it != null) setAuthors(it) })
+        viewModel.bindDate().observe(this, android.arch.lifecycle.Observer { if (it != null) setDate(it) })
         viewModel.bindSavingProgress().disposeOnDestroy().subscribe(this::setSavingProgress)
         viewModel.bindShowDatePicker().disposeOnDestroy().subscribe(this::showDatePicker)
         viewModel.bindShowExitDialog().disposeOnDestroy().subscribe { showExitDialog() }

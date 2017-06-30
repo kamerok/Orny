@@ -1,5 +1,7 @@
 package com.kamer.orny.presentation.editexpense
 
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
 import com.kamer.orny.data.domain.model.Author
 import com.kamer.orny.data.domain.model.Expense
 import com.kamer.orny.interaction.GetAuthorsInteractor
@@ -27,23 +29,24 @@ class EditExpenseViewModelImpl(val errorParser: ErrorMessageParser,
     private val expense = Expense()
     private val newExpense = expense.copy()
 
+    private val authors = MutableLiveData<List<Author>>()
+    private val date = MutableLiveData<Date>()
     private val savingProgress = BehaviorSubject.create<Boolean>()
-    private val authors = BehaviorSubject.create<List<Author>>()
-    private val date = BehaviorSubject.createDefault<Date>(Date())
     private val showPicker = PublishSubject.create<Date>()
     private val showExitDialog = PublishSubject.create<Any>()
     private val showAmountError = PublishSubject.create<String>()
     private val showError = BehaviorSubject.create<String>()
 
     init {
+        date.value = Date()
         loadAuthors()
     }
 
     override fun bindSavingProgress(): Observable<Boolean> = savingProgress
 
-    override fun bindAuthors(): Observable<List<Author>> = authors
+    override fun bindAuthors(): LiveData<List<Author>> = authors
 
-    override fun bindDate(): Observable<Date> = date
+    override fun bindDate(): LiveData<Date> = date
 
     override fun bindShowDatePicker(): Observable<Date> = showPicker
 
@@ -92,6 +95,7 @@ class EditExpenseViewModelImpl(val errorParser: ErrorMessageParser,
 
     override fun dateChanged(date: Date) {
         newExpense.date = date
+        this.date.value = date
     }
 
     override fun offBudgetChanged(isOffBudget: Boolean) {
@@ -115,7 +119,7 @@ class EditExpenseViewModelImpl(val errorParser: ErrorMessageParser,
                 .disposeOnDestroy()
                 .subscribe(
                         {
-                            authors.onNext(it)
+                            authors.value = it
                             expense.author = it.firstOrNull()
                         },
                         { showError.onNext(errorParser.getMessage(GetAuthorsException(it))) }

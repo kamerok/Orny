@@ -1,5 +1,6 @@
 package com.kamer.orny.presentation.editexpense
 
+import android.arch.lifecycle.LiveData
 import com.kamer.orny.data.domain.model.Author
 import io.reactivex.Observable
 import java.util.*
@@ -7,8 +8,8 @@ import java.util.*
 
 interface EditExpenseViewModel {
 
-    fun bindAuthors(): Observable<List<Author>>
-    fun bindDate(): Observable<Date>
+    fun bindAuthors(): LiveData<List<Author>>
+    fun bindDate(): LiveData<Date>
     fun bindSavingProgress(): Observable<Boolean>
     fun bindShowDatePicker(): Observable<Date>
     fun bindShowExitDialog(): Observable<Any>

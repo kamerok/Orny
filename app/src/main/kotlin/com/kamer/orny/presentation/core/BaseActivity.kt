@@ -1,5 +1,7 @@
 package com.kamer.orny.presentation.core
 
+import android.arch.lifecycle.LifecycleRegistry
+import android.arch.lifecycle.LifecycleRegistryOwner
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import com.kamer.orny.data.android.ActivityHolder
@@ -9,7 +11,11 @@ import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
-abstract class BaseActivity : AppCompatActivity() {
+
+
+abstract class BaseActivity : AppCompatActivity(), LifecycleRegistryOwner {
+
+    private val lifecycleRegistry by lazy { LifecycleRegistry(this) }
 
     @Inject lateinit var activityHolder: ActivityHolder
 
@@ -34,5 +40,7 @@ abstract class BaseActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         activityHolder.passActivityResult(requestCode, resultCode, data)
     }
+
+    override fun getLifecycle(): LifecycleRegistry = lifecycleRegistry
 
 }

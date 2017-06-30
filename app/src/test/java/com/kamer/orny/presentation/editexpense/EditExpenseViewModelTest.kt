@@ -8,6 +8,8 @@ import com.kamer.orny.presentation.editexpense.errors.GetAuthorsException
 import com.kamer.orny.presentation.editexpense.errors.NoChangesException
 import com.kamer.orny.presentation.editexpense.errors.SaveExpenseException
 import com.kamer.orny.presentation.editexpense.errors.WrongAmountFormatException
+import com.kamer.orny.utils.TestUtils
+import com.kamer.orny.utils.getResultValue
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.argumentCaptor
 import com.nhaarman.mockito_kotlin.never
@@ -24,7 +26,6 @@ import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
 import java.util.*
 
-
 @RunWith(MockitoJUnitRunner::class)
 class EditExpenseViewModelTest {
 
@@ -39,6 +40,7 @@ class EditExpenseViewModelTest {
 
     @Before
     fun setUp() {
+        TestUtils.setupLiveDataExecutor()
         `when`(errorParser.getMessage(any())).thenReturn(PARSED_ERROR)
         `when`(authorsInteractor.getAuthors()).thenReturn(Single.just(emptyList()))
         `when`(saveExpenseInteractor.saveExpense(any())).thenReturn(Completable.complete())
@@ -52,22 +54,27 @@ class EditExpenseViewModelTest {
                 Author(id = "0", name = "name1", color = "color1"),
                 Author(id = "1", name = "name2", color = "color2"))
         `when`(authorsInteractor.getAuthors()).thenReturn(Single.just(authors))
-        val observer = TestObserver.create<List<Author>>()
 
         createViewModel()
-        viewModel.bindAuthors().subscribe(observer)
+        val result = viewModel.bindAuthors().getResultValue()
 
-        observer.assertValues(authors)
+        assertThat(result).isEqualTo(authors)
     }
 
     @Test
     fun setCurrentDateOnStart() {
-        val observer = TestObserver.create<Date>()
+        val result = viewModel.bindDate().getResultValue()
 
-        viewModel.bindDate().subscribe(observer)
+        assertThat(result).isToday()
+    }
 
-        observer.assertValueCount(1)
-        assertThat(observer.values().first()).isToday()
+    @Test
+    fun setDateWhenDateChanged() {
+        val date = Date(10000)
+        viewModel.dateChanged(date)
+        val result = viewModel.bindDate().getResultValue()
+
+        assertThat(result).isInSameDayAs(date)
     }
 
     @Test

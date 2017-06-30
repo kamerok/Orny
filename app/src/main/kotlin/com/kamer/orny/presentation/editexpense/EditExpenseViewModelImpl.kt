@@ -31,7 +31,7 @@ class EditExpenseViewModelImpl(val errorParser: ErrorMessageParser,
 
     private val authors = MutableLiveData<List<Author>>()
     private val date = MutableLiveData<Date>()
-    private val savingProgress = BehaviorSubject.create<Boolean>()
+    private val savingProgress = MutableLiveData<Boolean>()
     private val showPicker = PublishSubject.create<Date>()
     private val showExitDialog = PublishSubject.create<Any>()
     private val showAmountError = PublishSubject.create<String>()
@@ -42,7 +42,7 @@ class EditExpenseViewModelImpl(val errorParser: ErrorMessageParser,
         loadAuthors()
     }
 
-    override fun bindSavingProgress(): Observable<Boolean> = savingProgress
+    override fun bindSavingProgress(): MutableLiveData<Boolean> = savingProgress
 
     override fun bindAuthors(): LiveData<List<Author>> = authors
 
@@ -130,8 +130,8 @@ class EditExpenseViewModelImpl(val errorParser: ErrorMessageParser,
         saveExpenseInteractor
                 .saveExpense(newExpense)
                 .disposeOnDestroy()
-                .doOnSubscribe { savingProgress.onNext(true) }
-                .doFinally { savingProgress.onNext(false) }
+                .doOnSubscribe { savingProgress.value = true }
+                .doFinally { savingProgress.value = false }
                 .subscribe(
                         { router.closeScreen() },
                         {

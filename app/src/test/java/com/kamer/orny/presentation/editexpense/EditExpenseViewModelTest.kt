@@ -10,6 +10,7 @@ import com.kamer.orny.presentation.editexpense.errors.SaveExpenseException
 import com.kamer.orny.presentation.editexpense.errors.WrongAmountFormatException
 import com.kamer.orny.utils.TestUtils
 import com.kamer.orny.utils.getResultValue
+import com.kamer.orny.utils.getResultValues
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.argumentCaptor
 import com.nhaarman.mockito_kotlin.never
@@ -257,13 +258,12 @@ class EditExpenseViewModelTest {
 
     @Test
     fun showSaveExpenseProgress() {
-        val observer = TestObserver.create<Boolean>()
-
-        viewModel.bindSavingProgress().subscribe(observer)
+        val progress = viewModel.bindSavingProgress().getResultValues(2)
         viewModel.amountChanged("1")
         viewModel.saveExpense()
 
-        observer.assertValues(true, false)
+        assertThat(progress[0]).isTrue()
+        assertThat(progress[1]).isFalse()
     }
 
     @Test

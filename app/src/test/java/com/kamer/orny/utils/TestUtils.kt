@@ -45,3 +45,22 @@ fun <T> LiveData<T>.getResultValue(): T {
 
     return data[0] as T
 }
+
+@Throws(InterruptedException::class)
+fun <T> LiveData<T>.getResultValues(count: Int): List<T> {
+    val data = mutableListOf<T>()
+    val latch = CountDownLatch(count)
+    val observer = object : Observer<T> {
+        override fun onChanged(o: T?) {
+            if (o == null) throw Exception("Null value in LiveData")
+            data.add(o)
+            latch.countDown()
+            if (latch.count == 0L) {
+                removeObserver(this)
+            }
+        }
+    }
+    observeForever(observer)
+
+    return data
+}

@@ -115,7 +115,7 @@ class EditExpenseActivity : BaseActivity(), LifecycleOwner {
     private fun bindViewModel() {
         viewModel.bindAuthors().observe(this, android.arch.lifecycle.Observer {  if (it != null) setAuthors(it) })
         viewModel.bindDate().observe(this, android.arch.lifecycle.Observer { if (it != null) setDate(it) })
-        viewModel.bindSavingProgress().disposeOnDestroy().subscribe(this::setSavingProgress)
+        viewModel.bindSavingProgress().observe(this, android.arch.lifecycle.Observer { if (it != null) setSavingProgress(it) })
         viewModel.bindShowDatePicker().disposeOnDestroy().subscribe(this::showDatePicker)
         viewModel.bindShowExitDialog().disposeOnDestroy().subscribe { showExitDialog() }
         viewModel.bindShowAmountError().disposeOnDestroy().subscribe(this::showAmountError)

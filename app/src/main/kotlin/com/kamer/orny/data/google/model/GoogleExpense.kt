@@ -5,10 +5,18 @@ import com.google.api.services.sheets.v4.model.CellData
 import com.google.api.services.sheets.v4.model.CellFormat
 import com.google.api.services.sheets.v4.model.ExtendedValue
 import com.google.api.services.sheets.v4.model.NumberFormat
+import java.lang.IllegalArgumentException
+import java.text.SimpleDateFormat
 import java.util.*
 
 
-data class GoogleExpense(val comment: String?, val date: Date?, val isOffBudget: Boolean, val values: List<Double>)
+data class GoogleExpense(val comment: String?, val date: Date?, val isOffBudget: Boolean, val values: List<Double>) {
+
+    companion object {
+        val DATE_FORMAT = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    }
+
+}
 
 fun GoogleExpense.toCells(): MutableList<CellData> {
     val cellsData: MutableList<CellData> = mutableListOf()
@@ -37,8 +45,11 @@ fun GoogleExpense.toCells(): MutableList<CellData> {
 
 fun MutableList<Any>.toExpense(): GoogleExpense {
     val comment = this[0].toString()
-    //todo set date
-//    val date = this[1].toString()
+    val date = try {
+        GoogleExpense.DATE_FORMAT.parse(this[1].toString())
+    } catch (e: IllegalArgumentException) {
+        null
+    }
     val isOffBudget = this[2].toString() == "1"
     val values = this
             .takeLast(size - 3)
@@ -46,7 +57,7 @@ fun MutableList<Any>.toExpense(): GoogleExpense {
             .map { it.toDoubleOrNull() ?: 0.0 }
     return GoogleExpense(
             comment = comment,
-            date = null,
+            date = date,
             isOffBudget = isOffBudget,
             values = values
     )

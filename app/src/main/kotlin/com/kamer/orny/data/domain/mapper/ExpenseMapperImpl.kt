@@ -2,15 +2,9 @@ package com.kamer.orny.data.domain.mapper
 
 import com.kamer.orny.data.domain.model.Expense
 import com.kamer.orny.data.google.model.GoogleExpense
-import java.text.SimpleDateFormat
-import java.util.*
 
 
 class ExpenseMapperImpl : ExpenseMapper{
-
-    companion object {
-        val DATE_FORMAT = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-    }
 
     override fun toGoogleExpense(expense: Expense): GoogleExpense {
         val values = mutableListOf<Double>()

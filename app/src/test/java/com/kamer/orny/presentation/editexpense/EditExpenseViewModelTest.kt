@@ -82,14 +82,13 @@ class EditExpenseViewModelTest {
     fun showGetAuthorsError() {
         `when`(authorsInteractor.getAuthors()).thenReturn(Single.error(Exception()))
         val captor = argumentCaptor<Exception>()
-        val observer = TestObserver.create<String>()
 
         createViewModel()
-        viewModel.bindShowError().subscribe(observer)
+        val result = viewModel.bindShowError().getResultValue()
 
         verify(errorParser).getMessage(captor.capture())
         assertThat(captor.firstValue).isInstanceOf(GetAuthorsException::class.java)
-        observer.assertValue(PARSED_ERROR)
+        assertThat(result).isEqualTo(PARSED_ERROR)
     }
 
     @Test
@@ -237,15 +236,14 @@ class EditExpenseViewModelTest {
     @Test
     fun showErrorOnSaveIfNothingChanged() {
         val captor = argumentCaptor<Exception>()
-        val observer = TestObserver.create<String>()
 
-        viewModel.bindShowError().subscribe(observer)
         viewModel.saveExpense()
+        val result = viewModel.bindShowError().getResultValue()
 
         verify(router, never()).closeScreen()
         verify(errorParser).getMessage(captor.capture())
         assertThat(captor.firstValue).isInstanceOf(NoChangesException::class.java)
-        observer.assertValue(PARSED_ERROR)
+        assertThat(result).isEqualTo(PARSED_ERROR)
     }
 
     @Test
@@ -278,15 +276,14 @@ class EditExpenseViewModelTest {
     fun showSavingError() {
         `when`(saveExpenseInteractor.saveExpense(any())).thenReturn(Completable.error(Exception()))
         val captor = argumentCaptor<Exception>()
-        val observer = TestObserver.create<String>()
 
-        viewModel.bindShowError().subscribe(observer)
         viewModel.amountChanged("1")
         viewModel.saveExpense()
+        val result = viewModel.bindShowError().getResultValue()
 
         verify(errorParser).getMessage(captor.capture())
         assertThat(captor.firstValue).isInstanceOf(SaveExpenseException::class.java)
-        observer.assertValue(PARSED_ERROR)
+        assertThat(result).isEqualTo(PARSED_ERROR)
     }
 
     private fun createViewModel() {

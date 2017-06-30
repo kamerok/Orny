@@ -8,13 +8,13 @@ import com.kamer.orny.interaction.GetAuthorsInteractor
 import com.kamer.orny.interaction.SaveExpenseInteractor
 import com.kamer.orny.presentation.core.BaseViewModel
 import com.kamer.orny.presentation.core.ErrorMessageParser
+import com.kamer.orny.presentation.core.SingleLiveEvent
 import com.kamer.orny.presentation.editexpense.errors.GetAuthorsException
 import com.kamer.orny.presentation.editexpense.errors.NoChangesException
 import com.kamer.orny.presentation.editexpense.errors.SaveExpenseException
 import com.kamer.orny.presentation.editexpense.errors.WrongAmountFormatException
 import com.kamer.orny.utils.onNext
 import io.reactivex.Observable
-import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import timber.log.Timber
 import java.util.*
@@ -35,7 +35,7 @@ class EditExpenseViewModelImpl(val errorParser: ErrorMessageParser,
     private val showPicker = PublishSubject.create<Date>()
     private val showExitDialog = PublishSubject.create<Any>()
     private val showAmountError = PublishSubject.create<String>()
-    private val showError = BehaviorSubject.create<String>()
+    private val showError = SingleLiveEvent<String>()
 
     init {
         date.value = Date()
@@ -54,7 +54,7 @@ class EditExpenseViewModelImpl(val errorParser: ErrorMessageParser,
 
     override fun bindShowAmountError(): Observable<String> = showAmountError
 
-    override fun bindShowError(): Observable<String> = showError
+    override fun bindShowError(): SingleLiveEvent<String> = showError
 
     override fun amountChanged(amountRaw: String) {
         if (amountRaw.isNullOrEmpty()) {
@@ -108,7 +108,7 @@ class EditExpenseViewModelImpl(val errorParser: ErrorMessageParser,
 
     override fun saveExpense() {
         when (newExpense) {
-            expense -> showError.onNext(errorParser.getMessage(NoChangesException()))
+            expense -> showError.value = errorParser.getMessage(NoChangesException())
             else -> saveChanges()
         }
     }
@@ -122,7 +122,7 @@ class EditExpenseViewModelImpl(val errorParser: ErrorMessageParser,
                             authors.value = it
                             expense.author = it.firstOrNull()
                         },
-                        { showError.onNext(errorParser.getMessage(GetAuthorsException(it))) }
+                        { showError.value = errorParser.getMessage(GetAuthorsException(it)) }
                 )
     }
 
@@ -136,7 +136,7 @@ class EditExpenseViewModelImpl(val errorParser: ErrorMessageParser,
                         { router.closeScreen() },
                         {
                             Timber.e(it.message, it)
-                            showError.onNext(errorParser.getMessage(SaveExpenseException(it)))
+                            showError.value = errorParser.getMessage(SaveExpenseException(it))
                         }
                 )
     }

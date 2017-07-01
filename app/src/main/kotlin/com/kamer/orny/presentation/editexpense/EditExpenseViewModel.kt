@@ -3,7 +3,6 @@ package com.kamer.orny.presentation.editexpense
 import android.arch.lifecycle.LiveData
 import com.kamer.orny.data.domain.model.Author
 import com.kamer.orny.presentation.core.SingleLiveEvent
-import io.reactivex.Observable
 import java.util.*
 
 
@@ -13,7 +12,7 @@ interface EditExpenseViewModel {
     fun bindDate(): LiveData<Date>
     fun bindSavingProgress(): LiveData<Boolean>
     fun bindShowDatePicker(): SingleLiveEvent<Date>
-    fun bindShowExitDialog(): Observable<Any>
+    fun bindShowExitDialog(): SingleLiveEvent<Nothing>
     fun bindShowAmountError(): SingleLiveEvent<String>
     fun bindShowError(): SingleLiveEvent<String>
 

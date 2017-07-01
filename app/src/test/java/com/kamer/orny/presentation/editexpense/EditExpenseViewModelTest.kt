@@ -11,12 +11,12 @@ import com.kamer.orny.presentation.editexpense.errors.WrongAmountFormatException
 import com.kamer.orny.utils.TestUtils
 import com.kamer.orny.utils.getResultValue
 import com.kamer.orny.utils.getResultValues
+import com.kamer.orny.utils.hasValue
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.argumentCaptor
 import com.nhaarman.mockito_kotlin.never
 import io.reactivex.Completable
 import io.reactivex.Single
-import io.reactivex.observers.TestObserver
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -161,62 +161,52 @@ class EditExpenseViewModelTest {
 
     @Test
     fun showDialogWhenExitIfAmountChanged() {
-        val observer = TestObserver.create<Any>()
-
-        viewModel.bindShowExitDialog().subscribe(observer)
         viewModel.amountChanged("1")
         viewModel.exitScreen()
+        val result = viewModel.bindShowExitDialog().hasValue()
 
         verify(router, never()).closeScreen()
-        observer.assertValueCount(1)
+        assertThat(result).isTrue()
     }
 
     @Test
     fun showDialogWhenExitIfCommentChanged() {
-        val observer = TestObserver.create<Any>()
-
-        viewModel.bindShowExitDialog().subscribe(observer)
         viewModel.commentChanged("1")
         viewModel.exitScreen()
+        val result = viewModel.bindShowExitDialog().hasValue()
 
         verify(router, never()).closeScreen()
-        observer.assertValueCount(1)
+        assertThat(result).isTrue()
     }
 
     @Test
     fun showDialogWhenExitIfAuthorChanged() {
-        val observer = TestObserver.create<Any>()
-
-        viewModel.bindShowExitDialog().subscribe(observer)
         viewModel.authorSelected(Author("1", "", ""))
         viewModel.exitScreen()
+        val result = viewModel.bindShowExitDialog().hasValue()
 
         verify(router, never()).closeScreen()
-        observer.assertValueCount(1)
+        assertThat(result).isTrue()
     }
 
     @Test
     fun showDialogWhenExitIfDateChanged() {
-        val observer = TestObserver.create<Any>()
-
-        viewModel.bindShowExitDialog().subscribe(observer)
         viewModel.dateChanged(Date(100))
         viewModel.exitScreen()
+        val result = viewModel.bindShowExitDialog().hasValue()
 
         verify(router, never()).closeScreen()
-        observer.assertValueCount(1)
+        assertThat(result).isTrue()
     }
 
     @Test
     fun showDialogWhenExitIfOffBudgetChanged() {
-        val observer = TestObserver.create<Any>()
-
-        viewModel.bindShowExitDialog().subscribe(observer)
         viewModel.offBudgetChanged(true)
         viewModel.exitScreen()
+        val result = viewModel.bindShowExitDialog().hasValue()
 
         verify(router, never()).closeScreen()
-        observer.assertValueCount(1)
+        assertThat(result).isTrue()
     }
 
     @Test

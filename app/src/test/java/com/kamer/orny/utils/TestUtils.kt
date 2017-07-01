@@ -62,3 +62,19 @@ fun <T> LiveData<T>.getResultValues(count: Int): List<T> {
 
     return data
 }
+
+@Throws(InterruptedException::class)
+fun <T> LiveData<T>.hasValue(): Boolean {
+    var hasValue = false
+    val latch = CountDownLatch(1)
+    val observer = object : Observer<T> {
+        override fun onChanged(o: T?) {
+            hasValue = true
+            latch.countDown()
+            removeObserver(this)
+        }
+    }
+    observeForever(observer)
+
+    return hasValue
+}

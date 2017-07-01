@@ -13,9 +13,6 @@ import com.kamer.orny.presentation.editexpense.errors.GetAuthorsException
 import com.kamer.orny.presentation.editexpense.errors.NoChangesException
 import com.kamer.orny.presentation.editexpense.errors.SaveExpenseException
 import com.kamer.orny.presentation.editexpense.errors.WrongAmountFormatException
-import com.kamer.orny.utils.onNext
-import io.reactivex.Observable
-import io.reactivex.subjects.PublishSubject
 import timber.log.Timber
 import java.util.*
 
@@ -33,7 +30,7 @@ class EditExpenseViewModelImpl(val errorParser: ErrorMessageParser,
     private val date = MutableLiveData<Date>()
     private val savingProgress = MutableLiveData<Boolean>()
     private val showPicker = SingleLiveEvent<Date>()
-    private val showExitDialog = PublishSubject.create<Any>()
+    private val showExitDialog = SingleLiveEvent<Nothing>()
     private val showAmountError = SingleLiveEvent<String>()
     private val showError = SingleLiveEvent<String>()
 
@@ -50,7 +47,7 @@ class EditExpenseViewModelImpl(val errorParser: ErrorMessageParser,
 
     override fun bindShowDatePicker(): SingleLiveEvent<Date> = showPicker
 
-    override fun bindShowExitDialog(): Observable<Any> = showExitDialog
+    override fun bindShowExitDialog(): SingleLiveEvent<Nothing> = showExitDialog
 
     override fun bindShowAmountError(): SingleLiveEvent<String> = showAmountError
 
@@ -74,7 +71,7 @@ class EditExpenseViewModelImpl(val errorParser: ErrorMessageParser,
     override fun exitScreen() {
         when (newExpense) {
             expense -> router.closeScreen()
-            else -> showExitDialog.onNext()
+            else -> showExitDialog.call()
         }
     }
 

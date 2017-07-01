@@ -54,8 +54,8 @@ android {
 }
 
 def support = "25.4.0"
-def arch = "1.0.0-alpha2"
-def playServices = "11.0.0"
+def arch = "1.0.0-alpha3"
+def playServices = "11.0.2"
 def dagger = "2.11-rc1"
 
 dependencies {

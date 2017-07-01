@@ -6,7 +6,6 @@ import android.arch.core.executor.TaskExecutor
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
 
 class TestUtils {
 
@@ -41,7 +40,6 @@ fun <T> LiveData<T>.getResultValue(): T {
         }
     }
     observeForever(observer)
-    latch.await(2, TimeUnit.SECONDS)
 
     return data[0] as T
 }

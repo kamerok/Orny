@@ -114,12 +114,12 @@ class EditExpenseActivity : BaseActivity(), LifecycleOwner {
     }
 
     private fun bindViewModel() {
-        viewModel.bindAuthors().observe(this, Observer {  if (it != null) setAuthors(it) })
+        viewModel.bindAuthors().observe(this, Observer { if (it != null) setAuthors(it) })
         viewModel.bindDate().observe(this, Observer { if (it != null) setDate(it) })
         viewModel.bindSavingProgress().observe(this, Observer { if (it != null) setSavingProgress(it) })
         viewModel.bindShowDatePicker().observe(this, Observer { if (it != null) showDatePicker(it) })
         viewModel.bindShowExitDialog().disposeOnDestroy().subscribe { showExitDialog() }
-        viewModel.bindShowAmountError().disposeOnDestroy().subscribe(this::showAmountError)
+        viewModel.bindShowAmountError().observe(this, Observer { if (it != null) showAmountError(it) })
         viewModel.bindShowError().observe(this, Observer { if (it != null) showError(it) })
     }
 

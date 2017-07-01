@@ -94,27 +94,25 @@ class EditExpenseViewModelTest {
     @Test
     fun showWrongAmountFormatErrorOnNonDouble() {
         val captor = argumentCaptor<Exception>()
-        val observer = TestObserver.create<String>()
 
-        viewModel.bindShowAmountError().subscribe(observer)
         viewModel.amountChanged("Wrong")
+        val result = viewModel.bindShowAmountError().getResultValue()
 
         verify(errorParser).getMessage(captor.capture())
         assertThat(captor.firstValue).isInstanceOf(WrongAmountFormatException::class.java)
-        observer.assertValue(PARSED_ERROR)
+        assertThat(result).isEqualTo(PARSED_ERROR)
     }
 
     @Test
     fun showWrongAmountFormatErrorOnNegative() {
         val captor = argumentCaptor<Exception>()
-        val observer = TestObserver.create<String>()
 
-        viewModel.bindShowAmountError().subscribe(observer)
         viewModel.amountChanged("-1")
+        val result = viewModel.bindShowAmountError().getResultValue()
 
         verify(errorParser).getMessage(captor.capture())
         assertThat(captor.firstValue).isInstanceOf(WrongAmountFormatException::class.java)
-        observer.assertValue(PARSED_ERROR)
+        assertThat(result).isEqualTo(PARSED_ERROR)
     }
 
     @Test
@@ -137,15 +135,12 @@ class EditExpenseViewModelTest {
 
     @Test
     fun closeScreenOnExitWhenAmountSetAndDeleted() {
-        val observer = TestObserver.create<String>()
-
-        viewModel.bindShowAmountError().subscribe(observer)
         viewModel.amountChanged("1")
         viewModel.amountChanged("")
         viewModel.exitScreen()
+        val result = viewModel.bindShowAmountError().getResultValue()
 
-        observer.assertNoValues()
-        observer.assertNoErrors()
+        assertThat(result).isNull()
         verify(router).closeScreen()
     }
 

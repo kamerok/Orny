@@ -34,7 +34,7 @@ class EditExpenseViewModelImpl(val errorParser: ErrorMessageParser,
     private val savingProgress = MutableLiveData<Boolean>()
     private val showPicker = SingleLiveEvent<Date>()
     private val showExitDialog = PublishSubject.create<Any>()
-    private val showAmountError = PublishSubject.create<String>()
+    private val showAmountError = SingleLiveEvent<String>()
     private val showError = SingleLiveEvent<String>()
 
     init {
@@ -52,7 +52,7 @@ class EditExpenseViewModelImpl(val errorParser: ErrorMessageParser,
 
     override fun bindShowExitDialog(): Observable<Any> = showExitDialog
 
-    override fun bindShowAmountError(): Observable<String> = showAmountError
+    override fun bindShowAmountError(): SingleLiveEvent<String> = showAmountError
 
     override fun bindShowError(): SingleLiveEvent<String> = showError
 
@@ -61,16 +61,13 @@ class EditExpenseViewModelImpl(val errorParser: ErrorMessageParser,
             newExpense.amount = 0.0
             return
         }
-        try {
-            val amount = amountRaw.toDouble()
-            if (amount < 0) {
-                showAmountError.onNext(errorParser.getMessage(
-                        WrongAmountFormatException(Exception("Amount can't be negative"))))
-            } else {
-                newExpense.amount = amount
-            }
-        } catch(e: NumberFormatException) {
-            showAmountError.onNext(errorParser.getMessage(WrongAmountFormatException(e)))
+        val amount = amountRaw.toDoubleOrNull()
+        when {
+            amount == null ->
+                showAmountError.value = errorParser.getMessage(WrongAmountFormatException("Can't parse"))
+            amount < 0 ->
+                showAmountError.value = errorParser.getMessage(WrongAmountFormatException("Amount can't be negative"))
+            else -> newExpense.amount = amount
         }
     }
 

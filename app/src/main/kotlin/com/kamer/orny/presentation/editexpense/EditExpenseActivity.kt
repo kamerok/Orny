@@ -3,6 +3,7 @@ package com.kamer.orny.presentation.editexpense
 import android.app.DatePickerDialog
 import android.app.ProgressDialog
 import android.arch.lifecycle.LifecycleOwner
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
@@ -113,13 +114,13 @@ class EditExpenseActivity : BaseActivity(), LifecycleOwner {
     }
 
     private fun bindViewModel() {
-        viewModel.bindAuthors().observe(this, android.arch.lifecycle.Observer {  if (it != null) setAuthors(it) })
-        viewModel.bindDate().observe(this, android.arch.lifecycle.Observer { if (it != null) setDate(it) })
-        viewModel.bindSavingProgress().observe(this, android.arch.lifecycle.Observer { if (it != null) setSavingProgress(it) })
-        viewModel.bindShowDatePicker().disposeOnDestroy().subscribe(this::showDatePicker)
+        viewModel.bindAuthors().observe(this, Observer {  if (it != null) setAuthors(it) })
+        viewModel.bindDate().observe(this, Observer { if (it != null) setDate(it) })
+        viewModel.bindSavingProgress().observe(this, Observer { if (it != null) setSavingProgress(it) })
+        viewModel.bindShowDatePicker().observe(this, Observer { if (it != null) showDatePicker(it) })
         viewModel.bindShowExitDialog().disposeOnDestroy().subscribe { showExitDialog() }
         viewModel.bindShowAmountError().disposeOnDestroy().subscribe(this::showAmountError)
-        viewModel.bindShowError().observe(this, android.arch.lifecycle.Observer { if (it != null) showError(it) })
+        viewModel.bindShowError().observe(this, Observer { if (it != null) showError(it) })
     }
 
     private fun setAuthors(authors: List<Author>) {

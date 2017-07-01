@@ -119,15 +119,13 @@ class EditExpenseViewModelTest {
 
     @Test
     fun showDatePickerOnDateClicked() {
-        val observer = TestObserver.create<Date>()
         val time = 199L
 
-        viewModel.bindShowDatePicker().subscribe(observer)
         viewModel.dateChanged(Date(time))
         viewModel.selectDate()
+        val result = viewModel.bindShowDatePicker().getResultValue()
 
-        observer.assertValueCount(1)
-        assertThat(observer.values().first()).isEqualTo(Date(time))
+        assertThat(result).isEqualTo(Date(time))
     }
 
     @Test

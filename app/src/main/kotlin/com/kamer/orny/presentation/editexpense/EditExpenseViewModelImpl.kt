@@ -32,7 +32,7 @@ class EditExpenseViewModelImpl(val errorParser: ErrorMessageParser,
     private val authors = MutableLiveData<List<Author>>()
     private val date = MutableLiveData<Date>()
     private val savingProgress = MutableLiveData<Boolean>()
-    private val showPicker = PublishSubject.create<Date>()
+    private val showPicker = SingleLiveEvent<Date>()
     private val showExitDialog = PublishSubject.create<Any>()
     private val showAmountError = PublishSubject.create<String>()
     private val showError = SingleLiveEvent<String>()
@@ -48,7 +48,7 @@ class EditExpenseViewModelImpl(val errorParser: ErrorMessageParser,
 
     override fun bindDate(): LiveData<Date> = date
 
-    override fun bindShowDatePicker(): Observable<Date> = showPicker
+    override fun bindShowDatePicker(): SingleLiveEvent<Date> = showPicker
 
     override fun bindShowExitDialog(): Observable<Any> = showExitDialog
 
@@ -90,7 +90,7 @@ class EditExpenseViewModelImpl(val errorParser: ErrorMessageParser,
     }
 
     override fun selectDate() {
-        showPicker.onNext(newExpense.date)
+        showPicker.value = newExpense.date
     }
 
     override fun dateChanged(date: Date) {

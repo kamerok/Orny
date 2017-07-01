@@ -12,7 +12,7 @@ interface EditExpenseViewModel {
     fun bindAuthors(): LiveData<List<Author>>
     fun bindDate(): LiveData<Date>
     fun bindSavingProgress(): LiveData<Boolean>
-    fun bindShowDatePicker(): Observable<Date>
+    fun bindShowDatePicker(): SingleLiveEvent<Date>
     fun bindShowExitDialog(): Observable<Any>
     fun bindShowAmountError(): Observable<String>
     fun bindShowError(): SingleLiveEvent<String>

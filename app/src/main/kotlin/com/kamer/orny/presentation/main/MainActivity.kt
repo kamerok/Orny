@@ -16,6 +16,7 @@ import com.kamer.orny.utils.gone
 import com.kamer.orny.utils.toast
 import com.kamer.orny.utils.visible
 import kotlinx.android.synthetic.main.activity_main.*
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -38,13 +39,17 @@ class MainActivity : BaseActivity() {
     }
 
     private fun initViews() {
+        loadingProgressView.gone()
         loadButtonView.setOnClickListener {
             googleRepo
-                    .getAllExpenses()
+                    .getPage()
                     .disposeOnDestroy()
                     .defaultBackgroundSchedulers()
-                    .subscribe({ list ->
-                        textView.text = list.size.toString()
+                    .doOnSubscribe { loadingProgressView.visible() }
+                    .doFinally { loadingProgressView.gone() }
+                    .subscribe({ page ->
+                        Timber.d(page.toString())
+                        textView.text = page.budget.toString()
                     }, {
                         toast(it.message.toString())
                     })
@@ -53,7 +58,7 @@ class MainActivity : BaseActivity() {
     }
 
     private fun bindViewModels() {
-        viewModel.bindShowLoading().disposeOnDestroy().subscribe(this::setLoading)
+//        viewModel.bindShowLoading().disposeOnDestroy().subscribe(this::setLoading)
     }
 
     private fun setLoading(isLoading: Boolean) = loadingProgressView.run { if (isLoading) visible() else gone() }

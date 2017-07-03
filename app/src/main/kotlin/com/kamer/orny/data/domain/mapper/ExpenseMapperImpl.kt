@@ -2,17 +2,19 @@ package com.kamer.orny.data.domain.mapper
 
 import com.kamer.orny.data.domain.model.Expense
 import com.kamer.orny.data.google.model.GoogleExpense
+import java.util.*
 
 
 class ExpenseMapperImpl : ExpenseMapper{
 
     override fun toGoogleExpense(expense: Expense): GoogleExpense {
         val values = mutableListOf<Double>()
-        //todo fix author
-//        if (expense.author?.id == "1") {
-//            values.add(0.0)
-//        }
-//        values.add(expense.amount)
+        for ((key, value) in expense.values) {
+            while (values.size < key.position + 1) {
+                values.add(0.0)
+            }
+            values.add(key.position, value)
+        }
         return GoogleExpense(
                 comment = expense.comment,
                 date = expense.date,
@@ -22,16 +24,11 @@ class ExpenseMapperImpl : ExpenseMapper{
     }
 
     override fun toExpense(googleExpense: GoogleExpense): Expense {
-        /*val date = try {
-            DATE_FORMAT.parse(googleExpense.date)
-        } catch (e: ParseException) {
-            Date()
-        }*/
         //todo fix Expense model and author
         return Expense(
                 comment = googleExpense.comment ?: "",
-//                date = date,
-                isOffBudget = googleExpense.isOffBudget
+                isOffBudget = googleExpense.isOffBudget,
+                date = googleExpense.date ?: Date()
         )
     }
 }

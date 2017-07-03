@@ -43,7 +43,7 @@ class EditExpenseViewModelTest {
     fun setUp() {
         TestUtils.setupLiveDataExecutor()
         `when`(errorParser.getMessage(any())).thenReturn(PARSED_ERROR)
-        `when`(authorsInteractor.getAuthors()).thenReturn(Single.just(listOf(Author(id = "0", name = "name1", color = "color1"))))
+        `when`(authorsInteractor.getAuthors()).thenReturn(Single.just(listOf(createAuthor(0))))
         `when`(createExpenseInteractor.createExpense(any())).thenReturn(Completable.complete())
 
         createViewModel()
@@ -51,9 +51,7 @@ class EditExpenseViewModelTest {
 
     @Test
     fun setAuthorsOnStart() {
-        val authors = listOf(
-                Author(id = "0", name = "name1", color = "color1"),
-                Author(id = "1", name = "name2", color = "color2"))
+        val authors = listOf(createAuthor(0), createAuthor(1))
         `when`(authorsInteractor.getAuthors()).thenReturn(Single.just(authors))
 
         createViewModel()
@@ -146,10 +144,8 @@ class EditExpenseViewModelTest {
 
     @Test
     fun firstAuthorNotCountAsChange() {
-        val firstAuthor = Author(id = "0", name = "name1", color = "color1")
-        val authors = listOf(
-                firstAuthor,
-                Author(id = "1", name = "name2", color = "color2"))
+        val firstAuthor = createAuthor(0)
+        val authors = listOf(firstAuthor, createAuthor(1))
         `when`(authorsInteractor.getAuthors()).thenReturn(Single.just(authors))
 
         createViewModel()
@@ -181,7 +177,7 @@ class EditExpenseViewModelTest {
 
     @Test
     fun closeScreenWhenExitIfAuthorChanged() {
-        viewModel.authorSelected(Author("1", "", ""))
+        viewModel.authorSelected(createAuthor(0))
         viewModel.exitScreen()
 
         verify(router).closeScreen()
@@ -266,4 +262,6 @@ class EditExpenseViewModelTest {
     private fun createViewModel() {
         viewModel = EditExpenseViewModelImpl(errorParser, router, authorsInteractor, createExpenseInteractor)
     }
+
+    private fun createAuthor(index: Int) = Author(id = "$index", position = index, name = "name$index", color = "color$index")
 }

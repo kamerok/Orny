@@ -6,6 +6,6 @@ import io.reactivex.Completable
 
 interface ExpenseRepo {
 
-    fun saveExpense(expense: com.kamer.orny.data.domain.model.Expense): io.reactivex.Completable
+    fun saveExpense(expense: Expense): Completable
 
 }

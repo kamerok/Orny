@@ -6,8 +6,8 @@ interface AuthRepo {
 
 //    fun isAuthorized(): Observable<Boolean>
 
-    fun login(): io.reactivex.Completable
+    fun login(): Completable
 
-    fun logout(): io.reactivex.Completable
+    fun logout(): Completable
 
 }

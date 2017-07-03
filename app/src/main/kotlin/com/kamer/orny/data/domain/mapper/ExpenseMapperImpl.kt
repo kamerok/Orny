@@ -9,10 +9,10 @@ class ExpenseMapperImpl : ExpenseMapper{
     override fun toGoogleExpense(expense: Expense): GoogleExpense {
         val values = mutableListOf<Double>()
         //todo fix author
-        if (expense.author?.id == "1") {
-            values.add(0.0)
-        }
-        values.add(expense.amount)
+//        if (expense.author?.id == "1") {
+//            values.add(0.0)
+//        }
+//        values.add(expense.amount)
         return GoogleExpense(
                 comment = expense.comment,
                 date = expense.date,

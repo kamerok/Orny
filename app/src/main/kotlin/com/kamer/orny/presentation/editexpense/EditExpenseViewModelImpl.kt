@@ -3,7 +3,7 @@ package com.kamer.orny.presentation.editexpense
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import com.kamer.orny.data.domain.model.Author
-import com.kamer.orny.data.domain.model.Expense
+import com.kamer.orny.data.domain.model.NewExpense
 import com.kamer.orny.interaction.GetAuthorsInteractor
 import com.kamer.orny.interaction.SaveExpenseInteractor
 import com.kamer.orny.presentation.core.BaseViewModel
@@ -13,6 +13,7 @@ import com.kamer.orny.presentation.editexpense.errors.GetAuthorsException
 import com.kamer.orny.presentation.editexpense.errors.NoChangesException
 import com.kamer.orny.presentation.editexpense.errors.SaveExpenseException
 import com.kamer.orny.presentation.editexpense.errors.WrongAmountFormatException
+import io.reactivex.Single
 import timber.log.Timber
 import java.util.*
 
@@ -23,77 +24,83 @@ class EditExpenseViewModelImpl(val errorParser: ErrorMessageParser,
                                val saveExpenseInteractor: SaveExpenseInteractor
 ) : BaseViewModel(), EditExpenseViewModel {
 
-    private val expense = Expense()
-    private val newExpense = expense.copy()
+    private var authors = emptyList<Author>()
 
-    private val authors = MutableLiveData<List<Author>>()
-    private val date = MutableLiveData<Date>()
-    private val savingProgress = MutableLiveData<Boolean>()
-    private val showPicker = SingleLiveEvent<Date>()
-    private val showExitDialog = SingleLiveEvent<Nothing>()
-    private val showAmountError = SingleLiveEvent<String>()
-    private val showError = SingleLiveEvent<String>()
+    private var comment: String = ""
+    private var date = Date()
+    private var isOffBudget = false
+    private var amount = 0.0
+    private var author: Author? = null
+
+    private val authorsStream = MutableLiveData<List<Author>>()
+    private val dateStream = MutableLiveData<Date>()
+    private val savingProgressStream = MutableLiveData<Boolean>()
+    private val showPickerStream = SingleLiveEvent<Date>()
+    private val showExitDialogStream = SingleLiveEvent<Nothing>()
+    private val showAmountErrorStream = SingleLiveEvent<String>()
+    private val showErrorStream = SingleLiveEvent<String>()
 
     init {
-        date.value = Date()
+        dateStream.value = date
         loadAuthors()
     }
 
-    override fun bindSavingProgress(): MutableLiveData<Boolean> = savingProgress
+    override fun bindSavingProgress(): MutableLiveData<Boolean> = savingProgressStream
 
-    override fun bindAuthors(): LiveData<List<Author>> = authors
+    override fun bindAuthors(): LiveData<List<Author>> = authorsStream
 
-    override fun bindDate(): LiveData<Date> = date
+    override fun bindDate(): LiveData<Date> = dateStream
 
-    override fun bindShowDatePicker(): SingleLiveEvent<Date> = showPicker
+    override fun bindShowDatePicker(): SingleLiveEvent<Date> = showPickerStream
 
-    override fun bindShowExitDialog(): SingleLiveEvent<Nothing> = showExitDialog
+    override fun bindShowExitDialog(): SingleLiveEvent<Nothing> = showExitDialogStream
 
-    override fun bindShowAmountError(): SingleLiveEvent<String> = showAmountError
+    override fun bindShowAmountError(): SingleLiveEvent<String> = showAmountErrorStream
 
-    override fun bindShowError(): SingleLiveEvent<String> = showError
+    override fun bindShowError(): SingleLiveEvent<String> = showErrorStream
 
     override fun amountChanged(amountRaw: String) {
         if (amountRaw.isNullOrEmpty()) {
-            newExpense.amount = 0.0
+            amount = 0.0
             return
         }
-        val amount = amountRaw.toDoubleOrNull()
+        val newAmount = amountRaw.toDoubleOrNull()
         when {
-            amount == null ->
-                showAmountError.value = errorParser.getMessage(WrongAmountFormatException("Can't parse"))
-            amount < 0 ->
-                showAmountError.value = errorParser.getMessage(WrongAmountFormatException("Amount can't be negative"))
-            else -> newExpense.amount = amount
+            newAmount == null ->
+                showAmountErrorStream.value = errorParser.getMessage(WrongAmountFormatException("Can't parse"))
+            newAmount < 0 ->
+                showAmountErrorStream.value = errorParser.getMessage(WrongAmountFormatException("Amount can't be negative"))
+            else -> amount = newAmount
         }
     }
 
     override fun exitScreen() {
-        when (newExpense) {
-            expense -> router.closeScreen()
-            else -> showExitDialog.call()
+        if (isSomethingToSave()) {
+            showExitDialogStream.call()
+        } else {
+            router.closeScreen()
         }
     }
 
     override fun commentChanged(comment: String) {
-        newExpense.comment = comment
+        this.comment = comment
     }
 
     override fun authorSelected(author: Author) {
-        newExpense.author = author
+        this.author = author
     }
 
     override fun selectDate() {
-        showPicker.value = newExpense.date
+        showPickerStream.value = date
     }
 
     override fun dateChanged(date: Date) {
-        newExpense.date = date
-        this.date.value = date
+        this.date = date
+        this.dateStream.value = date
     }
 
     override fun offBudgetChanged(isOffBudget: Boolean) {
-        newExpense.isOffBudget = isOffBudget
+        this.isOffBudget = isOffBudget
     }
 
     override fun confirmExit() {
@@ -101,9 +108,10 @@ class EditExpenseViewModelImpl(val errorParser: ErrorMessageParser,
     }
 
     override fun saveExpense() {
-        when (newExpense) {
-            expense -> showError.value = errorParser.getMessage(NoChangesException())
-            else -> saveChanges()
+        if (isSomethingToSave()) {
+            saveChanges()
+        } else {
+            showErrorStream.value = errorParser.getMessage(NoChangesException())
         }
     }
 
@@ -113,26 +121,37 @@ class EditExpenseViewModelImpl(val errorParser: ErrorMessageParser,
                 .disposeOnDestroy()
                 .subscribe(
                         {
-                            authors.value = it
-                            expense.author = it.firstOrNull()
+                            authorsStream.value = it
+                            author = it.firstOrNull()
+                            authors = it
                         },
-                        { showError.value = errorParser.getMessage(GetAuthorsException(it)) }
+                        { showErrorStream.value = errorParser.getMessage(GetAuthorsException(it)) }
                 )
     }
 
     private fun saveChanges() {
-        saveExpenseInteractor
-                .saveExpense(newExpense)
+        Single
+                .fromCallable {
+                    val author = author
+                    if (author == null) {
+                        throw Exception("No author selected")
+                    } else {
+                        NewExpense(comment, date, isOffBudget, amount, author)
+                    }
+                }
+                .flatMapCompletable { saveExpenseInteractor.saveExpense(it) }
                 .disposeOnDestroy()
-                .doOnSubscribe { savingProgress.value = true }
-                .doFinally { savingProgress.value = false }
+                .doOnSubscribe { savingProgressStream.value = true }
+                .doFinally { savingProgressStream.value = false }
                 .subscribe(
                         { router.closeScreen() },
                         {
                             Timber.e(it.message, it)
-                            showError.value = errorParser.getMessage(SaveExpenseException(it))
+                            showErrorStream.value = errorParser.getMessage(SaveExpenseException(it))
                         }
                 )
     }
+
+    private fun isSomethingToSave(): Boolean = amount != 0.0 || comment.isNotEmpty()
 
 }

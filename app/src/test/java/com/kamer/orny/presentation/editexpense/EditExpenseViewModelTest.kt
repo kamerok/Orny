@@ -43,7 +43,7 @@ class EditExpenseViewModelTest {
     fun setUp() {
         TestUtils.setupLiveDataExecutor()
         `when`(errorParser.getMessage(any())).thenReturn(PARSED_ERROR)
-        `when`(authorsInteractor.getAuthors()).thenReturn(Single.just(emptyList()))
+        `when`(authorsInteractor.getAuthors()).thenReturn(Single.just(listOf(Author(id = "0", name = "name1", color = "color1"))))
         `when`(saveExpenseInteractor.saveExpense(any())).thenReturn(Completable.complete())
 
         createViewModel()
@@ -180,33 +180,27 @@ class EditExpenseViewModelTest {
     }
 
     @Test
-    fun showDialogWhenExitIfAuthorChanged() {
+    fun closeScreenWhenExitIfAuthorChanged() {
         viewModel.authorSelected(Author("1", "", ""))
         viewModel.exitScreen()
-        val result = viewModel.bindShowExitDialog().hasValue()
 
-        verify(router, never()).closeScreen()
-        assertThat(result).isTrue()
+        verify(router).closeScreen()
     }
 
     @Test
-    fun showDialogWhenExitIfDateChanged() {
+    fun closeScreenWhenExitIfDateChanged() {
         viewModel.dateChanged(Date(100))
         viewModel.exitScreen()
-        val result = viewModel.bindShowExitDialog().hasValue()
 
-        verify(router, never()).closeScreen()
-        assertThat(result).isTrue()
+        verify(router).closeScreen()
     }
 
     @Test
-    fun showDialogWhenExitIfOffBudgetChanged() {
+    fun closeScreenWhenExitIfOffBudgetChanged() {
         viewModel.offBudgetChanged(true)
         viewModel.exitScreen()
-        val result = viewModel.bindShowExitDialog().hasValue()
 
-        verify(router, never()).closeScreen()
-        assertThat(result).isTrue()
+        verify(router).closeScreen()
     }
 
     @Test

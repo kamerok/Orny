@@ -4,11 +4,10 @@ import java.util.*
 
 
 data class Expense(val id: String = NO_ID,
-                   var amount: Double = 0.0,
                    var comment: String = "",
-                   var author: Author? = null,
                    var date: Date = Date(),
-                   var isOffBudget: Boolean = false) {
+                   var isOffBudget: Boolean = false,
+                   var values: Map<Author, Double> = emptyMap()) {
 
     companion object {
         const val NO_ID = "-1"

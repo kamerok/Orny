@@ -3,7 +3,7 @@ package com.kamer.orny.di.app
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import com.kamer.orny.interaction.GetAuthorsInteractor
-import com.kamer.orny.interaction.SaveExpenseInteractor
+import com.kamer.orny.interaction.CreateExpenseInteractor
 import com.kamer.orny.presentation.core.ErrorMessageParser
 import com.kamer.orny.presentation.editexpense.EditExpenseRouter
 import com.kamer.orny.presentation.editexpense.EditExpenseViewModelImpl
@@ -26,10 +26,10 @@ class ViewModelModule {
     fun provideEditExpenseViewModelFactory(errorMessageParser: ErrorMessageParser,
                                            editExpenseRouter: EditExpenseRouter,
                                            getAuthorsInteractor: GetAuthorsInteractor,
-                                           saveExpenseInteractor: SaveExpenseInteractor): ViewModelProvider.Factory =
+                                           createExpenseInteractor: CreateExpenseInteractor): ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {
                 override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                    return EditExpenseViewModelImpl(errorMessageParser, editExpenseRouter, getAuthorsInteractor, saveExpenseInteractor) as T
+                    return EditExpenseViewModelImpl(errorMessageParser, editExpenseRouter, getAuthorsInteractor, createExpenseInteractor) as T
                 }
             }
 

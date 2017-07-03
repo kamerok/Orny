@@ -7,9 +7,9 @@ import com.kamer.orny.utils.defaultBackgroundSchedulers
 import io.reactivex.Completable
 
 
-class SaveExpenseInteractorImpl(val expenseRepo: ExpenseRepo) : SaveExpenseInteractor {
+class CreateExpenseInteractorImpl(val expenseRepo: ExpenseRepo) : CreateExpenseInteractor {
 
-    override fun saveExpense(expense: NewExpense): Completable = expenseRepo
+    override fun createExpense(expense: NewExpense): Completable = expenseRepo
             .saveExpense(Expense(
                     id = Expense.NO_ID,
                     comment = expense.comment,

@@ -1,8 +1,8 @@
 package com.kamer.orny.presentation.editexpense
 
 import com.kamer.orny.data.domain.model.Author
+import com.kamer.orny.interaction.CreateExpenseInteractor
 import com.kamer.orny.interaction.GetAuthorsInteractor
-import com.kamer.orny.interaction.SaveExpenseInteractor
 import com.kamer.orny.presentation.core.ErrorMessageParser
 import com.kamer.orny.presentation.editexpense.errors.GetAuthorsException
 import com.kamer.orny.presentation.editexpense.errors.NoChangesException
@@ -35,7 +35,7 @@ class EditExpenseViewModelTest {
     @Mock lateinit var errorParser: ErrorMessageParser
     @Mock lateinit var router: EditExpenseRouter
     @Mock lateinit var authorsInteractor: GetAuthorsInteractor
-    @Mock lateinit var saveExpenseInteractor: SaveExpenseInteractor
+    @Mock lateinit var createExpenseInteractor: CreateExpenseInteractor
 
     private lateinit var viewModel: EditExpenseViewModel
 
@@ -44,7 +44,7 @@ class EditExpenseViewModelTest {
         TestUtils.setupLiveDataExecutor()
         `when`(errorParser.getMessage(any())).thenReturn(PARSED_ERROR)
         `when`(authorsInteractor.getAuthors()).thenReturn(Single.just(listOf(Author(id = "0", name = "name1", color = "color1"))))
-        `when`(saveExpenseInteractor.saveExpense(any())).thenReturn(Completable.complete())
+        `when`(createExpenseInteractor.createExpense(any())).thenReturn(Completable.complete())
 
         createViewModel()
     }
@@ -228,7 +228,7 @@ class EditExpenseViewModelTest {
         viewModel.amountChanged("1")
         viewModel.saveExpense()
 
-        verify(saveExpenseInteractor).saveExpense(any())
+        verify(createExpenseInteractor).createExpense(any())
     }
 
     @Test
@@ -251,7 +251,7 @@ class EditExpenseViewModelTest {
 
     @Test
     fun showSavingError() {
-        `when`(saveExpenseInteractor.saveExpense(any())).thenReturn(Completable.error(Exception()))
+        `when`(createExpenseInteractor.createExpense(any())).thenReturn(Completable.error(Exception()))
         val captor = argumentCaptor<Exception>()
 
         viewModel.amountChanged("1")
@@ -264,6 +264,6 @@ class EditExpenseViewModelTest {
     }
 
     private fun createViewModel() {
-        viewModel = EditExpenseViewModelImpl(errorParser, router, authorsInteractor, saveExpenseInteractor)
+        viewModel = EditExpenseViewModelImpl(errorParser, router, authorsInteractor, createExpenseInteractor)
     }
 }

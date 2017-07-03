@@ -4,8 +4,8 @@ import com.kamer.orny.data.domain.ExpenseRepo
 import com.kamer.orny.data.domain.PageRepo
 import com.kamer.orny.interaction.GetAuthorsInteractor
 import com.kamer.orny.interaction.GetAuthorsInteractorImpl
-import com.kamer.orny.interaction.SaveExpenseInteractor
-import com.kamer.orny.interaction.SaveExpenseInteractorImpl
+import com.kamer.orny.interaction.CreateExpenseInteractor
+import com.kamer.orny.interaction.CreateExpenseInteractorImpl
 import dagger.Module
 import dagger.Provides
 
@@ -19,7 +19,7 @@ class InteractionModule {
 
     @Provides
     @ApplicationScope
-    fun provideSaveExpenseInteractor(expenseRepo: ExpenseRepo): SaveExpenseInteractor
-            = SaveExpenseInteractorImpl(expenseRepo)
+    fun provideSaveExpenseInteractor(expenseRepo: ExpenseRepo): CreateExpenseInteractor
+            = CreateExpenseInteractorImpl(expenseRepo)
 
 }

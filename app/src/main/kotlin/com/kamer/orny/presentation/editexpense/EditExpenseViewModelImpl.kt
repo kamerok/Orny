@@ -4,8 +4,8 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import com.kamer.orny.data.domain.model.Author
 import com.kamer.orny.data.domain.model.NewExpense
+import com.kamer.orny.interaction.CreateExpenseInteractor
 import com.kamer.orny.interaction.GetAuthorsInteractor
-import com.kamer.orny.interaction.SaveExpenseInteractor
 import com.kamer.orny.presentation.core.BaseViewModel
 import com.kamer.orny.presentation.core.ErrorMessageParser
 import com.kamer.orny.presentation.core.SingleLiveEvent
@@ -21,7 +21,7 @@ import java.util.*
 class EditExpenseViewModelImpl(val errorParser: ErrorMessageParser,
                                val router: EditExpenseRouter,
                                val authorsInteractor: GetAuthorsInteractor,
-                               val saveExpenseInteractor: SaveExpenseInteractor
+                               val createExpenseInteractor: CreateExpenseInteractor
 ) : BaseViewModel(), EditExpenseViewModel {
 
     private var authors = emptyList<Author>()
@@ -139,7 +139,7 @@ class EditExpenseViewModelImpl(val errorParser: ErrorMessageParser,
                         NewExpense(comment, date, isOffBudget, amount, author)
                     }
                 }
-                .flatMapCompletable { saveExpenseInteractor.saveExpense(it) }
+                .flatMapCompletable { createExpenseInteractor.createExpense(it) }
                 .disposeOnDestroy()
                 .doOnSubscribe { savingProgressStream.value = true }
                 .doFinally { savingProgressStream.value = false }

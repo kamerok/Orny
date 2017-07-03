@@ -4,8 +4,8 @@ import com.kamer.orny.data.domain.model.NewExpense
 import io.reactivex.Completable
 
 
-interface SaveExpenseInteractor {
+interface CreateExpenseInteractor {
 
-    fun saveExpense(expense: NewExpense): Completable
+    fun createExpense(expense: NewExpense): Completable
 
 }

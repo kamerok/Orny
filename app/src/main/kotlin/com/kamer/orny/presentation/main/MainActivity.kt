@@ -5,7 +5,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import com.kamer.orny.R
 import com.kamer.orny.app.App
-import com.kamer.orny.data.google.GoogleRepo
+import com.kamer.orny.data.domain.PageRepo
 import com.kamer.orny.di.app.ViewModelModule
 import com.kamer.orny.presentation.core.BaseActivity
 import com.kamer.orny.presentation.editexpense.EditExpenseActivity
@@ -23,7 +23,7 @@ import javax.inject.Named
 
 class MainActivity : BaseActivity() {
 
-    @Inject lateinit var googleRepo: GoogleRepo
+    @Inject lateinit var pageRepo: PageRepo
 
     @field:[Inject Named(ViewModelModule.STATISTICS)] lateinit var viewModelFactory: ViewModelProvider.Factory
 
@@ -41,15 +41,15 @@ class MainActivity : BaseActivity() {
     private fun initViews() {
         loadingProgressView.gone()
         loadButtonView.setOnClickListener {
-            googleRepo
-                    .getPage()
+            pageRepo
+                    .getPageSettings()
                     .disposeOnDestroy()
                     .defaultBackgroundSchedulers()
                     .doOnSubscribe { loadingProgressView.visible() }
                     .doFinally { loadingProgressView.gone() }
-                    .subscribe({ page ->
-                        Timber.d(page.toString())
-                        textView.text = page.budget.toString()
+                    .subscribe({ settings ->
+                        Timber.d(settings.toString())
+                        textView.text = settings.budget.toString()
                     }, {
                         toast(it.message.toString())
                     })

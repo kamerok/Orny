@@ -8,10 +8,7 @@ import com.kamer.orny.data.android.ReactiveActivitiesImpl
 import com.kamer.orny.data.domain.*
 import com.kamer.orny.data.domain.mapper.ExpenseMapper
 import com.kamer.orny.data.domain.mapper.ExpenseMapperImpl
-import com.kamer.orny.data.google.GoogleAuthHolder
-import com.kamer.orny.data.google.GoogleAuthHolderImpl
-import com.kamer.orny.data.google.GoogleRepo
-import com.kamer.orny.data.google.GoogleRepoImpl
+import com.kamer.orny.data.google.*
 import com.kamer.orny.utils.Prefs
 import dagger.Module
 import dagger.Provides
@@ -42,6 +39,10 @@ class DataModule {
     fun provideGoogleRepo(googleAuthHolder: GoogleAuthHolder, reactiveActivities: ReactiveActivities): GoogleRepo
             = GoogleRepoImpl(googleAuthHolder, reactiveActivities)
 
+    @Provides
+    @ApplicationScope
+    fun provideGooglePageHolder(googleRepo: GoogleRepo): GooglePageHolder = GooglePageHolderImpl(googleRepo)
+
     //Domain
 
     @Provides
@@ -50,7 +51,7 @@ class DataModule {
 
     @Provides
     @ApplicationScope
-    fun providePageRepo(): PageRepo = PageRepoImpl()
+    fun providePageRepo(googlePageHolder: GooglePageHolder): PageRepo = PageRepoImpl(googlePageHolder)
 
     @Provides
     @ApplicationScope

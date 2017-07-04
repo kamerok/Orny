@@ -2,24 +2,26 @@ package com.kamer.orny.data.domain
 
 import com.kamer.orny.data.domain.model.Author
 import com.kamer.orny.data.domain.model.PageSettings
-import io.reactivex.Completable
+import com.kamer.orny.data.google.GooglePageHolder
 import io.reactivex.Observable
 import io.reactivex.Single
 
 
-class PageRepoImpl : PageRepo {
+class PageRepoImpl(val googlePageHolder: GooglePageHolder) : PageRepo {
 
-    override fun getPageSettings(): Observable<PageSettings> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getPageSettings(): Observable<PageSettings> = googlePageHolder
+            .getPage()
+            .map { (budget, periodDays, startDate) -> PageSettings(budget, startDate, periodDays) }
 
-    override fun savePageSettings(pageSettings: PageSettings): Completable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getPageAuthors(): Single<List<Author>> = googlePageHolder
+            .getPage()
+            .map { page ->
+                val authorsNames = page.authors
+                val authors = mutableListOf<Author>()
+                authorsNames.indices.mapTo(authors) { Author("$it", it, authorsNames[it], "") }
+                return@map authors
+            }
+            .first(mutableListOf<Author>())
+            .map { it }
 
-    override fun getPageAuthors(): Single<List<Author>> =
-            Single
-                    .just(listOf(
-                            Author(id = "1", position = 1, name = "Макс", color = "#ff5722"),
-                            Author(id = "0", position = 0, name = "Лена", color = "#8a2be2")))
 }

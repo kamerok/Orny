@@ -1,10 +1,13 @@
 package com.kamer.orny.presentation.statistics
 
-import io.reactivex.Observable
+import android.arch.lifecycle.LiveData
+import com.kamer.orny.interaction.model.Statistics
 
 
 interface StatisticsViewModel {
 
-    fun bindShowLoading(): Observable<Boolean>
+    fun bindShowLoading(): LiveData<Boolean>
+
+    fun bindStatistics(): LiveData<Statistics>
 
 }

@@ -1,22 +1,22 @@
 package com.kamer.orny.presentation.main
 
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import com.kamer.orny.R
 import com.kamer.orny.app.App
 import com.kamer.orny.data.domain.PageRepo
 import com.kamer.orny.di.app.ViewModelModule
+import com.kamer.orny.interaction.model.Statistics
 import com.kamer.orny.presentation.core.BaseActivity
 import com.kamer.orny.presentation.editexpense.EditExpenseActivity
 import com.kamer.orny.presentation.statistics.StatisticsViewModel
 import com.kamer.orny.presentation.statistics.StatisticsViewModelImpl
-import com.kamer.orny.utils.defaultBackgroundSchedulers
 import com.kamer.orny.utils.gone
-import com.kamer.orny.utils.toast
 import com.kamer.orny.utils.visible
 import kotlinx.android.synthetic.main.activity_main.*
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -27,40 +27,46 @@ class MainActivity : BaseActivity() {
 
     @field:[Inject Named(ViewModelModule.STATISTICS)] lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    lateinit var viewModel: StatisticsViewModel
+    lateinit var statisticsViewModel: StatisticsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         App.appComponent.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(StatisticsViewModelImpl::class.java)
+        statisticsViewModel = ViewModelProviders.of(this, viewModelFactory).get(StatisticsViewModelImpl::class.java)
         initViews()
         bindViewModels()
     }
 
     private fun initViews() {
         loadingProgressView.gone()
-        loadButtonView.setOnClickListener {
-            pageRepo
-                    .getPageSettings()
-                    .disposeOnDestroy()
-                    .defaultBackgroundSchedulers()
-                    .doOnSubscribe { loadingProgressView.visible() }
-                    .doFinally { loadingProgressView.gone() }
-                    .subscribe({ settings ->
-                        Timber.d(settings.toString())
-                        textView.text = settings.budget.toString()
-                    }, {
-                        toast(it.message.toString())
-                    })
-        }
-        openButtonView.setOnClickListener { startActivity(EditExpenseActivity.getIntent(this)) }
+        addExpenseView.setOnClickListener { startActivity(EditExpenseActivity.getIntent(this)) }
     }
 
     private fun bindViewModels() {
-//        viewModel.bindShowLoading().disposeOnDestroy().subscribe(this::setLoading)
+        statisticsViewModel.bindShowLoading().observe(this, Observer { if (it != null) setLoading(it) })
+        statisticsViewModel.bindStatistics().observe(this, Observer { if (it != null) updateStatistics(it) })
     }
 
     private fun setLoading(isLoading: Boolean) = loadingProgressView.run { if (isLoading) visible() else gone() }
+
+    private fun updateStatistics(statistics: Statistics) {
+        daysView.text = getString(R.string.statistics_days, statistics.currentDay, statistics.daysTotal)
+        budgetLeftView.text = getString(R.string.statistics_budget, statistics.budgetLeft, statistics.budgetLimit)
+        budgetDifferenceView.text = statistics.budgetDifference.toString()
+        budgetDifferenceView.setBackgroundColor(ContextCompat.getColor(this,
+                if (statistics.budgetDifference < 0) R.color.budget_negative else R.color.budget_positive))
+        canSpendView.text = getString(R.string.statistics_can_spend, statistics.toSpendToday)
+        averageSpendView.text = getString(R.string.statistics_can_spend_daily, statistics.averageSpendInMonthAccordingBudgetLeft, statistics.averageSpendInMonth)
+        val firstUser = statistics.usersStatistics[0]
+        firstUserView.text = getString(R.string.statistics_user_spent,
+                firstUser.authorName, firstUser.budgetSpent, firstUser.offBudgetSpent, firstUser.spentTotal)
+        val secondUser = statistics.usersStatistics[1]
+        secondUserView.text = getString(R.string.statistics_user_spent,
+                secondUser.authorName, secondUser.budgetSpent, secondUser.offBudgetSpent, secondUser.spentTotal)
+        totalView.text = getString(R.string.statistics_total_spent, statistics.budgetSpentTotal, statistics.offBudgetSpentTotal, statistics.spentTotal)
+        val debt = statistics.debts.first()
+        debtView.text = getString(R.string.statistics_debt, debt.fromName, debt.amount, debt.toName)
+    }
 
 }

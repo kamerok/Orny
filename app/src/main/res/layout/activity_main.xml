@@ -18,32 +18,101 @@
         app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/daysView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_margin="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Days: 10/25"/>
+
+    <TextView
+        android:id="@+id/budgetLeftView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Budget: 10000/25000"/>
+
+    <TextView
+        android:id="@+id/budgetDifferenceView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp"
+        android:textSize="64sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/budgetLeftView"
+        tools:background="@color/budget_negative"
+        tools:text="-1000"/>
 
-    <Button
-        android:id="@+id/loadButtonView"
+    <TextView
+        android:id="@+id/canSpendView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Load"
+        android:layout_margin="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="@id/openButtonView"
-        app:layout_constraintTop_toBottomOf="@id/textView"/>
+        app:layout_constraintTop_toBottomOf="@id/budgetDifferenceView"
+        tools:text="Can spend today: 0"/>
 
-    <Button
-        android:id="@+id/openButtonView"
+    <TextView
+        android:id="@+id/averageSpendView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Open"
-        app:layout_constraintLeft_toLeftOf="@id/loadButtonView"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView"/>
+        android:layout_margin="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/canSpendView"
+        tools:text="Can spend daily: 100/1000"/>
+
+    <TextView
+        android:id="@+id/firstUserView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/averageSpendView"
+        tools:text="First: 1000 + 2000 = 3000"/>
+
+    <TextView
+        android:id="@+id/secondUserView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/firstUserView"
+        tools:text="Second: 1000 + 2000 = 3000"/>
+
+    <TextView
+        android:id="@+id/totalView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/secondUserView"
+        tools:text="Total: 1000 + 2000 = 3000"/>
+
+    <TextView
+        android:id="@+id/debtView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/totalView"
+        tools:text="First → 1000 → Second"/>
+
+    <Button
+        android:id="@+id/addExpenseView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="@string/main_add_expense"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
 
 </android.support.constraint.ConstraintLayout>

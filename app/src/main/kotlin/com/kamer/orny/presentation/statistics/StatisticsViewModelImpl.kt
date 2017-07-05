@@ -1,28 +1,35 @@
 package com.kamer.orny.presentation.statistics
 
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
+import com.kamer.orny.interaction.GetStatisticsInteractor
+import com.kamer.orny.interaction.model.Statistics
 import com.kamer.orny.presentation.core.BaseViewModel
 import com.kamer.orny.utils.defaultBackgroundSchedulers
-import io.reactivex.Completable
-import io.reactivex.Observable
-import io.reactivex.subjects.BehaviorSubject
+import timber.log.Timber
 
 
-class StatisticsViewModelImpl : BaseViewModel(), StatisticsViewModel {
+class StatisticsViewModelImpl(getStatisticsInteractor: GetStatisticsInteractor) : BaseViewModel(), StatisticsViewModel {
 
-    private val loading = BehaviorSubject.create<Boolean>()
+    private val loading = MutableLiveData<Boolean>()
+    private val statistics = MutableLiveData<Statistics>()
 
     init {
-        Completable
-                .fromAction {
-                    Thread.sleep(3000)
-                }
+        getStatisticsInteractor
+                .getStatistics()
                 .defaultBackgroundSchedulers()
                 .disposeOnDestroy()
-                .doOnSubscribe { loading.onNext(true) }
-                .doFinally { loading.onNext(false) }
-                .subscribe()
+                .doOnSubscribe { loading.value = true }
+                .doFinally { loading.value = false }
+                .subscribe({
+                    statistics.value = it
+                },{
+                    Timber.e(it)
+                })
     }
 
-    override fun bindShowLoading(): Observable<Boolean> = loading
+    override fun bindShowLoading(): LiveData<Boolean> = loading
+
+    override fun bindStatistics(): LiveData<Statistics> = statistics
 
 }

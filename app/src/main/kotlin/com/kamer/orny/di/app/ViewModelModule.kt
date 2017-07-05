@@ -2,8 +2,9 @@ package com.kamer.orny.di.app
 
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
-import com.kamer.orny.interaction.GetAuthorsInteractor
 import com.kamer.orny.interaction.CreateExpenseInteractor
+import com.kamer.orny.interaction.GetAuthorsInteractor
+import com.kamer.orny.interaction.GetStatisticsInteractor
 import com.kamer.orny.presentation.core.ErrorMessageParser
 import com.kamer.orny.presentation.editexpense.EditExpenseRouter
 import com.kamer.orny.presentation.editexpense.EditExpenseViewModelImpl
@@ -36,10 +37,10 @@ class ViewModelModule {
     @Named(STATISTICS)
     @Provides
     @ApplicationScope
-    fun provideStatisticsViewModelFactory(): ViewModelProvider.Factory =
+    fun provideStatisticsViewModelFactory(getStatisticsInteractor: GetStatisticsInteractor): ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {
                 override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                    return StatisticsViewModelImpl() as T
+                    return StatisticsViewModelImpl(getStatisticsInteractor) as T
                 }
             }
 

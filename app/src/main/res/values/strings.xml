@@ -5,6 +5,18 @@
     <!--Launch-->
     <string name="launch_sign_in_button">Sign In</string>
 
+    <!--Main-->
+    <string name="main_add_expense">Add Expense</string>
+
+    <!--Statistics-->
+    <string name="statistics_days">Days: %1$d/%2$d</string>
+    <string name="statistics_budget">Budget: %1$.1f/%2$.1f</string>
+    <string name="statistics_can_spend">Can spend today: %.1f</string>
+    <string name="statistics_can_spend_daily">Can spend daily: %1$.1f/%2$.1f</string>
+    <string name="statistics_user_spent">%1$s: %2$.1f + %3$.1f = %4$.1f</string>
+    <string name="statistics_total_spent">Total: %1$.1f + %2$.1f = %3$.1f</string>
+    <string name="statistics_debt">%1$s → %2$.1f → %3$s</string>
+
     <!--EditExpense-->
     <string name="edit_expense_add_title">Add Expense</string>
     <string name="edit_expense_action_save">Save</string>

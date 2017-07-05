@@ -3,4 +3,9 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <!--Main-->
+    <color name="budget_positive">#b7e1cd</color>
+    <color name="budget_negative">#f4c7c3</color>
+
 </resources>

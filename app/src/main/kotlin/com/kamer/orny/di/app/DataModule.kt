@@ -55,8 +55,8 @@ class DataModule {
 
     @Provides
     @ApplicationScope
-    fun provideExpenseRepo(googleRepo: GoogleRepo, expenseMapper: ExpenseMapper): ExpenseRepo
-            = ExpenseRepoImpl(googleRepo, expenseMapper)
+    fun provideExpenseRepo(googlePageHolder: GooglePageHolder, googleRepo: GoogleRepo, expenseMapper: ExpenseMapper): ExpenseRepo
+            = ExpenseRepoImpl(googlePageHolder, googleRepo, expenseMapper)
 
     @Provides
     @ApplicationScope

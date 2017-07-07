@@ -6,7 +6,9 @@ import com.kamer.orny.data.domain.PageRepo
 import com.kamer.orny.data.domain.model.Author
 import com.kamer.orny.data.domain.model.Expense
 import com.kamer.orny.data.domain.model.PageSettings
+import com.kamer.orny.interaction.model.Debt
 import com.kamer.orny.interaction.model.Statistics
+import com.kamer.orny.interaction.model.UserStatistics
 import com.nhaarman.mockito_kotlin.verify
 import io.reactivex.Observable
 import io.reactivex.observers.TestObserver
@@ -31,6 +33,7 @@ class GetStatisticsInteractorTest {
     @Before
     fun setUp() {
         initSettings()
+        initAuthors()
         initExpenses()
         interactor = GetStatisticsInteractorImpl(pageRepo, expenseRepo)
     }
@@ -51,7 +54,7 @@ class GetStatisticsInteractorTest {
     @Test
     fun calculateTotalDays() {
         val days = 25
-        initSettings(period =  days)
+        initSettings(period = days)
 
         assertThat(getStatistics().daysTotal).isEqualTo(days)
     }
@@ -66,7 +69,7 @@ class GetStatisticsInteractorTest {
     }
 
     private fun testCurrentDay(period: Int, dayDifference: Int, resultDays: Int) {
-        initSettings(startDate =  Date(Date().time - DateUtils.DAY_IN_MILLIS * dayDifference), period =  period)
+        initSettings(startDate = Date(Date().time - DateUtils.DAY_IN_MILLIS * dayDifference), period = period)
 
         assertThat(getStatistics().currentDay)
                 .isEqualTo(resultDays)
@@ -84,49 +87,49 @@ class GetStatisticsInteractorTest {
     fun calculateSpendTotal() {
         initExpenses(listOf(expense(values = 0 to 100.0), expense(values = 1 to 200.0)))
 
-        assertThat(getStatistics().spentTotal).isEqualTo(300.0)
+        assertThat(getStatistics().spendTotal).isEqualTo(300.0)
     }
 
     @Test
     fun calculateSpendTotalTwoValuesInSingleExpense() {
         initExpenses(listOf(expense(values = *arrayOf(0 to 100.0, 1 to 100.0))))
 
-        assertThat(getStatistics().spentTotal).isEqualTo(200.0)
+        assertThat(getStatistics().spendTotal).isEqualTo(200.0)
     }
 
     @Test
     fun calculateSpendTotalWithOffBudget() {
         initExpenses(listOf(expense(values = 0 to 200.0), expense(isOffBudget = true, values = 1 to 200.0)))
 
-        assertThat(getStatistics().spentTotal).isEqualTo(400.0)
+        assertThat(getStatistics().spendTotal).isEqualTo(400.0)
     }
 
     @Test
     fun calculateBudgetSpendTotal() {
         initExpenses(listOf(expense(values = 0 to 100.0), expense(values = 1 to 200.0)))
 
-        assertThat(getStatistics().budgetSpentTotal).isEqualTo(300.0)
+        assertThat(getStatistics().budgetSpendTotal).isEqualTo(300.0)
     }
 
     @Test
     fun calculateBudgetSpendTotalTwoValuesInSingleExpense() {
         initExpenses(listOf(expense(values = *arrayOf(0 to 100.0, 1 to 100.0))))
 
-        assertThat(getStatistics().budgetSpentTotal).isEqualTo(200.0)
+        assertThat(getStatistics().budgetSpendTotal).isEqualTo(200.0)
     }
 
     @Test
     fun calculateBudgetSpendTotalWithOffBudget() {
         initExpenses(listOf(expense(values = 0 to 200.0), expense(isOffBudget = true, values = 1 to 200.0)))
 
-        assertThat(getStatistics().budgetSpentTotal).isEqualTo(200.0)
+        assertThat(getStatistics().budgetSpendTotal).isEqualTo(200.0)
     }
 
     @Test
     fun calculateOffBudgetSpendTotal() {
         initExpenses(listOf(expense(values = 0 to 200.0), expense(isOffBudget = true, values = 1 to 100.0)))
 
-        assertThat(getStatistics().offBudgetSpentTotal).isEqualTo(100.0)
+        assertThat(getStatistics().offBudgetSpendTotal).isEqualTo(100.0)
     }
 
     @Test
@@ -262,12 +265,80 @@ class GetStatisticsInteractorTest {
         assertThat(getStatistics().averageSpendPerDayAccordingBudgetLeft).isEqualTo(0.0)
     }
 
+    @Test
+    fun calculateUsersStatistics() {
+        initExpenses(listOf(
+                expense(values = 0 to 200.0),
+                expense(isOffBudget = true, values = 1 to 100.0),
+                expense(isOffBudget = true, values = 0 to 150.0),
+                expense(values = 1 to 50.0)
+        ))
+
+        val userStatistics = getStatistics().usersStatistics
+
+        assertThat(userStatistics).containsOnly(
+                UserStatistics("0", 350.0, 200.0, 150.0),
+                UserStatistics("1", 150.0, 50.0, 100.0)
+        )
+    }
+
+    @Test
+    fun calculateUsersStatisticsNoSecondUserSpend() {
+        initExpenses(listOf(
+                expense(values = 0 to 200.0),
+                expense(isOffBudget = true, values = 0 to 150.0)
+        ))
+
+        val userStatistics = getStatistics().usersStatistics
+
+        assertThat(userStatistics).containsOnly(
+                UserStatistics("0", 350.0, 200.0, 150.0),
+                UserStatistics("1", 0.0, 0.0, 0.0)
+        )
+    }
+
+    @Test
+    fun calculateUsersStatisticsSingleUser() {
+        initAuthors(1)
+        initExpenses(listOf(
+                expense(values = 0 to 100.0),
+                expense(isOffBudget = true, values = 0 to 100.0)
+        ))
+
+        val userStatistics = getStatistics().usersStatistics
+
+        assertThat(userStatistics).containsOnly(UserStatistics("0", 200.0, 100.0, 100.0))
+    }
+
+    @Test
+    fun calculateDebts() {
+        initExpenses(listOf(expense(values = 0 to 200.0), expense(isOffBudget = true, values = 1 to 100.0)))
+
+        val debts = getStatistics().debts
+
+        assertThat(debts).containsOnly(Debt("1", "0", 50.0))
+    }
+
+    @Test
+    fun calculateDebtsSingleUserSpend() {
+        initExpenses(listOf(expense(values = 0 to 200.0)))
+
+        val debts = getStatistics().debts
+
+        assertThat(debts).containsOnly(Debt("1", "0", 100.0))
+    }
+
     private fun initSettings(budget: Double = 0.0, startDate: Date = Date(), period: Int = 0) {
         `when`(pageRepo.getPageSettings()).thenReturn(Observable.just(PageSettings(budget, startDate, period)))
     }
 
     private fun initExpenses(list: List<Expense> = emptyList()) {
         `when`(expenseRepo.getAllExpenses()).thenReturn(Observable.just(list))
+    }
+
+    private fun initAuthors(usersCont: Int = 2) {
+        val list = (0..usersCont - 1).map { author(it) }
+        `when`(pageRepo.getPageAuthors()).thenReturn(Observable.just(list))
     }
 
     private fun getStatistics(): Statistics {
@@ -281,8 +352,10 @@ class GetStatisticsInteractorTest {
     private fun expense(date: Date = Date(), isOffBudget: Boolean = false, vararg values: Pair<Int, Double>): Expense = Expense(
             date = date,
             isOffBudget = isOffBudget,
-            values = values.map { pair -> Pair(Author("$pair.first", pair.first, "$pair.first", ""), pair.second) }.toMap()
+            values = values.map { (first, second) -> Pair(author(first), second) }.toMap()
     )
+
+    private fun author(id: Int) = Author("$id", id, "$id", "")
 
     private fun yesterday(): Date = Date().apply { time -= DateUtils.DAY_IN_MILLIS }
 }

@@ -60,11 +60,11 @@ class MainActivity : BaseActivity() {
         averageSpendView.text = getString(R.string.statistics_can_spend_daily, statistics.averageSpendPerDayAccordingBudgetLeft, statistics.averageSpendPerDay)
         val firstUser = statistics.usersStatistics[0]
         firstUserView.text = getString(R.string.statistics_user_spent,
-                firstUser.authorName, firstUser.budgetSpent, firstUser.offBudgetSpent, firstUser.spentTotal)
+                firstUser.authorName, firstUser.budgetSpend, firstUser.offBudgetSpend, firstUser.spentTotal)
         val secondUser = statistics.usersStatistics[1]
         secondUserView.text = getString(R.string.statistics_user_spent,
-                secondUser.authorName, secondUser.budgetSpent, secondUser.offBudgetSpent, secondUser.spentTotal)
-        totalView.text = getString(R.string.statistics_total_spent, statistics.budgetSpentTotal, statistics.offBudgetSpentTotal, statistics.spentTotal)
+                secondUser.authorName, secondUser.budgetSpend, secondUser.offBudgetSpend, secondUser.spentTotal)
+        totalView.text = getString(R.string.statistics_total_spent, statistics.budgetSpendTotal, statistics.offBudgetSpendTotal, statistics.spendTotal)
         val debt = statistics.debts.first()
         debtView.text = getString(R.string.statistics_debt, debt.fromName, debt.amount, debt.toName)
     }

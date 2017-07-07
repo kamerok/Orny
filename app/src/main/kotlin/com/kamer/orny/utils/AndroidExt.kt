@@ -10,6 +10,7 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import java.util.*
 
 fun Context.toast(message: CharSequence) =
         Toast.makeText(this.applicationContext, message, Toast.LENGTH_SHORT).show()
@@ -54,3 +55,7 @@ fun TextView.onTextChanged(listener: (String) -> Unit) = addTextChangedListener(
 
     }
 })
+
+fun Calendar.dayStart() = this.apply {
+    set(get(Calendar.YEAR), get(Calendar.MONTH), get(Calendar.DAY_OF_MONTH), 0, 0, 0)
+}

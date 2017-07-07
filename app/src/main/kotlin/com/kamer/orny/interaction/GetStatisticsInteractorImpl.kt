@@ -16,18 +16,16 @@ class GetStatisticsInteractorImpl(val pageRepo: PageRepo, val expenseRepo: Expen
     override fun getStatistics(): Observable<Statistics> = Observable
             .zip(pageRepo.getPageSettings(), expenseRepo.getAllExpenses(), BiFunction {
                 (budget, startDate, period), expenses ->
-                val daysDifference = ((Date().time - startDate.time) / DateUtils.DAY_IN_MILLIS).toInt() + 1
+                val daysDifference = calculateDayDifference(startDate)
                 var spendTotal = 0.0
                 var budgetSpendTotal = 0.0
                 var budgetSpendToday = 0.0
-                val today = Calendar.getInstance()
-                expenses.forEach { expense ->
-                    expense.values.forEach {
+                expenses.forEach { (_, _, date, isOffBudget, values) ->
+                    values.forEach {
                         spendTotal += it.value
-                        if (!expense.isOffBudget) {
+                        if (!isOffBudget) {
                             budgetSpendTotal += it.value
-                            val expenseDay = Calendar.getInstance().apply { time = expense.date }
-                            if (isSameDay(expenseDay, today)) {
+                            if (isToday(date)) {
                                 budgetSpendToday += it.value
                             }
                         }
@@ -56,7 +54,14 @@ class GetStatisticsInteractorImpl(val pageRepo: PageRepo, val expenseRepo: Expen
                         debts = listOf(Debt("Max", "Lena", 10.0)))
             })
 
-    private fun isSameDay(day1: Calendar, day2: Calendar)
-            = (day1.get(Calendar.DAY_OF_YEAR) == day2.get(Calendar.DAY_OF_YEAR)
-            && day1.get(Calendar.YEAR) == day2.get(Calendar.YEAR))
+    private fun calculateDayDifference(date: Date): Int {
+        return ((Date().time / DateUtils.DAY_IN_MILLIS) - (date.time / DateUtils.DAY_IN_MILLIS)).toInt() + 1
+    }
+
+    private fun isToday(day: Date): Boolean {
+        val today = Calendar.getInstance()
+        val calendar = Calendar.getInstance().apply { time = day }
+        return calendar.get(Calendar.DAY_OF_YEAR) == today.get(Calendar.DAY_OF_YEAR)
+                && calendar.get(Calendar.YEAR) == today.get(Calendar.YEAR)
+    }
 }

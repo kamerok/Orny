@@ -62,6 +62,7 @@ class GetStatisticsInteractorTest {
         testCurrentDay(period = 10, dayDifference = 0, resultDays = 1)
         testCurrentDay(period = 10, dayDifference = 11, resultDays = 10)
         testCurrentDay(period = 10, dayDifference = -1, resultDays = 0)
+        testCurrentDay(period = 10, dayDifference = -2, resultDays = 0)
     }
 
     private fun testCurrentDay(period: Int, dayDifference: Int, resultDays: Int) {

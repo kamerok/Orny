@@ -11,4 +11,5 @@ class GetAuthorsInteractorImpl(val pageRepo: PageRepo) : GetAuthorsInteractor {
     override fun getAuthors(): Single<List<Author>> = pageRepo
             .getPageAuthors()
             .defaultBackgroundSchedulers()
+            .first(listOf())
 }

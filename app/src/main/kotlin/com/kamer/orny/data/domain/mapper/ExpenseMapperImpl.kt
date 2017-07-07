@@ -1,11 +1,12 @@
 package com.kamer.orny.data.domain.mapper
 
+import com.kamer.orny.data.domain.model.Author
 import com.kamer.orny.data.domain.model.Expense
 import com.kamer.orny.data.google.model.GoogleExpense
 import java.util.*
 
 
-class ExpenseMapperImpl : ExpenseMapper{
+class ExpenseMapperImpl : ExpenseMapper {
 
     override fun toGoogleExpense(expense: Expense): GoogleExpense {
         val values = mutableListOf<Double>()
@@ -23,12 +24,14 @@ class ExpenseMapperImpl : ExpenseMapper{
         )
     }
 
-    override fun toExpense(googleExpense: GoogleExpense): Expense {
-        //todo fix Expense model and author
+    override fun toExpense(googleExpense: GoogleExpense, authors: List<Author>): Expense {
+        val values = mutableMapOf<Author, Double>()
+        googleExpense.values.forEachIndexed { index, value -> values.put(authors[index], value) }
         return Expense(
                 comment = googleExpense.comment ?: "",
                 isOffBudget = googleExpense.isOffBudget,
-                date = googleExpense.date ?: Date()
+                date = googleExpense.date ?: Date(),
+                values = values
         )
     }
 }

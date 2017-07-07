@@ -53,11 +53,11 @@ class MainActivity : BaseActivity() {
     private fun updateStatistics(statistics: Statistics) {
         daysView.text = getString(R.string.statistics_days, statistics.currentDay, statistics.daysTotal)
         budgetLeftView.text = getString(R.string.statistics_budget, statistics.budgetLeft, statistics.budgetLimit)
-        budgetDifferenceView.text = statistics.budgetDifference.toString()
+        budgetDifferenceView.text = String.format("%.1f", statistics.budgetDifference)
         budgetDifferenceView.setBackgroundColor(ContextCompat.getColor(this,
                 if (statistics.budgetDifference < 0) R.color.budget_negative else R.color.budget_positive))
         canSpendView.text = getString(R.string.statistics_can_spend, statistics.toSpendToday)
-        averageSpendView.text = getString(R.string.statistics_can_spend_daily, statistics.averageSpendInMonthAccordingBudgetLeft, statistics.averageSpendInMonth)
+        averageSpendView.text = getString(R.string.statistics_can_spend_daily, statistics.averageSpendPerDayAccordingBudgetLeft, statistics.averageSpendPerDay)
         val firstUser = statistics.usersStatistics[0]
         firstUserView.text = getString(R.string.statistics_user_spent,
                 firstUser.authorName, firstUser.budgetSpent, firstUser.offBudgetSpent, firstUser.spentTotal)

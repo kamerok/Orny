@@ -53,6 +53,8 @@ class GetStatisticsInteractorImpl(val pageRepo: PageRepo, val expenseRepo: Expen
                 val averageSpendPerDay = budget / period
                 val averageSpendPerDayAccordingBudgetLeft
                         = (budget - (budgetSpendTotal - budgetSpendToday)) / (period - daysDifference)
+                val averageSpendPerDayAccordingBudgetLeftWithoutToday
+                        = (budget - budgetSpendTotal) / (period - daysDifference)
                 val debts = mutableListOf<Debt>()
                 if (usersStatistics.size == 2) {
                     val statistics = usersStatistics.values.toList()
@@ -76,7 +78,7 @@ class GetStatisticsInteractorImpl(val pageRepo: PageRepo, val expenseRepo: Expen
                         budgetDifference = currentDay * averageSpendPerDay - budgetSpendTotal,
                         toSpendToday = (averageSpendPerDayAccordingBudgetLeft - budgetSpendToday).coerceAtLeast(0.0),
                         averageSpendPerDay = averageSpendPerDay,
-                        averageSpendPerDayAccordingBudgetLeft = averageSpendPerDayAccordingBudgetLeft.coerceAtLeast(0.0),
+                        averageSpendPerDayAccordingBudgetLeft = averageSpendPerDayAccordingBudgetLeftWithoutToday.coerceAtLeast(0.0),
                         usersStatistics = usersStatistics.values.toList(),
                         debts = debts
                 )

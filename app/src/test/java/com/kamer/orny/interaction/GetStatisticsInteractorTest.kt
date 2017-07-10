@@ -250,9 +250,9 @@ class GetStatisticsInteractorTest {
     }
 
     @Test
-    fun averageSpendPerDayAccordingBudgetLeftShouldIgnoreToday() {
+    fun averageSpendPerDayAccordingBudgetLeftShouldNotIgnoreToday() {
         initSettings(budget = 533.0, period = 3)
-        initExpenses(listOf(expense(date = yesterday(), values = 1 to 200.0), expense(values = 0 to 100.0)))
+        initExpenses(listOf(expense(date = yesterday(), values = 1 to 100.0), expense(values = 0 to 100.0)))
 
         assertThat(getStatistics().averageSpendPerDayAccordingBudgetLeft).isEqualTo(111.0)
     }

@@ -29,7 +29,7 @@ class GoogleRepoImpl(val googleAuthHolder: GoogleAuthHolder, val reactiveActivit
         private const val APP_PAGE_ID = "AppSupportedSheet"
 
         private const val SPREADSHEET_ID = "1YsFrfpNzs_gjdtnqVNuAPPYl3NRjeo8GgEWAOD7BdOg"
-        private const val SHEET_NAME = "Тест"
+        private const val SHEET_NAME = "Июнь"
         private const val SHEET_ID = 1549946213
 
         val DATE_FORMAT = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())

@@ -266,6 +266,13 @@ class GetStatisticsInteractorTest {
     }
 
     @Test
+    fun averageSpendPerDayAccordingBudgetLeftShouldExpand() {
+        initSettings(budget = 200.0, period = 3, startDate = yesterday())
+
+        assertThat(getStatistics().averageSpendPerDayAccordingBudgetLeft).isEqualTo(100.0)
+    }
+
+    @Test
     fun calculateUsersStatistics() {
         initExpenses(listOf(
                 expense(values = 0 to 200.0),

@@ -52,7 +52,7 @@ class GetStatisticsInteractorImpl(val pageRepo: PageRepo, val expenseRepo: Expen
                 val budgetLeft = budget - budgetSpendTotal
                 val averageSpendPerDay = budget / period
                 val averageSpendPerDayAccordingBudgetLeft
-                        = (budget - (budgetSpendTotal - budgetSpendToday)) / period
+                        = (budget - (budgetSpendTotal - budgetSpendToday)) / (period - daysDifference)
                 val debts = mutableListOf<Debt>()
                 if (usersStatistics.size == 2) {
                     val statistics = usersStatistics.values.toList()
@@ -64,15 +64,16 @@ class GetStatisticsInteractorImpl(val pageRepo: PageRepo, val expenseRepo: Expen
                                 (statistics[1].spentTotal - statistics[0].spentTotal) / 2))
                     }
                 }
+                val currentDay = (daysDifference + 1).coerceIn(0, period)
                 Statistics(
                         daysTotal = period,
-                        currentDay = daysDifference.coerceIn(0, period),
+                        currentDay = currentDay,
                         budgetLimit = budget,
                         budgetLeft = budgetLeft.coerceAtLeast(0.0),
                         spendTotal = spendTotal,
                         budgetSpendTotal = budgetSpendTotal,
                         offBudgetSpendTotal = spendTotal - budgetSpendTotal,
-                        budgetDifference = daysDifference.coerceIn(0, period) * averageSpendPerDay - budgetSpendTotal,
+                        budgetDifference = currentDay * averageSpendPerDay - budgetSpendTotal,
                         toSpendToday = (averageSpendPerDayAccordingBudgetLeft - budgetSpendToday).coerceAtLeast(0.0),
                         averageSpendPerDay = averageSpendPerDay,
                         averageSpendPerDayAccordingBudgetLeft = averageSpendPerDayAccordingBudgetLeft.coerceAtLeast(0.0),
@@ -87,7 +88,7 @@ class GetStatisticsInteractorImpl(val pageRepo: PageRepo, val expenseRepo: Expen
             timeInMillis = date.time
             dayStart()
         }
-        return ((today.timeInMillis / DateUtils.DAY_IN_MILLIS) - (dateCalendar.timeInMillis / DateUtils.DAY_IN_MILLIS)).toInt() + 1
+        return ((today.timeInMillis / DateUtils.DAY_IN_MILLIS) - (dateCalendar.timeInMillis / DateUtils.DAY_IN_MILLIS)).toInt()
     }
 
     private fun isToday(day: Date): Boolean {

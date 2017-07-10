@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import com.kamer.orny.R
 import com.kamer.orny.app.App
-import com.kamer.orny.data.domain.PageRepo
 import com.kamer.orny.di.app.ViewModelModule
 import com.kamer.orny.interaction.model.Statistics
 import com.kamer.orny.presentation.core.BaseActivity
@@ -22,8 +21,6 @@ import javax.inject.Named
 
 
 class MainActivity : BaseActivity() {
-
-    @Inject lateinit var pageRepo: PageRepo
 
     @field:[Inject Named(ViewModelModule.STATISTICS)] lateinit var viewModelFactory: ViewModelProvider.Factory
 

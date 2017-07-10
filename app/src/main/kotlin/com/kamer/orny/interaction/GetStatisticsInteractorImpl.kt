@@ -17,13 +17,13 @@ class GetStatisticsInteractorImpl(val pageRepo: PageRepo, val expenseRepo: Expen
     override fun getStatistics(): Observable<Statistics> = Observable
             .zip(pageRepo.getPageSettings(), pageRepo.getPageAuthors(), expenseRepo.getAllExpenses(), Function3 {
                 (budget, startDate, period), authors, expenses ->
-                val daysDifference = calculateDayDifference(startDate)
+
                 var spendTotal = 0.0
                 var budgetSpendTotal = 0.0
                 var budgetSpendToday = 0.0
                 val usersStatistics = authors
-                        .map { (id, _, name) -> id to UserStatistics(name, 0.0, 0.0, 0.0) }
-                        .toMap().toMutableMap()
+                        .associate { (id, _, name) -> id to UserStatistics(name) }
+                        .toMutableMap()
                 expenses.forEach { (_, _, date, isOffBudget, values) ->
                     values.forEach {
                         val author = it.key
@@ -32,12 +32,14 @@ class GetStatisticsInteractorImpl(val pageRepo: PageRepo, val expenseRepo: Expen
                         val offBudgetSpend = if (isOffBudget) spend else 0.0
 
                         spendTotal += spend
+
                         if (!isOffBudget) {
                             budgetSpendTotal += budgetSpend
                             if (isToday(date)) {
                                 budgetSpendToday += budgetSpend
                             }
                         }
+
                         val userId = author.id
                         val oldStatistics = usersStatistics[userId]
                         if (oldStatistics != null) {
@@ -49,12 +51,18 @@ class GetStatisticsInteractorImpl(val pageRepo: PageRepo, val expenseRepo: Expen
                         }
                     }
                 }
-                val budgetLeft = budget - budgetSpendTotal
+
+                val daysDifference = startDate.daysFromToday()
+                val currentDay = (daysDifference.inc()).coerceIn(0, period)
+                val budgetLeft = (budget - budgetSpendTotal).coerceAtLeast(0.0)
+                val offBudgetSpendTotal = spendTotal - budgetSpendTotal
                 val averageSpendPerDay = budget / period
-                val averageSpendPerDayAccordingBudgetLeft
-                        = (budget - (budgetSpendTotal - budgetSpendToday)) / (period - daysDifference)
-                val averageSpendPerDayAccordingBudgetLeftWithoutToday
-                        = (budget - budgetSpendTotal) / (period - daysDifference)
+                val budgetDifference = currentDay * averageSpendPerDay - budgetSpendTotal
+                val daysLeft = period - daysDifference
+                val yesterdayBudgetLeft = budget - (budgetSpendTotal - budgetSpendToday)
+                val toSpendToday = (yesterdayBudgetLeft / daysLeft - budgetSpendToday).coerceAtLeast(0.0)
+                val averageSpendPerDayAccordingBudgetLeft = (budgetLeft / daysLeft).coerceAtLeast(0.0)
+
                 val debts = mutableListOf<Debt>()
                 if (usersStatistics.size == 2) {
                     val statistics = usersStatistics.values.toList()
@@ -66,31 +74,32 @@ class GetStatisticsInteractorImpl(val pageRepo: PageRepo, val expenseRepo: Expen
                                 (statistics[1].spentTotal - statistics[0].spentTotal) / 2))
                     }
                 }
-                val currentDay = (daysDifference + 1).coerceIn(0, period)
                 Statistics(
                         daysTotal = period,
                         currentDay = currentDay,
                         budgetLimit = budget,
-                        budgetLeft = budgetLeft.coerceAtLeast(0.0),
+                        budgetLeft = budgetLeft,
                         spendTotal = spendTotal,
                         budgetSpendTotal = budgetSpendTotal,
-                        offBudgetSpendTotal = spendTotal - budgetSpendTotal,
-                        budgetDifference = currentDay * averageSpendPerDay - budgetSpendTotal,
-                        toSpendToday = (averageSpendPerDayAccordingBudgetLeft - budgetSpendToday).coerceAtLeast(0.0),
+                        offBudgetSpendTotal = offBudgetSpendTotal,
+                        budgetDifference = budgetDifference,
+                        toSpendToday = toSpendToday,
                         averageSpendPerDay = averageSpendPerDay,
-                        averageSpendPerDayAccordingBudgetLeft = averageSpendPerDayAccordingBudgetLeftWithoutToday.coerceAtLeast(0.0),
+                        averageSpendPerDayAccordingBudgetLeft = averageSpendPerDayAccordingBudgetLeft,
                         usersStatistics = usersStatistics.values.toList(),
                         debts = debts
                 )
             })
 
-    private fun calculateDayDifference(date: Date): Int {
+    private fun Date.daysFromToday(): Int {
         val today = Calendar.getInstance().dayStart()
         val dateCalendar = Calendar.getInstance().apply {
-            timeInMillis = date.time
+            timeInMillis = this@daysFromToday.time
             dayStart()
         }
-        return ((today.timeInMillis / DateUtils.DAY_IN_MILLIS) - (dateCalendar.timeInMillis / DateUtils.DAY_IN_MILLIS)).toInt()
+        val todayDay = today.timeInMillis / DateUtils.DAY_IN_MILLIS
+        val dateDay = dateCalendar.timeInMillis / DateUtils.DAY_IN_MILLIS
+        return (todayDay - dateDay).toInt()
     }
 
     private fun isToday(day: Date): Boolean {

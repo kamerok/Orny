@@ -7,6 +7,7 @@
 
     <!--Main-->
     <string name="main_add_expense">Add Expense</string>
+    <string name="main_settings">Settings</string>
 
     <!--Statistics-->
     <string name="statistics_days">Days: %1$d/%2$d</string>
@@ -28,5 +29,8 @@
     <string name="edit_expense_amount_hint">Amount</string>
     <string name="edit_expense_comment_hint">Comment</string>
     <string name="edit_expense_off_budget">Off Budget</string>
+
+    <!--Settings-->
+    <string name="settings_title">Setting</string>
 
 </resources>

@@ -11,6 +11,7 @@ import com.kamer.orny.di.app.ViewModelModule
 import com.kamer.orny.interaction.model.Statistics
 import com.kamer.orny.presentation.core.BaseActivity
 import com.kamer.orny.presentation.editexpense.EditExpenseActivity
+import com.kamer.orny.presentation.settings.SettingsActivity
 import com.kamer.orny.presentation.statistics.StatisticsViewModel
 import com.kamer.orny.presentation.statistics.StatisticsViewModelImpl
 import com.kamer.orny.utils.gone
@@ -38,6 +39,8 @@ class MainActivity : BaseActivity() {
     private fun initViews() {
         loadingProgressView.gone()
         addExpenseView.setOnClickListener { startActivity(EditExpenseActivity.getIntent(this)) }
+        settingsView.setOnClickListener { startActivity(SettingsActivity
+                .getIntent(this)) }
     }
 
     private fun bindViewModels() {

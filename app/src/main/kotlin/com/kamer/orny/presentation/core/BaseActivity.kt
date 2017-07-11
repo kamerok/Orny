@@ -4,7 +4,7 @@ import android.arch.lifecycle.LifecycleRegistry
 import android.arch.lifecycle.LifecycleRegistryOwner
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
-import com.kamer.orny.data.android.ActivityHolder
+import com.kamer.orny.data.android.ActivityHolderSetter
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -17,7 +17,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleRegistryOwner {
 
     private val lifecycleRegistry by lazy { LifecycleRegistry(this) }
 
-    @Inject lateinit var activityHolder: ActivityHolder
+    @Inject lateinit var activityHolderSetter: ActivityHolderSetter
 
     private val compositeDisposable = CompositeDisposable()
 
@@ -27,18 +27,18 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleRegistryOwner {
 
     override fun onResume() {
         super.onResume()
-        activityHolder.onActivityResumed(this)
+        activityHolderSetter.onActivityResumed(this)
     }
 
     override fun onDestroy() {
         compositeDisposable.dispose()
-        activityHolder.onActivityDestroyed(this)
+        activityHolderSetter.onActivityDestroyed(this)
         super.onDestroy()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        activityHolder.passActivityResult(requestCode, resultCode, data)
+        activityHolderSetter.passActivityResult(requestCode, resultCode, data)
     }
 
     override fun getLifecycle(): LifecycleRegistry = lifecycleRegistry

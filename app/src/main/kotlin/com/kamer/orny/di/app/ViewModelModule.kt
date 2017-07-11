@@ -8,6 +8,8 @@ import com.kamer.orny.interaction.GetStatisticsInteractor
 import com.kamer.orny.presentation.core.ErrorMessageParser
 import com.kamer.orny.presentation.editexpense.EditExpenseRouter
 import com.kamer.orny.presentation.editexpense.EditExpenseViewModelImpl
+import com.kamer.orny.presentation.main.MainRouter
+import com.kamer.orny.presentation.main.MainViewModelImpl
 import com.kamer.orny.presentation.statistics.StatisticsViewModelImpl
 import dagger.Module
 import dagger.Provides
@@ -19,6 +21,7 @@ class ViewModelModule {
     companion object {
         const val EDIT_EXPENSE = "EditExpense"
         const val STATISTICS = "Statistics"
+        const val MAIN = "Main"
     }
 
     @Named(EDIT_EXPENSE)
@@ -41,6 +44,16 @@ class ViewModelModule {
             object : ViewModelProvider.Factory {
                 override fun <T : ViewModel?> create(modelClass: Class<T>): T {
                     return StatisticsViewModelImpl(getStatisticsInteractor) as T
+                }
+            }
+
+    @Named(MAIN)
+    @Provides
+    @ApplicationScope
+    fun provideMainViewModelFactory(mainRouter: MainRouter): ViewModelProvider.Factory =
+            object : ViewModelProvider.Factory {
+                override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                    return MainViewModelImpl(mainRouter) as T
                 }
             }
 

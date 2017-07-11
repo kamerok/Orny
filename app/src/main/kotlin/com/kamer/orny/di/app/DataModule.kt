@@ -1,10 +1,7 @@
 package com.kamer.orny.di.app
 
 import android.content.Context
-import com.kamer.orny.data.android.ActivityHolder
-import com.kamer.orny.data.android.ActivityHolderImpl
-import com.kamer.orny.data.android.ReactiveActivities
-import com.kamer.orny.data.android.ReactiveActivitiesImpl
+import com.kamer.orny.data.android.*
 import com.kamer.orny.data.domain.*
 import com.kamer.orny.data.domain.mapper.ExpenseMapper
 import com.kamer.orny.data.domain.mapper.ExpenseMapperImpl
@@ -20,7 +17,15 @@ class DataModule {
 
     @Provides
     @ApplicationScope
-    fun provideActivityHolder(): ActivityHolder = ActivityHolderImpl()
+    fun provideActivityHolderImpl() = ActivityHolderImpl()
+
+    @Provides
+    @ApplicationScope
+    fun provideActivityHolder(activityHolderImpl: ActivityHolderImpl): ActivityHolder = activityHolderImpl
+
+    @Provides
+    @ApplicationScope
+    fun provideActivityHolderSetter(activityHolderImpl: ActivityHolderImpl): ActivityHolderSetter = activityHolderImpl
 
     @Provides
     @ApplicationScope

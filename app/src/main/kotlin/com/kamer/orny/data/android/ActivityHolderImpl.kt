@@ -5,7 +5,7 @@ import android.content.Intent
 import java.lang.ref.WeakReference
 
 
-class ActivityHolderImpl : ActivityHolder {
+class ActivityHolderImpl : ActivityHolder, ActivityHolderSetter {
 
     private var activityRef: WeakReference<Activity>? = null
     private var resultHandlers = mutableListOf<ActivityHolder.ActivityResultHandler>()

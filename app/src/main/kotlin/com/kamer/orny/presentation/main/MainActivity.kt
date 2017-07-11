@@ -10,8 +10,6 @@ import com.kamer.orny.app.App
 import com.kamer.orny.di.app.ViewModelModule
 import com.kamer.orny.interaction.model.Statistics
 import com.kamer.orny.presentation.core.BaseActivity
-import com.kamer.orny.presentation.editexpense.EditExpenseActivity
-import com.kamer.orny.presentation.settings.SettingsActivity
 import com.kamer.orny.presentation.statistics.StatisticsViewModel
 import com.kamer.orny.presentation.statistics.StatisticsViewModelImpl
 import com.kamer.orny.utils.gone
@@ -23,24 +21,26 @@ import javax.inject.Named
 
 class MainActivity : BaseActivity() {
 
-    @field:[Inject Named(ViewModelModule.STATISTICS)] lateinit var viewModelFactory: ViewModelProvider.Factory
+    @field:[Inject Named(ViewModelModule.STATISTICS)] lateinit var statisticsViewModelFactory: ViewModelProvider.Factory
+    @field:[Inject Named(ViewModelModule.MAIN)] lateinit var mainViewModelFactory: ViewModelProvider.Factory
 
-    lateinit var statisticsViewModel: StatisticsViewModel
+    private lateinit var statisticsViewModel: StatisticsViewModel
+    private lateinit var mainViewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         App.appComponent.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        statisticsViewModel = ViewModelProviders.of(this, viewModelFactory).get(StatisticsViewModelImpl::class.java)
+        statisticsViewModel = ViewModelProviders.of(this, statisticsViewModelFactory).get(StatisticsViewModelImpl::class.java)
+        mainViewModel = ViewModelProviders.of(this, mainViewModelFactory).get(MainViewModelImpl::class.java)
         initViews()
         bindViewModels()
     }
 
     private fun initViews() {
         loadingProgressView.gone()
-        addExpenseView.setOnClickListener { startActivity(EditExpenseActivity.getIntent(this)) }
-        settingsView.setOnClickListener { startActivity(SettingsActivity
-                .getIntent(this)) }
+        addExpenseView.setOnClickListener { mainViewModel.addExpense() }
+        settingsView.setOnClickListener { mainViewModel.openSettings() }
     }
 
     private fun bindViewModels() {

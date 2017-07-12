@@ -31,6 +31,6 @@
     <string name="edit_expense_off_budget">Off Budget</string>
 
     <!--Settings-->
-    <string name="settings_title">Setting</string>
+    <string name="settings_title">Settings</string>
 
 </resources>

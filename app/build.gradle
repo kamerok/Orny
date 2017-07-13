@@ -82,6 +82,9 @@ dependencies {
     compile "com.google.dagger:dagger:$dagger"
     kapt "com.google.dagger:dagger-compiler:$dagger"
 
+    kapt "com.google.dagger:dagger-android-processor:$dagger"
+    compile "com.google.dagger:dagger-android-support:$dagger"
+
     compile 'io.reactivex.rxjava2:rxkotlin:2.0.0'
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
 

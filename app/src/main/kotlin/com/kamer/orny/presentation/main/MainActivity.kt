@@ -6,7 +6,6 @@ import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import com.kamer.orny.R
-import com.kamer.orny.app.App
 import com.kamer.orny.di.app.ViewModelModule
 import com.kamer.orny.interaction.model.Statistics
 import com.kamer.orny.presentation.core.BaseActivity
@@ -14,6 +13,7 @@ import com.kamer.orny.presentation.statistics.StatisticsViewModel
 import com.kamer.orny.presentation.statistics.StatisticsViewModelImpl
 import com.kamer.orny.utils.gone
 import com.kamer.orny.utils.visible
+import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 import javax.inject.Named
@@ -28,7 +28,7 @@ class MainActivity : BaseActivity() {
     private lateinit var mainViewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        App.appComponent.inject(this)
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         statisticsViewModel = ViewModelProviders.of(this, statisticsViewModelFactory).get(StatisticsViewModelImpl::class.java)

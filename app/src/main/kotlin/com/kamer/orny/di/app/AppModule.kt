@@ -1,15 +1,14 @@
 package com.kamer.orny.di.app
 
-import android.app.Application
 import android.content.Context
+import com.kamer.orny.app.App
 import dagger.Module
 import dagger.Provides
 
 @Module
-class AppModule(private val application: Application) {
+class AppModule {
 
     @Provides
-    @ApplicationScope
-    fun provideApplicationContext(): Context = application
+    fun provideApplicationContext(application: App): Context = application
 
 }

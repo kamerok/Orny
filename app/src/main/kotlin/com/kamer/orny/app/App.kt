@@ -1,22 +1,29 @@
 package com.kamer.orny.app
 
+import android.app.Activity
 import android.app.Application
-import com.kamer.orny.di.app.AppComponent
-import com.kamer.orny.di.app.AppModule
 import com.kamer.orny.di.app.DaggerAppComponent
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.HasActivityInjector
 import timber.log.Timber
+import javax.inject.Inject
 
-class App : Application() {
+class App : Application(), HasActivityInjector {
 
-    companion object {
-        lateinit var appComponent: AppComponent
-    }
+    @Inject lateinit var injector: DispatchingAndroidInjector<Activity>
 
     override fun onCreate() {
         super.onCreate()
 
-        appComponent = DaggerAppComponent.builder().appModule(AppModule(this)).build()
+        DaggerAppComponent
+                .builder()
+                .application(this)
+                .build()
+                .inject(this)
+
         Timber.plant(Timber.DebugTree())
     }
 
+    override fun activityInjector(): AndroidInjector<Activity> = injector
 }

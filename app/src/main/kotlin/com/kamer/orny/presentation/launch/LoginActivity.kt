@@ -4,11 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import com.kamer.orny.R
-import com.kamer.orny.app.App
 import com.kamer.orny.data.domain.AuthRepo
 import com.kamer.orny.presentation.core.BaseActivity
 import com.kamer.orny.utils.defaultBackgroundSchedulers
 import com.kamer.orny.utils.toast
+import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_launch.*
 import timber.log.Timber
 import javax.inject.Inject
@@ -24,7 +24,7 @@ class LoginActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        App.appComponent.inject(this)
+        AndroidInjection.inject(this)
         setContentView(R.layout.activity_launch)
         signInView.setOnClickListener { login() }
     }

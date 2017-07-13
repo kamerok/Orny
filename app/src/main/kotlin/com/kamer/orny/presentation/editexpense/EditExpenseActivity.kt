@@ -17,12 +17,12 @@ import android.view.inputmethod.EditorInfo
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import com.kamer.orny.R
-import com.kamer.orny.app.App
 import com.kamer.orny.data.domain.model.Author
 import com.kamer.orny.di.app.ViewModelModule
 import com.kamer.orny.presentation.core.BaseActivity
 import com.kamer.orny.utils.onTextChanged
 import com.kamer.orny.utils.setupToolbar
+import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_edit_expense.*
 import kotlinx.android.synthetic.main.layout_toolbar.*
 import java.text.SimpleDateFormat
@@ -49,7 +49,7 @@ class EditExpenseActivity : BaseActivity(), LifecycleOwner {
     private var dialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        App.appComponent.inject(this)
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_expense)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(EditExpenseViewModelImpl::class.java)

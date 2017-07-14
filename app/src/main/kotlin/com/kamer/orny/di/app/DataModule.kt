@@ -1,75 +1,65 @@
 package com.kamer.orny.di.app
 
-import android.content.Context
 import com.kamer.orny.data.android.*
 import com.kamer.orny.data.domain.*
 import com.kamer.orny.data.domain.mapper.ExpenseMapper
 import com.kamer.orny.data.domain.mapper.ExpenseMapperImpl
 import com.kamer.orny.data.google.*
-import com.kamer.orny.utils.Prefs
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 
 @Module
-class DataModule {
+abstract class DataModule {
 
     //Android
 
-    @Provides
+    @Binds
     @ApplicationScope
-    fun provideActivityHolderImpl() = ActivityHolderImpl()
+    abstract fun bindActivityHolder(holder: ActivityHolderImpl): ActivityHolder
 
-    @Provides
+    @Binds
     @ApplicationScope
-    fun provideActivityHolder(activityHolderImpl: ActivityHolderImpl): ActivityHolder = activityHolderImpl
+    abstract fun bindActivityHolderSetter(holder: ActivityHolderImpl): ActivityHolderSetter
 
-    @Provides
+    @Binds
     @ApplicationScope
-    fun provideActivityHolderSetter(activityHolderImpl: ActivityHolderImpl): ActivityHolderSetter = activityHolderImpl
-
-    @Provides
-    @ApplicationScope
-    fun provideReactiveActivities(activityHolder: ActivityHolder): ReactiveActivities
-            = ReactiveActivitiesImpl(activityHolder)
+    abstract fun bindReactiveActivities(reactiveActivities: ReactiveActivitiesImpl): ReactiveActivities
 
     //Google
 
-    @Provides
+    @Binds
     @ApplicationScope
-    fun provideGoogleAuthHolder(context: Context, prefs: Prefs, activityHolder: ActivityHolder, reactiveActivities: ReactiveActivities): GoogleAuthHolder
-            = GoogleAuthHolderImpl(context, prefs, activityHolder, reactiveActivities)
+    abstract fun bindGoogleAuthHolder(authHolder: GoogleAuthHolderImpl): GoogleAuthHolder
 
-    @Provides
+    @Binds
     @ApplicationScope
-    fun provideGoogleRepo(googleAuthHolder: GoogleAuthHolder, reactiveActivities: ReactiveActivities): GoogleRepo
-            = GoogleRepoImpl(googleAuthHolder, reactiveActivities)
+    abstract fun bindGoogleRepo(googleRepo: GoogleRepoImpl): GoogleRepo
 
-    @Provides
+    @Binds
     @ApplicationScope
-    fun provideGooglePageHolder(googleRepo: GoogleRepo): GooglePageHolder = GooglePageHolderImpl(googleRepo)
+    abstract fun bindGooglePageHolder(googlePageHolder: GooglePageHolderImpl): GooglePageHolder
 
     //Domain
 
-    @Provides
+    @Binds
     @ApplicationScope
-    fun provideAuthRepo(googleAuthHolder: GoogleAuthHolder): AuthRepo = AuthRepoImpl(googleAuthHolder)
+    abstract fun bindAuthRepo(authRepo: AuthRepoImpl): AuthRepo
 
-    @Provides
+    @Binds
     @ApplicationScope
-    fun providePageRepo(googlePageHolder: GooglePageHolder): PageRepo = PageRepoImpl(googlePageHolder)
+    abstract fun bindPageRepo(pageRepo: PageRepoImpl): PageRepo
 
-    @Provides
+    @Binds
     @ApplicationScope
-    fun provideExpenseRepo(googlePageHolder: GooglePageHolder, googleRepo: GoogleRepo, pageRepo: PageRepo, expenseMapper: ExpenseMapper): ExpenseRepo
-            = ExpenseRepoImpl(googlePageHolder, googleRepo, pageRepo, expenseMapper)
+    abstract fun bindExpenseRepo(expenseRepo: ExpenseRepoImpl): ExpenseRepo
 
-    @Provides
+    @Binds
     @ApplicationScope
-    fun provideSpreadsheetRepo(googleRepo: GoogleRepo): SpreadsheetRepo = SpreadsheetRepoImpl(googleRepo)
+    abstract fun bindSpreadsheetRepo(spreadsheetRepoImpl: SpreadsheetRepoImpl): SpreadsheetRepo
 
     //Mapping
 
-    @Provides
+    @Binds
     @ApplicationScope
-    fun provideExpenseMapper(): ExpenseMapper = ExpenseMapperImpl()
+    abstract fun bindExpenseMapper(expenseMapper: ExpenseMapperImpl): ExpenseMapper
 }

@@ -5,13 +5,17 @@ import android.app.Activity
 import android.content.Intent
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
+import com.kamer.orny.di.app.ApplicationScope
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
 
 
-class ReactiveActivitiesImpl(val activityHolder: ActivityHolder)
-    : ReactiveActivities, ActivityHolder.ActivityResultHandler {
+@ApplicationScope
+class ReactiveActivitiesImpl @Inject constructor(
+        val activityHolder: ActivityHolder
+) : ReactiveActivities, ActivityHolder.ActivityResultHandler {
 
     companion object {
         private const val REQUEST_ACCOUNT_PICKER = 1000
@@ -37,7 +41,7 @@ class ReactiveActivitiesImpl(val activityHolder: ActivityHolder)
             .observeOn(Schedulers.io())
 
     override fun chooseGoogleAccount(credential: GoogleAccountCredential): Single<String> = Single.create { e ->
-        chooseAccountListener = object: SingleListener<String> {
+        chooseAccountListener = object : SingleListener<String> {
 
             override fun onError(t: Throwable) = e.onError(t)
 

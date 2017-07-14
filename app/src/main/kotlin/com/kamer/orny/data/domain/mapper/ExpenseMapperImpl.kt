@@ -3,10 +3,13 @@ package com.kamer.orny.data.domain.mapper
 import com.kamer.orny.data.domain.model.Author
 import com.kamer.orny.data.domain.model.Expense
 import com.kamer.orny.data.google.model.GoogleExpense
+import com.kamer.orny.di.app.ApplicationScope
 import java.util.*
+import javax.inject.Inject
 
 
-class ExpenseMapperImpl : ExpenseMapper {
+@ApplicationScope
+class ExpenseMapperImpl @Inject constructor() : ExpenseMapper {
 
     override fun toGoogleExpense(expense: Expense): GoogleExpense {
         val values = mutableListOf<Double>()

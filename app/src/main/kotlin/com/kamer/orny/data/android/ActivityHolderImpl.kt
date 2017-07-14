@@ -2,10 +2,12 @@ package com.kamer.orny.data.android
 
 import android.app.Activity
 import android.content.Intent
+import com.kamer.orny.di.app.ApplicationScope
 import java.lang.ref.WeakReference
+import javax.inject.Inject
 
-
-class ActivityHolderImpl : ActivityHolder, ActivityHolderSetter {
+@ApplicationScope
+class ActivityHolderImpl @Inject constructor() : ActivityHolder, ActivityHolderSetter {
 
     private var activityRef: WeakReference<Activity>? = null
     private var resultHandlers = mutableListOf<ActivityHolder.ActivityResultHandler>()

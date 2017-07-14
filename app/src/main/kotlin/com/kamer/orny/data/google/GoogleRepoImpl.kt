@@ -13,6 +13,7 @@ import com.kamer.orny.data.android.ReactiveActivities
 import com.kamer.orny.data.google.exceptions.NotSupportedSheetException
 import com.kamer.orny.data.google.model.GoogleExpense
 import com.kamer.orny.data.google.model.GooglePage
+import com.kamer.orny.di.app.ApplicationScope
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
@@ -20,10 +21,14 @@ import timber.log.Timber
 import java.lang.IllegalArgumentException
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
 
-class GoogleRepoImpl(val googleAuthHolder: GoogleAuthHolder, val reactiveActivities: ReactiveActivities)
-    : GoogleRepo {
+@ApplicationScope
+class GoogleRepoImpl @Inject constructor(
+        val googleAuthHolder: GoogleAuthHolder,
+        val reactiveActivities: ReactiveActivities
+) : GoogleRepo {
 
     companion object {
         private const val APP_PAGE_ID = "AppSupportedSheet"

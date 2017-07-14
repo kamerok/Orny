@@ -1,10 +1,15 @@
 package com.kamer.orny.data.domain
 
 import com.kamer.orny.data.google.GoogleAuthHolder
+import com.kamer.orny.di.app.ApplicationScope
 import io.reactivex.Completable
+import javax.inject.Inject
 
 
-class AuthRepoImpl(private val googleAuthHolder: GoogleAuthHolder) : AuthRepo {
+@ApplicationScope
+class AuthRepoImpl @Inject constructor(
+        private val googleAuthHolder: GoogleAuthHolder
+) : AuthRepo {
 
 //    override fun isAuthorized(): Observable<Boolean> = googleAuthHolder.isAuthorized()
 

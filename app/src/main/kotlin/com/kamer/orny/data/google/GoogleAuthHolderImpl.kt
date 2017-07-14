@@ -7,6 +7,7 @@ import com.google.api.client.util.ExponentialBackOff
 import com.google.api.services.sheets.v4.SheetsScopes
 import com.kamer.orny.data.android.ActivityHolder
 import com.kamer.orny.data.android.ReactiveActivities
+import com.kamer.orny.di.app.ApplicationScope
 import com.kamer.orny.presentation.launch.LoginActivity
 import com.kamer.orny.utils.Prefs
 import com.kamer.orny.utils.hasPermission
@@ -16,9 +17,11 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import java.util.*
+import javax.inject.Inject
 
 
-class GoogleAuthHolderImpl(
+@ApplicationScope
+class GoogleAuthHolderImpl @Inject constructor(
         private val context: Context,
         private val prefs: Prefs,
         private val activityHolder: ActivityHolder,

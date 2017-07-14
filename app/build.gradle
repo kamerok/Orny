@@ -10,6 +10,9 @@ repositories {
 
 android {
 
+    def appName = "Orny"
+    def build = 1
+
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
 
@@ -37,6 +40,12 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.debug
+        }
+
+        applicationVariants.all { variant ->
+            variant.outputs.all {
+                outputFileName = "$appName-${defaultConfig.versionName}.${build}-${variant.name}.apk"
+            }
         }
     }
 

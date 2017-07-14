@@ -18,7 +18,6 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import com.kamer.orny.R
 import com.kamer.orny.data.domain.model.Author
-import com.kamer.orny.di.app.ViewModelModule
 import com.kamer.orny.presentation.core.BaseActivity
 import com.kamer.orny.utils.onTextChanged
 import com.kamer.orny.utils.setupToolbar
@@ -28,7 +27,6 @@ import kotlinx.android.synthetic.main.layout_toolbar.*
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
-import javax.inject.Named
 
 
 class EditExpenseActivity : BaseActivity(), LifecycleOwner {
@@ -39,7 +37,7 @@ class EditExpenseActivity : BaseActivity(), LifecycleOwner {
         fun getIntent(context: Context) = Intent(context, EditExpenseActivity::class.java)
     }
 
-    @field:[Inject Named(ViewModelModule.EDIT_EXPENSE)] lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
 
     lateinit var viewModel: EditExpenseViewModel
 

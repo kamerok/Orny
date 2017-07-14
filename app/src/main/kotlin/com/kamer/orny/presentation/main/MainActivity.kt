@@ -6,7 +6,8 @@ import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import com.kamer.orny.R
-import com.kamer.orny.di.app.ViewModelModule
+import com.kamer.orny.di.app.features.MainModule
+import com.kamer.orny.di.app.features.StatisticsModule
 import com.kamer.orny.interaction.model.Statistics
 import com.kamer.orny.presentation.core.BaseActivity
 import com.kamer.orny.presentation.statistics.StatisticsViewModel
@@ -21,8 +22,8 @@ import javax.inject.Named
 
 class MainActivity : BaseActivity() {
 
-    @field:[Inject Named(ViewModelModule.STATISTICS)] lateinit var statisticsViewModelFactory: ViewModelProvider.Factory
-    @field:[Inject Named(ViewModelModule.MAIN)] lateinit var mainViewModelFactory: ViewModelProvider.Factory
+    @field:[Inject Named(StatisticsModule.STATISTICS)] lateinit var statisticsViewModelFactory: ViewModelProvider.Factory
+    @field:[Inject Named(MainModule.MAIN)] lateinit var mainViewModelFactory: ViewModelProvider.Factory
 
     private lateinit var statisticsViewModel: StatisticsViewModel
     private lateinit var mainViewModel: MainViewModel

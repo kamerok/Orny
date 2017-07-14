@@ -12,11 +12,7 @@ import dagger.android.support.AndroidSupportInjectionModule
         BuildersModule::class,
         AppModule::class,
         UtilsModule::class,
-        NavigationModule::class,
-        DataModule::class,
-        InteractionModule::class,
-        PresentationModule::class,
-        ViewModelModule::class))
+        DataModule::class))
 interface AppComponent {
 
     @Component.Builder

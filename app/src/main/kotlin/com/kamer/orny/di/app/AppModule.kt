@@ -2,13 +2,13 @@ package com.kamer.orny.di.app
 
 import android.content.Context
 import com.kamer.orny.app.App
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 
 @Module
-class AppModule {
+abstract class AppModule {
 
-    @Provides
-    fun provideApplicationContext(application: App): Context = application
+    @Binds
+    abstract fun bindApplicationContext(application: App): Context
 
 }

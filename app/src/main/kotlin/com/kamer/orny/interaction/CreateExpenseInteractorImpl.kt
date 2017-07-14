@@ -5,9 +5,12 @@ import com.kamer.orny.data.domain.model.Expense
 import com.kamer.orny.data.domain.model.NewExpense
 import com.kamer.orny.utils.defaultBackgroundSchedulers
 import io.reactivex.Completable
+import javax.inject.Inject
 
 
-class CreateExpenseInteractorImpl(val expenseRepo: ExpenseRepo) : CreateExpenseInteractor {
+class CreateExpenseInteractorImpl @Inject constructor(
+        val expenseRepo: ExpenseRepo
+) : CreateExpenseInteractor {
 
     override fun createExpense(expense: NewExpense): Completable = expenseRepo
             .saveExpense(Expense(

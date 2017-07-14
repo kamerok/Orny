@@ -10,9 +10,13 @@ import com.kamer.orny.utils.dayStart
 import io.reactivex.Observable
 import io.reactivex.functions.Function3
 import java.util.*
+import javax.inject.Inject
 
 
-class GetStatisticsInteractorImpl(val pageRepo: PageRepo, val expenseRepo: ExpenseRepo) : GetStatisticsInteractor {
+class GetStatisticsInteractorImpl @Inject constructor(
+        val pageRepo: PageRepo,
+        val expenseRepo: ExpenseRepo
+) : GetStatisticsInteractor {
 
     override fun getStatistics(): Observable<Statistics> = Observable
             .zip(pageRepo.getPageSettings(), pageRepo.getPageAuthors(), expenseRepo.getAllExpenses(), Function3 {

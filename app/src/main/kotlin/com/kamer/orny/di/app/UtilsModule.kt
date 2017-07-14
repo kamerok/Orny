@@ -1,22 +1,21 @@
 package com.kamer.orny.di.app
 
-import android.content.Context
 import com.kamer.orny.presentation.core.ErrorMessageParser
 import com.kamer.orny.presentation.core.ErrorMessageParserImpl
 import com.kamer.orny.utils.Prefs
 import com.kamer.orny.utils.PrefsImpl
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 
 @Module
-class UtilsModule {
+abstract class UtilsModule {
 
-    @Provides
+    @Binds
     @ApplicationScope
-    fun provideErrorParser(): ErrorMessageParser = ErrorMessageParserImpl()
+    abstract fun bindErrorParser(errorParser: ErrorMessageParserImpl): ErrorMessageParser
 
-    @Provides
+    @Binds
     @ApplicationScope
-    fun providePrefs(context: Context): Prefs = PrefsImpl(context)
+    abstract fun bindPrefs(prefs: PrefsImpl): Prefs
 
 }

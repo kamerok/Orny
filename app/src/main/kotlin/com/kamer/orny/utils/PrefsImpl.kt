@@ -2,9 +2,12 @@ package com.kamer.orny.utils
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.kamer.orny.di.app.ApplicationScope
+import javax.inject.Inject
 
 
-class PrefsImpl(context: Context) : Prefs {
+@ApplicationScope
+class PrefsImpl @Inject constructor(context: Context) : Prefs {
 
     companion object {
         val ACCOUNT_NAME = "account_name"

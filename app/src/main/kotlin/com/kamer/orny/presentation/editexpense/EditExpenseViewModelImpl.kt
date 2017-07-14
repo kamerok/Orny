@@ -16,12 +16,14 @@ import com.kamer.orny.presentation.editexpense.errors.WrongAmountFormatException
 import io.reactivex.Single
 import timber.log.Timber
 import java.util.*
+import javax.inject.Inject
 
 
-class EditExpenseViewModelImpl(val errorParser: ErrorMessageParser,
-                               val router: EditExpenseRouter,
-                               val authorsInteractor: GetAuthorsInteractor,
-                               val createExpenseInteractor: CreateExpenseInteractor
+class EditExpenseViewModelImpl @Inject constructor(
+        val errorParser: ErrorMessageParser,
+        val router: EditExpenseRouter,
+        val authorsInteractor: GetAuthorsInteractor,
+        val createExpenseInteractor: CreateExpenseInteractor
 ) : BaseViewModel(), EditExpenseViewModel {
 
     private var authors = emptyList<Author>()

@@ -7,9 +7,12 @@ import com.kamer.orny.interaction.model.Statistics
 import com.kamer.orny.presentation.core.BaseViewModel
 import com.kamer.orny.utils.defaultBackgroundSchedulers
 import timber.log.Timber
+import javax.inject.Inject
 
 
-class StatisticsViewModelImpl(getStatisticsInteractor: GetStatisticsInteractor) : BaseViewModel(), StatisticsViewModel {
+class StatisticsViewModelImpl @Inject constructor(
+        getStatisticsInteractor: GetStatisticsInteractor
+) : BaseViewModel(), StatisticsViewModel {
 
     private val loading = MutableLiveData<Boolean>()
     private val statistics = MutableLiveData<Statistics>()
@@ -23,7 +26,7 @@ class StatisticsViewModelImpl(getStatisticsInteractor: GetStatisticsInteractor) 
                 .doFinally { loading.value = false }
                 .subscribe({
                     statistics.value = it
-                },{
+                }, {
                     Timber.e(it)
                 })
     }

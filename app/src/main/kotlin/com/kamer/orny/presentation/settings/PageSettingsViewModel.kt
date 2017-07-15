@@ -12,11 +12,13 @@ interface PageSettingsViewModel {
     fun bindLoadingProgress(): LiveData<Boolean>
     fun bindSavingProgress(): LiveData<Boolean>
     fun bindPageSettings(): LiveData<PageSettings>
+    fun bindShowDatePicker(): SingleLiveEvent<Date>
     fun bindError(): SingleLiveEvent<String>
 
     fun budgetChanged(budget: String)
     fun startDateChanged(date: Date)
     fun periodChanged(period: String)
+    fun selectDate()
     fun saveSettings()
 
 }

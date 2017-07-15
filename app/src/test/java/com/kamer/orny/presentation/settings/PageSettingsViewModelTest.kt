@@ -325,6 +325,42 @@ class PageSettingsViewModelTest{
         assertError(viewModel.bindError(), SaveSettingsException::class)
     }
 
+    @Test
+    fun showPicker() {
+        val startDate = yesterday().dayStart()
+        initSettings(startDate = startDate)
+
+        createViewModel()
+        viewModel.selectDate()
+        val result = viewModel.bindShowDatePicker().getResultValue()
+
+        assertThat(result).isEqualTo(startDate)
+    }
+
+    @Test
+    fun showPickerWithChangedDate() {
+        val date = yesterday().dayStart()
+
+        createViewModel()
+        viewModel.startDateChanged(date)
+        viewModel.selectDate()
+        val result = viewModel.bindShowDatePicker().getResultValue()
+
+        assertThat(result).isEqualTo(date)
+    }
+
+    @Test
+    fun showErrorWhenSelectDateBeforeSettingsLoaded() {
+        `when`(getInteractor.getSettings()).thenReturn(Single.never())
+
+        createViewModel()
+        viewModel.selectDate()
+        val result = viewModel.bindShowDatePicker().getResultValue()
+
+        assertThat(result).isNull()
+        assertError(viewModel.bindError(), GetSettingsException::class)
+    }
+
     private fun initSettings(budget: Double = 0.0, startDate: Date = Date(), period: Int = 0) {
         `when`(getInteractor.getSettings()).thenReturn(Single.just(PageSettings(budget, startDate, period)))
     }

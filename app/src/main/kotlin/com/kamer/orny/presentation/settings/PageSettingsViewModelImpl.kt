@@ -32,6 +32,7 @@ class PageSettingsViewModelImpl(
     private val loadingStream = MutableLiveData<Boolean>()
     private val savingStream = MutableLiveData<Boolean>()
     private val pageSettingsStream = MutableLiveData<PageSettings>()
+    private val showPickerStream = SingleLiveEvent<Date>()
     private val errorStream = SingleLiveEvent<String>()
 
     init {
@@ -45,6 +46,7 @@ class PageSettingsViewModelImpl(
                     val settings = it.copy(startDate = it.startDate.dayStart())
                     pageSettingsStream.value = settings
                     loadedSettings = settings
+                    newSettings = settings
                 }, {
                     errorStream.value = errorParser.getMessage(GetSettingsException(it))
                 })
@@ -57,6 +59,8 @@ class PageSettingsViewModelImpl(
     override fun bindSavingProgress(): LiveData<Boolean> = savingStream
 
     override fun bindPageSettings(): LiveData<PageSettings> = pageSettingsStream
+
+    override fun bindShowDatePicker(): SingleLiveEvent<Date> = showPickerStream
 
     override fun bindError(): SingleLiveEvent<String> = errorStream
 
@@ -94,13 +98,21 @@ class PageSettingsViewModelImpl(
         }
     }
 
+    override fun selectDate() {
+        if (loadedSettings == null) {
+            errorStream.value = errorParser.getMessage(GetSettingsException("Select date before loading"))
+            return
+        }
+        showPickerStream.value = newSettings.startDate
+    }
+
     override fun saveSettings() {
         saveInteractor
                 .saveSettings(newSettings)
                 .disposeOnDestroy()
-                .doOnSubscribe{ savingStream.value = true }
+                .doOnSubscribe { savingStream.value = true }
                 .doFinally { savingStream.value = false }
-                .subscribe({},{
+                .subscribe({}, {
                     errorStream.value = errorParser.getMessage(SaveSettingsException(it))
                 })
     }

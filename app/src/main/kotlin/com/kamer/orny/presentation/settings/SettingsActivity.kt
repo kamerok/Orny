@@ -29,6 +29,9 @@ class SettingsActivity : BaseActivity() {
 
     private lateinit var pageSettingsViewModel: PageSettingsViewModel
 
+    private var ignoreBudgetChange = false
+    private var ignorePeriodChange = false
+
     companion object {
         private val DATE_FORMAT = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
@@ -45,19 +48,25 @@ class SettingsActivity : BaseActivity() {
     }
 
     private fun initViews() {
-        budgetView.onTextChanged { pageSettingsViewModel.budgetChanged(it) }
+        budgetView.onTextChanged {
+            if (ignoreBudgetChange) ignoreBudgetChange = false
+            else pageSettingsViewModel.budgetChanged(it)
+        }
         dateView.setOnClickListener { pageSettingsViewModel.selectDate() }
-        periodView.onTextChanged { pageSettingsViewModel.periodChanged(it) }
+        periodView.onTextChanged {
+            if (ignorePeriodChange) ignorePeriodChange = false
+            else pageSettingsViewModel.periodChanged(it)
+        }
         saveButton.setOnClickListener { pageSettingsViewModel.saveSettings() }
     }
 
     private fun bindViewModels() {
         pageSettingsViewModel.bindSaveButtonEnabled().observe(this, Observer { if (it != null) setSaveEnabled(it) })
-        pageSettingsViewModel.bindLoadingProgress().observe(this, Observer { if(it != null) setLoadingProgress(it) })
-        pageSettingsViewModel.bindSavingProgress().observe(this, Observer { if(it != null) setSavingProgress(it) })
-        pageSettingsViewModel.bindPageSettings().observe(this, Observer { if(it != null) updateSettings(it) })
-        pageSettingsViewModel.bindShowDatePicker().observe(this, Observer { if(it != null) showDatePicker(it) })
-        pageSettingsViewModel.bindError().observe(this, Observer { if(it != null) showError(it) })
+        pageSettingsViewModel.bindLoadingProgress().observe(this, Observer { if (it != null) setLoadingProgress(it) })
+        pageSettingsViewModel.bindSavingProgress().observe(this, Observer { if (it != null) setSavingProgress(it) })
+        pageSettingsViewModel.bindPageSettings().observe(this, Observer { if (it != null) updateSettings(it) })
+        pageSettingsViewModel.bindShowDatePicker().observe(this, Observer { if (it != null) showDatePicker(it) })
+        pageSettingsViewModel.bindError().observe(this, Observer { if (it != null) showError(it) })
     }
 
     private fun setSaveEnabled(isEnabled: Boolean) {
@@ -73,8 +82,10 @@ class SettingsActivity : BaseActivity() {
     }
 
     private fun updateSettings(settings: PageSettings) {
+        ignoreBudgetChange = true
         budgetView.setText(settings.budget.toString())
         dateView.text = DATE_FORMAT.format(settings.startDate)
+        ignorePeriodChange = true
         periodView.setText(settings.period.toString())
     }
 

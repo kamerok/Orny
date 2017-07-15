@@ -58,4 +58,13 @@ fun TextView.onTextChanged(listener: (String) -> Unit) = addTextChangedListener(
 
 fun Calendar.dayStart() = this.apply {
     set(get(Calendar.YEAR), get(Calendar.MONTH), get(Calendar.DAY_OF_MONTH), 0, 0, 0)
+    set(Calendar.MILLISECOND, 0)
 }
+
+fun Date.dayStart() = Calendar
+        .getInstance()
+        .apply {
+            time = this@dayStart
+            dayStart()
+        }
+        .time

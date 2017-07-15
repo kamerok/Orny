@@ -28,6 +28,7 @@ class TestUtils {
     }
 }
 
+@Suppress("UNCHECKED_CAST")
 @Throws(InterruptedException::class)
 fun <T> LiveData<T>.getResultValue(): T {
     val data = arrayOfNulls<Any>(1)
@@ -45,7 +46,7 @@ fun <T> LiveData<T>.getResultValue(): T {
 }
 
 @Throws(InterruptedException::class)
-fun <T> LiveData<T>.getResultValues(count: Int): List<T> {
+fun <T> LiveData<T>.getResultValues(count: Int, postElements: () -> Unit = {}): List<T> {
     val data = mutableListOf<T>()
     val latch = CountDownLatch(count)
     val observer = object : Observer<T> {
@@ -59,6 +60,7 @@ fun <T> LiveData<T>.getResultValues(count: Int): List<T> {
         }
     }
     observeForever(observer)
+    postElements.invoke()
 
     return data
 }

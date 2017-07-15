@@ -50,6 +50,13 @@ class PageSettingsViewModelTest{
     }
 
     @Test
+    fun hideProgressOnStart() {
+        createViewModel()
+
+        assertThat(viewModel.bindSavingProgress().getResultValue()).isFalse()
+    }
+
+    @Test
     fun loadSettingsFromInteractor() {
         createViewModel()
 
@@ -309,9 +316,9 @@ class PageSettingsViewModelTest{
     fun showSavingProgress() {
         createViewModel()
         viewModel.periodChanged("1")
-        val results = viewModel.bindSavingProgress().getResultValues(2) { viewModel.saveSettings() }
+        val results = viewModel.bindSavingProgress().getResultValues(3) { viewModel.saveSettings() }
 
-        assertThat(results).containsExactly(true, false)
+        assertThat(results).containsExactly(false, true, false)
     }
 
     @Test

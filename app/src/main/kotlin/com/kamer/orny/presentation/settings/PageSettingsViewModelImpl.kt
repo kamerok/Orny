@@ -38,6 +38,7 @@ class PageSettingsViewModelImpl @Inject constructor(
 
     init {
         saveEnabledStream.value = false
+        savingStream.value = false
         getInteractor
                 .getSettings()
                 .disposeOnDestroy()

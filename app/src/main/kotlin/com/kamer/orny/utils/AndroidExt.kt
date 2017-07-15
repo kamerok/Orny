@@ -23,6 +23,10 @@ fun View.gone() {
     visibility = View.GONE
 }
 
+fun View.setVisible(isVisible: Boolean) {
+    visibility = if (isVisible) View.VISIBLE else View.GONE
+}
+
 fun Context.isDeviceOnline(): Boolean {
     val connMgr = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     val networkInfo = connMgr.activeNetworkInfo

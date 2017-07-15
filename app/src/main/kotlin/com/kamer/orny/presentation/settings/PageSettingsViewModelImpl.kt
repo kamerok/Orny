@@ -14,10 +14,11 @@ import com.kamer.orny.presentation.settings.errors.WrongBudgetFormatException
 import com.kamer.orny.presentation.settings.errors.WrongPeriodFormatException
 import com.kamer.orny.utils.dayStart
 import java.util.*
+import javax.inject.Inject
 import kotlin.properties.Delegates
 
 
-class PageSettingsViewModelImpl(
+class PageSettingsViewModelImpl @Inject constructor(
         val errorParser: ErrorMessageParser,
         getInteractor: GetPageSettingsInteractor,
         val saveInteractor: SavePageSettingsInteractor

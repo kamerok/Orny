@@ -2,6 +2,7 @@ package com.kamer.orny.di.app
 
 import com.kamer.orny.di.app.features.EditExpenseModule
 import com.kamer.orny.di.app.features.MainModule
+import com.kamer.orny.di.app.features.PageSettingsModule
 import com.kamer.orny.di.app.features.StatisticsModule
 import com.kamer.orny.presentation.editexpense.EditExpenseActivity
 import com.kamer.orny.presentation.launch.LoginActivity
@@ -22,7 +23,7 @@ abstract class BuildersModule {
     @ContributesAndroidInjector(modules = arrayOf(MainModule::class, StatisticsModule::class))
     abstract fun injectMain(): MainActivity
 
-    @ContributesAndroidInjector
+    @ContributesAndroidInjector(modules = arrayOf(PageSettingsModule::class))
     abstract fun injectSettings(): SettingsActivity
 
 }

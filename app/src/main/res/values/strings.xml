@@ -32,5 +32,9 @@
 
     <!--Settings-->
     <string name="settings_title">Settings</string>
+    <string name="settings_page_settings">Page Settings</string>
+    <string name="settings_budget_hint">Budget</string>
+    <string name="settings_period_hint">Period</string>
+    <string name="settings_save">Save</string>
 
 </resources>

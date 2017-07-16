@@ -55,14 +55,14 @@ class EditExpenseViewModelTest {
         `when`(authorsInteractor.getAuthors()).thenReturn(Single.just(authors))
 
         createViewModel()
-        val result = viewModel.bindAuthors().getResultValue()
+        val result = viewModel.authorsStream.getResultValue()
 
         assertThat(result).isEqualTo(authors)
     }
 
     @Test
     fun setCurrentDateOnStart() {
-        val result = viewModel.bindDate().getResultValue()
+        val result = viewModel.dateStream.getResultValue()
 
         assertThat(result).isToday()
     }
@@ -71,7 +71,7 @@ class EditExpenseViewModelTest {
     fun setDateWhenDateChanged() {
         val date = Date(10000)
         viewModel.dateChanged(date)
-        val result = viewModel.bindDate().getResultValue()
+        val result = viewModel.dateStream.getResultValue()
 
         assertThat(result).isInSameDayAs(date)
     }
@@ -82,7 +82,7 @@ class EditExpenseViewModelTest {
         val captor = argumentCaptor<Exception>()
 
         createViewModel()
-        val result = viewModel.bindShowError().getResultValue()
+        val result = viewModel.showErrorStream.getResultValue()
 
         verify(errorParser).getMessage(captor.capture())
         assertThat(captor.firstValue).isInstanceOf(GetAuthorsException::class.java)
@@ -94,7 +94,7 @@ class EditExpenseViewModelTest {
         val captor = argumentCaptor<Exception>()
 
         viewModel.amountChanged("Wrong")
-        val result = viewModel.bindShowAmountError().getResultValue()
+        val result = viewModel.showAmountErrorStream.getResultValue()
 
         verify(errorParser).getMessage(captor.capture())
         assertThat(captor.firstValue).isInstanceOf(WrongAmountFormatException::class.java)
@@ -106,7 +106,7 @@ class EditExpenseViewModelTest {
         val captor = argumentCaptor<Exception>()
 
         viewModel.amountChanged("-1")
-        val result = viewModel.bindShowAmountError().getResultValue()
+        val result = viewModel.showAmountErrorStream.getResultValue()
 
         verify(errorParser).getMessage(captor.capture())
         assertThat(captor.firstValue).isInstanceOf(WrongAmountFormatException::class.java)
@@ -119,7 +119,7 @@ class EditExpenseViewModelTest {
 
         viewModel.dateChanged(Date(time))
         viewModel.selectDate()
-        val result = viewModel.bindShowDatePicker().getResultValue()
+        val result = viewModel.showDatePickerStream.getResultValue()
 
         assertThat(result).isEqualTo(Date(time))
     }
@@ -136,7 +136,7 @@ class EditExpenseViewModelTest {
         viewModel.amountChanged("1")
         viewModel.amountChanged("")
         viewModel.exitScreen()
-        val result = viewModel.bindShowAmountError().getResultValue()
+        val result = viewModel.showAmountErrorStream.getResultValue()
 
         assertThat(result).isNull()
         verify(router).closeScreen()
@@ -159,7 +159,7 @@ class EditExpenseViewModelTest {
     fun showDialogWhenExitIfAmountChanged() {
         viewModel.amountChanged("1")
         viewModel.exitScreen()
-        val result = viewModel.bindShowExitDialog().hasValue()
+        val result = viewModel.showExitDialogStream.hasValue()
 
         verify(router, never()).closeScreen()
         assertThat(result).isTrue()
@@ -169,7 +169,7 @@ class EditExpenseViewModelTest {
     fun showDialogWhenExitIfCommentChanged() {
         viewModel.commentChanged("1")
         viewModel.exitScreen()
-        val result = viewModel.bindShowExitDialog().hasValue()
+        val result = viewModel.showExitDialogStream.hasValue()
 
         verify(router, never()).closeScreen()
         assertThat(result).isTrue()
@@ -211,7 +211,7 @@ class EditExpenseViewModelTest {
         val captor = argumentCaptor<Exception>()
 
         viewModel.saveExpense()
-        val result = viewModel.bindShowError().getResultValue()
+        val result = viewModel.showErrorStream.getResultValue()
 
         verify(router, never()).closeScreen()
         verify(errorParser).getMessage(captor.capture())
@@ -229,7 +229,7 @@ class EditExpenseViewModelTest {
 
     @Test
     fun showSaveExpenseProgress() {
-        val progress = viewModel.bindSavingProgress().getResultValues(2)
+        val progress = viewModel.savingProgressStream.getResultValues(2)
         viewModel.amountChanged("1")
         viewModel.saveExpense()
 
@@ -252,7 +252,7 @@ class EditExpenseViewModelTest {
 
         viewModel.amountChanged("1")
         viewModel.saveExpense()
-        val result = viewModel.bindShowError().getResultValue()
+        val result = viewModel.showErrorStream.getResultValue()
 
         verify(errorParser).getMessage(captor.capture())
         assertThat(captor.firstValue).isInstanceOf(SaveExpenseException::class.java)

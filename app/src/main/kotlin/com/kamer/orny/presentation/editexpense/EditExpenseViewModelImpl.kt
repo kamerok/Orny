@@ -1,6 +1,5 @@
 package com.kamer.orny.presentation.editexpense
 
-import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import com.kamer.orny.data.domain.model.Author
 import com.kamer.orny.data.domain.model.NewExpense
@@ -34,32 +33,17 @@ class EditExpenseViewModelImpl @Inject constructor(
     private var amount = 0.0
     private var author: Author? = null
 
-    private val authorsStream = MutableLiveData<List<Author>>()
-    private val dateStream = MutableLiveData<Date>()
-    private val savingProgressStream = MutableLiveData<Boolean>()
-    private val showPickerStream = SingleLiveEvent<Date>()
-    private val showExitDialogStream = SingleLiveEvent<Nothing>()
-    private val showAmountErrorStream = SingleLiveEvent<String>()
-    private val showErrorStream = SingleLiveEvent<String>()
+    override val authorsStream = MutableLiveData<List<Author>>()
+    override val dateStream = MutableLiveData<Date>().apply { value = date }
+    override val savingProgressStream = MutableLiveData<Boolean>()
+    override val showDatePickerStream = SingleLiveEvent<Date>()
+    override val showExitDialogStream = SingleLiveEvent<Nothing>()
+    override val showAmountErrorStream = SingleLiveEvent<String>()
+    override val showErrorStream = SingleLiveEvent<String>()
 
     init {
-        dateStream.value = date
         loadAuthors()
     }
-
-    override fun bindSavingProgress(): MutableLiveData<Boolean> = savingProgressStream
-
-    override fun bindAuthors(): LiveData<List<Author>> = authorsStream
-
-    override fun bindDate(): LiveData<Date> = dateStream
-
-    override fun bindShowDatePicker(): SingleLiveEvent<Date> = showPickerStream
-
-    override fun bindShowExitDialog(): SingleLiveEvent<Nothing> = showExitDialogStream
-
-    override fun bindShowAmountError(): SingleLiveEvent<String> = showAmountErrorStream
-
-    override fun bindShowError(): SingleLiveEvent<String> = showErrorStream
 
     override fun amountChanged(amountRaw: String) {
         if (amountRaw.isNullOrEmpty()) {
@@ -93,7 +77,7 @@ class EditExpenseViewModelImpl @Inject constructor(
     }
 
     override fun selectDate() {
-        showPickerStream.value = date
+        showDatePickerStream.value = date
     }
 
     override fun dateChanged(date: Date) {

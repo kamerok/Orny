@@ -6,8 +6,7 @@ import com.kamer.orny.interaction.model.Statistics
 
 interface StatisticsViewModel {
 
-    fun bindShowLoading(): LiveData<Boolean>
-
-    fun bindStatistics(): LiveData<Statistics>
+    val showLoadingStream: LiveData<Boolean>
+    val statisticsStream: LiveData<Statistics>
 
 }

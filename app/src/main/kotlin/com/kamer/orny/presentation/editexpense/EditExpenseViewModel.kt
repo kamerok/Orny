@@ -8,13 +8,13 @@ import java.util.*
 
 interface EditExpenseViewModel {
 
-    fun bindAuthors(): LiveData<List<Author>>
-    fun bindDate(): LiveData<Date>
-    fun bindSavingProgress(): LiveData<Boolean>
-    fun bindShowDatePicker(): SingleLiveEvent<Date>
-    fun bindShowExitDialog(): SingleLiveEvent<Nothing>
-    fun bindShowAmountError(): SingleLiveEvent<String>
-    fun bindShowError(): SingleLiveEvent<String>
+    val authorsStream: LiveData<List<Author>>
+    val dateStream: LiveData<Date>
+    val savingProgressStream: LiveData<Boolean>
+    val showDatePickerStream: SingleLiveEvent<Date>
+    val showExitDialogStream: SingleLiveEvent<Nothing>
+    val showAmountErrorStream: SingleLiveEvent<String>
+    val showErrorStream: SingleLiveEvent<String>
 
     fun amountChanged(amountRaw: String)
     fun commentChanged(comment: String)

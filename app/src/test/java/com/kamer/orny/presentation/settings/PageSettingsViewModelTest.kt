@@ -55,14 +55,14 @@ class PageSettingsViewModelTest{
 
         createViewModel()
 
-        assertThat(viewModel.bindFieldsEditable().getResultValue()).isFalse()
+        assertThat(viewModel.fieldsEditableStream.getResultValue()).isFalse()
     }
 
     @Test
     fun fieldsEditableWhenSettingsLoaded() {
         createViewModel()
 
-        assertThat(viewModel.bindFieldsEditable().getResultValue()).isTrue()
+        assertThat(viewModel.fieldsEditableStream.getResultValue()).isTrue()
     }
 
     @Test
@@ -71,7 +71,7 @@ class PageSettingsViewModelTest{
 
         createViewModel()
 
-        assertThat(viewModel.bindFieldsEditable().getResultValue()).isFalse()
+        assertThat(viewModel.fieldsEditableStream.getResultValue()).isFalse()
     }
 
     @Test
@@ -82,7 +82,7 @@ class PageSettingsViewModelTest{
         viewModel.budgetChanged("1")
         viewModel.saveSettings()
 
-        assertThat(viewModel.bindFieldsEditable().getResultValue()).isFalse()
+        assertThat(viewModel.fieldsEditableStream.getResultValue()).isFalse()
     }
 
     @Test
@@ -91,7 +91,7 @@ class PageSettingsViewModelTest{
         viewModel.budgetChanged("1")
         viewModel.saveSettings()
 
-        assertThat(viewModel.bindFieldsEditable().getResultValue()).isTrue()
+        assertThat(viewModel.fieldsEditableStream.getResultValue()).isTrue()
     }
 
     @Test
@@ -102,14 +102,14 @@ class PageSettingsViewModelTest{
         viewModel.budgetChanged("1")
         viewModel.saveSettings()
 
-        assertThat(viewModel.bindFieldsEditable().getResultValue()).isTrue()
+        assertThat(viewModel.fieldsEditableStream.getResultValue()).isTrue()
     }
 
     @Test
     fun hideProgressOnStart() {
         createViewModel()
 
-        assertThat(viewModel.bindSavingProgress().getResultValue()).isFalse()
+        assertThat(viewModel.savingProgressStream.getResultValue()).isFalse()
     }
 
     @Test
@@ -125,7 +125,7 @@ class PageSettingsViewModelTest{
         initSettings(pageSettings)
 
         createViewModel()
-        val result = viewModel.bindPageSettings().getResultValue()
+        val result = viewModel.pageSettingsStream.getResultValue()
 
         assertThat(result).isEqualTo(pageSettings)
     }
@@ -136,7 +136,7 @@ class PageSettingsViewModelTest{
         `when`(getInteractor.getSettings()).thenReturn(subject.firstOrError())
 
         createViewModel()
-        val results = viewModel.bindLoadingProgress().getResultValues(2) { subject.onNext(PageSettings(0.0, Date(), 0)) }
+        val results = viewModel.loadingProgressStream.getResultValues(2) { subject.onNext(PageSettings(0.0, Date(), 0)) }
 
         assertThat(results).containsExactly(true, false)
     }
@@ -147,7 +147,7 @@ class PageSettingsViewModelTest{
         `when`(getInteractor.getSettings()).thenReturn(subject.firstOrError())
 
         createViewModel()
-        val results = viewModel.bindLoadingProgress().getResultValues(2) { subject.onError(Exception()) }
+        val results = viewModel.loadingProgressStream.getResultValues(2) { subject.onError(Exception()) }
 
         assertThat(results).containsExactly(true, false)
     }
@@ -157,17 +157,17 @@ class PageSettingsViewModelTest{
         `when`(getInteractor.getSettings()).thenReturn(Single.error(Exception()))
 
         createViewModel()
-        val result = viewModel.bindPageSettings().getResultValue()
+        val result = viewModel.pageSettingsStream.getResultValue()
 
         assertThat(result).isNull()
-        assertError(viewModel.bindError(), GetSettingsException::class)
+        assertError(viewModel.errorStream, GetSettingsException::class)
 
     }
 
     @Test
     fun saveDisabledByDefault() {
         createViewModel()
-        val result = viewModel.bindSaveButtonEnabled().getResultValue()
+        val result = viewModel.saveButtonEnabledStream.getResultValue()
 
         assertThat(result).isFalse()
     }
@@ -178,7 +178,7 @@ class PageSettingsViewModelTest{
 
         createViewModel()
         viewModel.budgetChanged("2")
-        val result = viewModel.bindSaveButtonEnabled().getResultValue()
+        val result = viewModel.saveButtonEnabledStream.getResultValue()
 
         assertThat(result).isTrue()
     }
@@ -191,7 +191,7 @@ class PageSettingsViewModelTest{
         viewModel.budgetChanged("2")
         viewModel.budgetChanged("0")
 
-        val result = viewModel.bindSaveButtonEnabled().getResultValue()
+        val result = viewModel.saveButtonEnabledStream.getResultValue()
 
         assertThat(result).isFalse()
     }
@@ -203,7 +203,7 @@ class PageSettingsViewModelTest{
         createViewModel()
         viewModel.budgetChanged("2")
 
-        assertError(viewModel.bindError(), GetSettingsException::class)
+        assertError(viewModel.errorStream, GetSettingsException::class)
     }
 
     @Test
@@ -212,7 +212,7 @@ class PageSettingsViewModelTest{
 
         createViewModel()
         viewModel.budgetChanged("ad")
-        val result = viewModel.bindSaveButtonEnabled().getResultValue()
+        val result = viewModel.saveButtonEnabledStream.getResultValue()
 
         assertThat(result).isFalse()
     }
@@ -224,7 +224,7 @@ class PageSettingsViewModelTest{
         createViewModel()
         viewModel.budgetChanged("ad")
 
-        assertError(viewModel.bindError(), WrongBudgetFormatException::class)
+        assertError(viewModel.errorStream, WrongBudgetFormatException::class)
     }
 
     @Test
@@ -233,7 +233,7 @@ class PageSettingsViewModelTest{
 
         createViewModel()
         viewModel.budgetChanged("-2")
-        val result = viewModel.bindSaveButtonEnabled().getResultValue()
+        val result = viewModel.saveButtonEnabledStream.getResultValue()
 
         assertThat(result).isFalse()
     }
@@ -245,7 +245,7 @@ class PageSettingsViewModelTest{
         createViewModel()
         viewModel.budgetChanged("-2")
 
-        assertError(viewModel.bindError(), WrongBudgetFormatException::class)
+        assertError(viewModel.errorStream, WrongBudgetFormatException::class)
     }
 
     @Test
@@ -254,7 +254,7 @@ class PageSettingsViewModelTest{
 
         createViewModel()
         viewModel.startDateChanged(yesterday())
-        val result = viewModel.bindSaveButtonEnabled().getResultValue()
+        val result = viewModel.saveButtonEnabledStream.getResultValue()
 
         assertThat(result).isTrue()
     }
@@ -265,7 +265,7 @@ class PageSettingsViewModelTest{
 
         createViewModel()
         viewModel.startDateChanged(yesterday())
-        val result = viewModel.bindPageSettings().getResultValue()
+        val result = viewModel.pageSettingsStream.getResultValue()
 
         assertThat(result.startDate).isEqualTo(yesterday().dayStart())
     }
@@ -277,7 +277,7 @@ class PageSettingsViewModelTest{
         createViewModel()
         viewModel.startDateChanged(yesterday())
         viewModel.startDateChanged(Date())
-        val result = viewModel.bindSaveButtonEnabled().getResultValue()
+        val result = viewModel.saveButtonEnabledStream.getResultValue()
 
         assertThat(result).isFalse()
     }
@@ -289,7 +289,7 @@ class PageSettingsViewModelTest{
         createViewModel()
         viewModel.startDateChanged(yesterday())
 
-        assertError(viewModel.bindError(), GetSettingsException::class)
+        assertError(viewModel.errorStream, GetSettingsException::class)
     }
 
     @Test
@@ -298,7 +298,7 @@ class PageSettingsViewModelTest{
 
         createViewModel()
         viewModel.periodChanged("2")
-        val result = viewModel.bindSaveButtonEnabled().getResultValue()
+        val result = viewModel.saveButtonEnabledStream.getResultValue()
 
         assertThat(result).isTrue()
     }
@@ -310,7 +310,7 @@ class PageSettingsViewModelTest{
         createViewModel()
         viewModel.periodChanged("2")
         viewModel.periodChanged("0")
-        val result = viewModel.bindSaveButtonEnabled().getResultValue()
+        val result = viewModel.saveButtonEnabledStream.getResultValue()
 
         assertThat(result).isFalse()
     }
@@ -322,7 +322,7 @@ class PageSettingsViewModelTest{
         createViewModel()
         viewModel.periodChanged("1")
 
-        assertError(viewModel.bindError(), GetSettingsException::class)
+        assertError(viewModel.errorStream, GetSettingsException::class)
     }
 
     @Test
@@ -331,7 +331,7 @@ class PageSettingsViewModelTest{
 
         createViewModel()
         viewModel.periodChanged("ad")
-        val result = viewModel.bindSaveButtonEnabled().getResultValue()
+        val result = viewModel.saveButtonEnabledStream.getResultValue()
 
         assertThat(result).isFalse()
     }
@@ -343,7 +343,7 @@ class PageSettingsViewModelTest{
         createViewModel()
         viewModel.periodChanged("ad")
 
-        assertError(viewModel.bindError(), WrongPeriodFormatException::class)
+        assertError(viewModel.errorStream, WrongPeriodFormatException::class)
     }
 
     @Test
@@ -352,7 +352,7 @@ class PageSettingsViewModelTest{
 
         createViewModel()
         viewModel.periodChanged("-1")
-        val result = viewModel.bindSaveButtonEnabled().getResultValue()
+        val result = viewModel.saveButtonEnabledStream.getResultValue()
 
         assertThat(result).isFalse()
     }
@@ -364,7 +364,7 @@ class PageSettingsViewModelTest{
         createViewModel()
         viewModel.periodChanged("-1")
 
-        assertError(viewModel.bindError(), WrongPeriodFormatException::class)
+        assertError(viewModel.errorStream, WrongPeriodFormatException::class)
     }
 
     @Test
@@ -383,7 +383,7 @@ class PageSettingsViewModelTest{
     fun showSavingProgress() {
         createViewModel()
         viewModel.periodChanged("1")
-        val results = viewModel.bindSavingProgress().getResultValues(3) { viewModel.saveSettings() }
+        val results = viewModel.savingProgressStream.getResultValues(3) { viewModel.saveSettings() }
 
         assertThat(results).containsExactly(false, true, false)
     }
@@ -396,7 +396,7 @@ class PageSettingsViewModelTest{
         viewModel.periodChanged("1")
         viewModel.saveSettings()
 
-        assertError(viewModel.bindError(), SaveSettingsException::class)
+        assertError(viewModel.errorStream, SaveSettingsException::class)
     }
 
     @Test
@@ -406,7 +406,7 @@ class PageSettingsViewModelTest{
 
         createViewModel()
         viewModel.selectDate()
-        val result = viewModel.bindShowDatePicker().getResultValue()
+        val result = viewModel.showDatePickerStream.getResultValue()
 
         assertThat(result).isEqualTo(startDate)
     }
@@ -418,7 +418,7 @@ class PageSettingsViewModelTest{
         createViewModel()
         viewModel.startDateChanged(date)
         viewModel.selectDate()
-        val result = viewModel.bindShowDatePicker().getResultValue()
+        val result = viewModel.showDatePickerStream.getResultValue()
 
         assertThat(result).isEqualTo(date)
     }
@@ -429,10 +429,10 @@ class PageSettingsViewModelTest{
 
         createViewModel()
         viewModel.selectDate()
-        val result = viewModel.bindShowDatePicker().getResultValue()
+        val result = viewModel.showDatePickerStream.getResultValue()
 
         assertThat(result).isNull()
-        assertError(viewModel.bindError(), GetSettingsException::class)
+        assertError(viewModel.errorStream, GetSettingsException::class)
     }
 
     private fun initSettings(budget: Double = 0.0, startDate: Date = Date(), period: Int = 0) {

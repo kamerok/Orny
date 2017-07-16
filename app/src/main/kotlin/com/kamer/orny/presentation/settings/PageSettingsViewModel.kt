@@ -8,13 +8,13 @@ import java.util.*
 
 interface PageSettingsViewModel {
 
-    fun bindFieldsEditable(): LiveData<Boolean>
-    fun bindSaveButtonEnabled(): LiveData<Boolean>
-    fun bindLoadingProgress(): LiveData<Boolean>
-    fun bindSavingProgress(): LiveData<Boolean>
-    fun bindPageSettings(): LiveData<PageSettings>
-    fun bindShowDatePicker(): SingleLiveEvent<Date>
-    fun bindError(): SingleLiveEvent<String>
+    val fieldsEditableStream: LiveData<Boolean>
+    val saveButtonEnabledStream: LiveData<Boolean>
+    val loadingProgressStream: LiveData<Boolean>
+    val savingProgressStream: LiveData<Boolean>
+    val pageSettingsStream: LiveData<PageSettings>
+    val showDatePickerStream: SingleLiveEvent<Date>
+    val errorStream: SingleLiveEvent<String>
 
     fun budgetChanged(budget: String)
     fun startDateChanged(date: Date)

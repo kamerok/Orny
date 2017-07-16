@@ -1,6 +1,5 @@
 package com.kamer.orny.presentation.settings
 
-import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import com.kamer.orny.data.domain.model.PageSettings
 import com.kamer.orny.interaction.GetPageSettingsInteractor
@@ -26,26 +25,26 @@ class PageSettingsViewModelImpl @Inject constructor(
 
     private var loadedSettings: PageSettings? = null
     private var newSettings: PageSettings by Delegates.observable(PageSettings(0.0, Date().dayStart(), 0)) { _, _, new ->
-        saveEnabledStream.value = loadedSettings != null && new != loadedSettings
+        saveButtonEnabledStream.value = loadedSettings != null && new != loadedSettings
     }
 
-    private val saveEnabledStream = MutableLiveData<Boolean>()
-    private val fieldsEditableStream = MutableLiveData<Boolean>()
-    private val loadingStream = MutableLiveData<Boolean>()
-    private val savingStream = MutableLiveData<Boolean>()
-    private val pageSettingsStream = MutableLiveData<PageSettings>()
-    private val showPickerStream = SingleLiveEvent<Date>()
-    private val errorStream = SingleLiveEvent<String>()
+    override val fieldsEditableStream = MutableLiveData<Boolean>()
+    override val saveButtonEnabledStream = MutableLiveData<Boolean>()
+    override val loadingProgressStream = MutableLiveData<Boolean>()
+    override val savingProgressStream = MutableLiveData<Boolean>()
+    override val pageSettingsStream = MutableLiveData<PageSettings>()
+    override val showDatePickerStream = SingleLiveEvent<Date>()
+    override val errorStream = SingleLiveEvent<String>()
 
     init {
         fieldsEditableStream.value = false
-        saveEnabledStream.value = false
-        savingStream.value = false
+        saveButtonEnabledStream.value = false
+        savingProgressStream.value = false
         getInteractor
                 .getSettings()
                 .disposeOnDestroy()
-                .doOnSubscribe { loadingStream.value = true }
-                .doFinally { loadingStream.value = false }
+                .doOnSubscribe { loadingProgressStream.value = true }
+                .doFinally { loadingProgressStream.value = false }
                 .doOnSuccess { fieldsEditableStream.value = true }
                 .subscribe({
                     val settings = it.copy(startDate = it.startDate.dayStart())
@@ -56,20 +55,6 @@ class PageSettingsViewModelImpl @Inject constructor(
                     errorStream.value = errorParser.getMessage(GetSettingsException(it))
                 })
     }
-
-    override fun bindFieldsEditable(): LiveData<Boolean> = fieldsEditableStream
-
-    override fun bindSaveButtonEnabled(): LiveData<Boolean> = saveEnabledStream
-
-    override fun bindLoadingProgress(): LiveData<Boolean> = loadingStream
-
-    override fun bindSavingProgress(): LiveData<Boolean> = savingStream
-
-    override fun bindPageSettings(): LiveData<PageSettings> = pageSettingsStream
-
-    override fun bindShowDatePicker(): SingleLiveEvent<Date> = showPickerStream
-
-    override fun bindError(): SingleLiveEvent<String> = errorStream
 
     override fun budgetChanged(budget: String) {
         if (loadedSettings == null) {
@@ -111,7 +96,7 @@ class PageSettingsViewModelImpl @Inject constructor(
             errorStream.value = errorParser.getMessage(GetSettingsException("Select date before loading"))
             return
         }
-        showPickerStream.value = newSettings.startDate
+        showDatePickerStream.value = newSettings.startDate
     }
 
     override fun saveSettings() {
@@ -119,11 +104,11 @@ class PageSettingsViewModelImpl @Inject constructor(
                 .saveSettings(newSettings)
                 .disposeOnDestroy()
                 .doOnSubscribe {
-                    savingStream.value = true
+                    savingProgressStream.value = true
                     fieldsEditableStream.value = false
                 }
                 .doFinally {
-                    savingStream.value = false
+                    savingProgressStream.value = false
                     fieldsEditableStream.value = true
                 }
                 .subscribe({}, {

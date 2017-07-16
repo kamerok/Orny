@@ -45,8 +45,8 @@ class MainActivity : BaseActivity() {
     }
 
     private fun bindViewModels() {
-        statisticsViewModel.bindShowLoading().observe(this, Observer { if (it != null) setLoading(it) })
-        statisticsViewModel.bindStatistics().observe(this, Observer { if (it != null) updateStatistics(it) })
+        statisticsViewModel.showLoadingStream.observe(this, Observer { if (it != null) setLoading(it) })
+        statisticsViewModel.statisticsStream.observe(this, Observer { if (it != null) updateStatistics(it) })
     }
 
     private fun setLoading(isLoading: Boolean) = loadingProgressView.run { if (isLoading) visible() else gone() }

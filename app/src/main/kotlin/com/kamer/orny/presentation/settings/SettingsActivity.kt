@@ -61,13 +61,13 @@ class SettingsActivity : BaseActivity() {
     }
 
     private fun bindViewModels() {
-        pageSettingsViewModel.bindFieldsEditable().observe(this, Observer { if (it != null) setFieldsEditable(it) })
-        pageSettingsViewModel.bindSaveButtonEnabled().observe(this, Observer { if (it != null) setSaveEnabled(it) })
-        pageSettingsViewModel.bindLoadingProgress().observe(this, Observer { if (it != null) setLoadingProgress(it) })
-        pageSettingsViewModel.bindSavingProgress().observe(this, Observer { if (it != null) setSavingProgress(it) })
-        pageSettingsViewModel.bindPageSettings().observe(this, Observer { if (it != null) updateSettings(it) })
-        pageSettingsViewModel.bindShowDatePicker().observe(this, Observer { if (it != null) showDatePicker(it) })
-        pageSettingsViewModel.bindError().observe(this, Observer { if (it != null) showError(it) })
+        pageSettingsViewModel.fieldsEditableStream.observe(this, Observer { if (it != null) setFieldsEditable(it) })
+        pageSettingsViewModel.saveButtonEnabledStream.observe(this, Observer { if (it != null) setSaveEnabled(it) })
+        pageSettingsViewModel.loadingProgressStream.observe(this, Observer { if (it != null) setLoadingProgress(it) })
+        pageSettingsViewModel.savingProgressStream.observe(this, Observer { if (it != null) setSavingProgress(it) })
+        pageSettingsViewModel.pageSettingsStream.observe(this, Observer { if (it != null) updateSettings(it) })
+        pageSettingsViewModel.showDatePickerStream.observe(this, Observer { if (it != null) showDatePicker(it) })
+        pageSettingsViewModel.errorStream.observe(this, Observer { if (it != null) showError(it) })
     }
 
     private fun setFieldsEditable(isEditable: Boolean) {

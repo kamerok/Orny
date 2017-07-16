@@ -112,13 +112,13 @@ class EditExpenseActivity : BaseActivity(), LifecycleOwner {
     }
 
     private fun bindViewModel() {
-        viewModel.bindAuthors().observe(this, Observer { if (it != null) setAuthors(it) })
-        viewModel.bindDate().observe(this, Observer { if (it != null) setDate(it) })
-        viewModel.bindSavingProgress().observe(this, Observer { if (it != null) setSavingProgress(it) })
-        viewModel.bindShowDatePicker().observe(this, Observer { if (it != null) showDatePicker(it) })
-        viewModel.bindShowExitDialog().observe(this, Observer { showExitDialog() })
-        viewModel.bindShowAmountError().observe(this, Observer { if (it != null) showAmountError(it) })
-        viewModel.bindShowError().observe(this, Observer { if (it != null) showError(it) })
+        viewModel.authorsStream.observe(this, Observer { if (it != null) setAuthors(it) })
+        viewModel.dateStream.observe(this, Observer { if (it != null) setDate(it) })
+        viewModel.savingProgressStream.observe(this, Observer { if (it != null) setSavingProgress(it) })
+        viewModel.showDatePickerStream.observe(this, Observer { if (it != null) showDatePicker(it) })
+        viewModel.showExitDialogStream.observe(this, Observer { showExitDialog() })
+        viewModel.showAmountErrorStream.observe(this, Observer { if (it != null) showAmountError(it) })
+        viewModel.showErrorStream.observe(this, Observer { if (it != null) showError(it) })
     }
 
     private fun setAuthors(authors: List<Author>) {

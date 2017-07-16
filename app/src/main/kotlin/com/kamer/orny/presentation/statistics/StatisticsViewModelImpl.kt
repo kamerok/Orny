@@ -1,6 +1,5 @@
 package com.kamer.orny.presentation.statistics
 
-import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import com.kamer.orny.interaction.GetStatisticsInteractor
 import com.kamer.orny.interaction.model.Statistics
@@ -14,25 +13,21 @@ class StatisticsViewModelImpl @Inject constructor(
         getStatisticsInteractor: GetStatisticsInteractor
 ) : BaseViewModel(), StatisticsViewModel {
 
-    private val loading = MutableLiveData<Boolean>()
-    private val statistics = MutableLiveData<Statistics>()
+    override val showLoadingStream = MutableLiveData<Boolean>()
+    override val statisticsStream = MutableLiveData<Statistics>()
 
     init {
         getStatisticsInteractor
                 .getStatistics()
                 .defaultBackgroundSchedulers()
                 .disposeOnDestroy()
-                .doOnSubscribe { loading.value = true }
-                .doFinally { loading.value = false }
+                .doOnSubscribe { showLoadingStream.value = true }
+                .doFinally { showLoadingStream.value = false }
                 .subscribe({
-                    statistics.value = it
+                    statisticsStream.value = it
                 }, {
                     Timber.e(it)
                 })
     }
-
-    override fun bindShowLoading(): LiveData<Boolean> = loading
-
-    override fun bindStatistics(): LiveData<Statistics> = statistics
 
 }

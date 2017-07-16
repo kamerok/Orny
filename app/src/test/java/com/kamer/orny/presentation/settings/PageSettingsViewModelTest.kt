@@ -50,6 +50,62 @@ class PageSettingsViewModelTest{
     }
 
     @Test
+    fun fieldsNotEditableOnStart() {
+        `when`(getInteractor.getSettings()).thenReturn(Single.never())
+
+        createViewModel()
+
+        assertThat(viewModel.bindFieldsEditable().getResultValue()).isFalse()
+    }
+
+    @Test
+    fun fieldsEditableWhenSettingsLoaded() {
+        createViewModel()
+
+        assertThat(viewModel.bindFieldsEditable().getResultValue()).isTrue()
+    }
+
+    @Test
+    fun fieldsNotEditableWhenSettingsLoadingError() {
+        `when`(getInteractor.getSettings()).thenReturn(Single.error(Exception()))
+
+        createViewModel()
+
+        assertThat(viewModel.bindFieldsEditable().getResultValue()).isFalse()
+    }
+
+    @Test
+    fun fieldsNotEditableWhenSavingInProgress() {
+        `when`(saveInteractor.saveSettings(any())).thenReturn(Completable.never())
+
+        createViewModel()
+        viewModel.budgetChanged("1")
+        viewModel.saveSettings()
+
+        assertThat(viewModel.bindFieldsEditable().getResultValue()).isFalse()
+    }
+
+    @Test
+    fun fieldsEditableAfterSaving() {
+        createViewModel()
+        viewModel.budgetChanged("1")
+        viewModel.saveSettings()
+
+        assertThat(viewModel.bindFieldsEditable().getResultValue()).isTrue()
+    }
+
+    @Test
+    fun fieldsEditableAfterSavingError() {
+        `when`(saveInteractor.saveSettings(any())).thenReturn(Completable.error(Exception()))
+
+        createViewModel()
+        viewModel.budgetChanged("1")
+        viewModel.saveSettings()
+
+        assertThat(viewModel.bindFieldsEditable().getResultValue()).isTrue()
+    }
+
+    @Test
     fun hideProgressOnStart() {
         createViewModel()
 

@@ -30,6 +30,7 @@ class PageSettingsViewModelImpl @Inject constructor(
     }
 
     private val saveEnabledStream = MutableLiveData<Boolean>()
+    private val fieldsEditableStream = MutableLiveData<Boolean>()
     private val loadingStream = MutableLiveData<Boolean>()
     private val savingStream = MutableLiveData<Boolean>()
     private val pageSettingsStream = MutableLiveData<PageSettings>()
@@ -37,6 +38,7 @@ class PageSettingsViewModelImpl @Inject constructor(
     private val errorStream = SingleLiveEvent<String>()
 
     init {
+        fieldsEditableStream.value = false
         saveEnabledStream.value = false
         savingStream.value = false
         getInteractor
@@ -44,6 +46,7 @@ class PageSettingsViewModelImpl @Inject constructor(
                 .disposeOnDestroy()
                 .doOnSubscribe { loadingStream.value = true }
                 .doFinally { loadingStream.value = false }
+                .doOnSuccess { fieldsEditableStream.value = true }
                 .subscribe({
                     val settings = it.copy(startDate = it.startDate.dayStart())
                     pageSettingsStream.value = settings
@@ -53,6 +56,8 @@ class PageSettingsViewModelImpl @Inject constructor(
                     errorStream.value = errorParser.getMessage(GetSettingsException(it))
                 })
     }
+
+    override fun bindFieldsEditable(): LiveData<Boolean> = fieldsEditableStream
 
     override fun bindSaveButtonEnabled(): LiveData<Boolean> = saveEnabledStream
 
@@ -113,8 +118,14 @@ class PageSettingsViewModelImpl @Inject constructor(
         saveInteractor
                 .saveSettings(newSettings)
                 .disposeOnDestroy()
-                .doOnSubscribe { savingStream.value = true }
-                .doFinally { savingStream.value = false }
+                .doOnSubscribe {
+                    savingStream.value = true
+                    fieldsEditableStream.value = false
+                }
+                .doFinally {
+                    savingStream.value = false
+                    fieldsEditableStream.value = true
+                }
                 .subscribe({}, {
                     errorStream.value = errorParser.getMessage(SaveSettingsException(it))
                 })

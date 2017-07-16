@@ -8,6 +8,7 @@ import java.util.*
 
 interface PageSettingsViewModel {
 
+    fun bindFieldsEditable(): LiveData<Boolean>
     fun bindSaveButtonEnabled(): LiveData<Boolean>
     fun bindLoadingProgress(): LiveData<Boolean>
     fun bindSavingProgress(): LiveData<Boolean>

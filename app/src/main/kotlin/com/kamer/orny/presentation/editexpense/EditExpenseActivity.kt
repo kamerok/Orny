@@ -3,6 +3,7 @@ package com.kamer.orny.presentation.editexpense
 import android.app.DatePickerDialog
 import android.app.ProgressDialog
 import android.arch.lifecycle.LifecycleOwner
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
@@ -116,7 +117,7 @@ class EditExpenseActivity : BaseActivity(), LifecycleOwner {
         viewModel.dateStream.safeObserve(this, this::setDate)
         viewModel.savingProgressStream.safeObserve(this, this::setSavingProgress)
         viewModel.showDatePickerStream.safeObserve(this, this::showDatePicker)
-        viewModel.showExitDialogStream.safeObserve(this) { showExitDialog() }
+        viewModel.showExitDialogStream.observe(this, Observer { showExitDialog() })
         viewModel.showAmountErrorStream.safeObserve(this, this::showAmountError)
         viewModel.showErrorStream.safeObserve(this, this::showError)
     }

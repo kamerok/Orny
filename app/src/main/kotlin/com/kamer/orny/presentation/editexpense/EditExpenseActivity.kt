@@ -3,7 +3,6 @@ package com.kamer.orny.presentation.editexpense
 import android.app.DatePickerDialog
 import android.app.ProgressDialog
 import android.arch.lifecycle.LifecycleOwner
-import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
@@ -20,6 +19,7 @@ import com.kamer.orny.R
 import com.kamer.orny.data.domain.model.Author
 import com.kamer.orny.presentation.core.BaseActivity
 import com.kamer.orny.utils.onTextChanged
+import com.kamer.orny.utils.safeObserve
 import com.kamer.orny.utils.setupToolbar
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_edit_expense.*
@@ -112,13 +112,13 @@ class EditExpenseActivity : BaseActivity(), LifecycleOwner {
     }
 
     private fun bindViewModel() {
-        viewModel.authorsStream.observe(this, Observer { if (it != null) setAuthors(it) })
-        viewModel.dateStream.observe(this, Observer { if (it != null) setDate(it) })
-        viewModel.savingProgressStream.observe(this, Observer { if (it != null) setSavingProgress(it) })
-        viewModel.showDatePickerStream.observe(this, Observer { if (it != null) showDatePicker(it) })
-        viewModel.showExitDialogStream.observe(this, Observer { showExitDialog() })
-        viewModel.showAmountErrorStream.observe(this, Observer { if (it != null) showAmountError(it) })
-        viewModel.showErrorStream.observe(this, Observer { if (it != null) showError(it) })
+        viewModel.authorsStream.safeObserve(this, this::setAuthors)
+        viewModel.dateStream.safeObserve(this, this::setDate)
+        viewModel.savingProgressStream.safeObserve(this, this::setSavingProgress)
+        viewModel.showDatePickerStream.safeObserve(this, this::showDatePicker)
+        viewModel.showExitDialogStream.safeObserve(this) { showExitDialog() }
+        viewModel.showAmountErrorStream.safeObserve(this, this::showAmountError)
+        viewModel.showErrorStream.safeObserve(this, this::showError)
     }
 
     private fun setAuthors(authors: List<Author>) {

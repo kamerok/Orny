@@ -1,6 +1,5 @@
 package com.kamer.orny.presentation.main
 
-import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
@@ -13,6 +12,7 @@ import com.kamer.orny.presentation.core.BaseActivity
 import com.kamer.orny.presentation.statistics.StatisticsViewModel
 import com.kamer.orny.presentation.statistics.StatisticsViewModelImpl
 import com.kamer.orny.utils.gone
+import com.kamer.orny.utils.safeObserve
 import com.kamer.orny.utils.visible
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_main.*
@@ -45,8 +45,8 @@ class MainActivity : BaseActivity() {
     }
 
     private fun bindViewModels() {
-        statisticsViewModel.showLoadingStream.observe(this, Observer { if (it != null) setLoading(it) })
-        statisticsViewModel.statisticsStream.observe(this, Observer { if (it != null) updateStatistics(it) })
+        statisticsViewModel.showLoadingStream.safeObserve(this, this::setLoading)
+        statisticsViewModel.statisticsStream.safeObserve(this, this::updateStatistics)
     }
 
     private fun setLoading(isLoading: Boolean) = loadingProgressView.run { if (isLoading) visible() else gone() }

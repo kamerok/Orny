@@ -1,7 +1,6 @@
 package com.kamer.orny.presentation.settings
 
 import android.app.DatePickerDialog
-import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
@@ -13,6 +12,7 @@ import com.kamer.orny.data.domain.model.PageSettings
 import com.kamer.orny.di.app.features.PageSettingsModule
 import com.kamer.orny.presentation.core.BaseActivity
 import com.kamer.orny.utils.onTextChanged
+import com.kamer.orny.utils.safeObserve
 import com.kamer.orny.utils.setVisible
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_settings.*
@@ -61,13 +61,13 @@ class SettingsActivity : BaseActivity() {
     }
 
     private fun bindViewModels() {
-        pageSettingsViewModel.fieldsEditableStream.observe(this, Observer { if (it != null) setFieldsEditable(it) })
-        pageSettingsViewModel.saveButtonEnabledStream.observe(this, Observer { if (it != null) setSaveEnabled(it) })
-        pageSettingsViewModel.loadingProgressStream.observe(this, Observer { if (it != null) setLoadingProgress(it) })
-        pageSettingsViewModel.savingProgressStream.observe(this, Observer { if (it != null) setSavingProgress(it) })
-        pageSettingsViewModel.pageSettingsStream.observe(this, Observer { if (it != null) updateSettings(it) })
-        pageSettingsViewModel.showDatePickerStream.observe(this, Observer { if (it != null) showDatePicker(it) })
-        pageSettingsViewModel.errorStream.observe(this, Observer { if (it != null) showError(it) })
+        pageSettingsViewModel.fieldsEditableStream.safeObserve(this, this::setFieldsEditable)
+        pageSettingsViewModel.saveButtonEnabledStream.safeObserve(this, this::setSaveEnabled)
+        pageSettingsViewModel.loadingProgressStream.safeObserve(this, this::setLoadingProgress)
+        pageSettingsViewModel.savingProgressStream.safeObserve(this, this::setSavingProgress)
+        pageSettingsViewModel.pageSettingsStream.safeObserve(this, this::updateSettings)
+        pageSettingsViewModel.showDatePickerStream.safeObserve(this, this::showDatePicker)
+        pageSettingsViewModel.errorStream.safeObserve(this, this::showError)
     }
 
     private fun setFieldsEditable(isEditable: Boolean) {

@@ -204,6 +204,17 @@ class PageSettingsViewModelTest{
     }
 
     @Test
+    fun updateSettingsWhenDateChanged() {
+        initSettings(startDate = Date())
+
+        createViewModel()
+        viewModel.startDateChanged(yesterday())
+        val result = viewModel.bindPageSettings().getResultValue()
+
+        assertThat(result.startDate).isEqualTo(yesterday().dayStart())
+    }
+
+    @Test
     fun disableSaveWhenStartDateChangedOnSameValue() {
         initSettings(startDate = Date())
 

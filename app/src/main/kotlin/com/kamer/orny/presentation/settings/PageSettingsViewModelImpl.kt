@@ -85,6 +85,7 @@ class PageSettingsViewModelImpl @Inject constructor(
             return
         }
         newSettings = newSettings.copy(startDate = date.dayStart())
+        pageSettingsStream.value = newSettings
     }
 
     override fun periodChanged(period: String) {

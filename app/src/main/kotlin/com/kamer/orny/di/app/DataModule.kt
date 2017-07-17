@@ -43,6 +43,10 @@ abstract class DataModule {
 
     @Binds
     @ApplicationScope
+    abstract fun bindAppSettingsRepo(repo: AppSettingsRepoImpl): AppSettingsRepo
+
+    @Binds
+    @ApplicationScope
     abstract fun bindAuthRepo(authRepo: AuthRepoImpl): AuthRepo
 
     @Binds

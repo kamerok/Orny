@@ -6,4 +6,8 @@ data class Author(
         val position: Int,
         val name: String,
         val color: String
-)
+) {
+    companion object {
+        val EMPTY_AUTHOR = Author("", 0, "", "")
+    }
+}

@@ -1,6 +1,5 @@
 package com.kamer.orny.di.app.features
 
-import android.arch.lifecycle.ViewModelProvider
 import com.kamer.orny.interaction.GetPageSettingsInteractor
 import com.kamer.orny.interaction.GetPageSettingsInteractorImpl
 import com.kamer.orny.interaction.SavePageSettingsInteractor
@@ -8,6 +7,7 @@ import com.kamer.orny.interaction.SavePageSettingsInteractorImpl
 import com.kamer.orny.presentation.settings.PageSettingsViewModelImpl
 import com.kamer.orny.utils.createFactory
 import dagger.Binds
+import dagger.Lazy
 import dagger.Module
 import dagger.Provides
 import javax.inject.Named
@@ -22,8 +22,8 @@ abstract class PageSettingsModule {
         @JvmStatic
         @Named(PAGE_SETTINGS)
         @Provides
-        fun provideViewModelFactory(viewModel: PageSettingsViewModelImpl): ViewModelProvider.Factory
-                = viewModel.createFactory()
+        fun provideViewModelFactory(lazyViewModel: Lazy<PageSettingsViewModelImpl>)
+                = createFactory { lazyViewModel.get() }
     }
 
     @Binds

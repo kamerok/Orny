@@ -10,6 +10,7 @@ import com.kamer.orny.presentation.editexpense.EditExpenseRouterImpl
 import com.kamer.orny.presentation.editexpense.EditExpenseViewModelImpl
 import com.kamer.orny.utils.createFactory
 import dagger.Binds
+import dagger.Lazy
 import dagger.Module
 import dagger.Provides
 
@@ -21,8 +22,8 @@ abstract class EditExpenseModule {
     companion object {
         @JvmStatic
         @Provides
-        fun provideViewModelFactory(viewModel: EditExpenseViewModelImpl): ViewModelProvider.Factory
-                = viewModel.createFactory()
+        fun provideViewModelFactory(lazyViewModel: Lazy<EditExpenseViewModelImpl>): ViewModelProvider.Factory
+                = createFactory { lazyViewModel.get() }
     }
 
     @Binds

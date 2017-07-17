@@ -36,6 +36,7 @@ class PageSettingsViewModelImpl @Inject constructor(
     override val pageSettingsStream = MutableLiveData<PageSettings>()
     override val showDatePickerStream = SingleLiveEvent<Date>()
     override val errorStream = SingleLiveEvent<String>()
+
     init {
         fieldsEditableStream.value = false
         saveButtonEnabledStream.value = false

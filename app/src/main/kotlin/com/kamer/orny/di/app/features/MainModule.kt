@@ -6,6 +6,7 @@ import com.kamer.orny.presentation.main.MainRouterImpl
 import com.kamer.orny.presentation.main.MainViewModelImpl
 import com.kamer.orny.utils.createFactory
 import dagger.Binds
+import dagger.Lazy
 import dagger.Module
 import dagger.Provides
 import javax.inject.Named
@@ -20,8 +21,8 @@ abstract class MainModule {
         @JvmStatic
         @Named(MAIN)
         @Provides
-        fun provideViewModelFactory(viewModel: MainViewModelImpl): ViewModelProvider.Factory
-                = viewModel.createFactory()
+        fun provideViewModelFactory(lazyViewModel: Lazy<MainViewModelImpl>): ViewModelProvider.Factory
+                = createFactory { lazyViewModel.get() }
 
     }
 

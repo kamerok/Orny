@@ -6,6 +6,7 @@ import com.kamer.orny.interaction.GetStatisticsInteractorImpl
 import com.kamer.orny.presentation.statistics.StatisticsViewModelImpl
 import com.kamer.orny.utils.createFactory
 import dagger.Binds
+import dagger.Lazy
 import dagger.Module
 import dagger.Provides
 import javax.inject.Named
@@ -20,8 +21,8 @@ abstract class StatisticsModule {
         @JvmStatic
         @Named(STATISTICS)
         @Provides
-        fun provideViewModelFactory(viewModel: StatisticsViewModelImpl): ViewModelProvider.Factory
-                = viewModel.createFactory()
+        fun provideViewModelFactory(lazyViewModel: Lazy<StatisticsViewModelImpl>): ViewModelProvider.Factory
+                = createFactory{ lazyViewModel.get() }
     }
 
     @Binds

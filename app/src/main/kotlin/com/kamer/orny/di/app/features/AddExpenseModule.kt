@@ -16,7 +16,7 @@ import dagger.Provides
 
 
 @Module
-abstract class EditExpenseModule {
+abstract class AddExpenseModule {
 
     @Module
     companion object {

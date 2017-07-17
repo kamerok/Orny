@@ -1,6 +1,6 @@
 package com.kamer.orny.di.app
 
-import com.kamer.orny.di.app.features.EditExpenseModule
+import com.kamer.orny.di.app.features.AddExpenseModule
 import com.kamer.orny.di.app.features.MainModule
 import com.kamer.orny.di.app.features.PageSettingsModule
 import com.kamer.orny.di.app.features.StatisticsModule
@@ -17,7 +17,7 @@ abstract class BuildersModule {
     @ContributesAndroidInjector
     abstract fun injectLogin(): LoginActivity
 
-    @ContributesAndroidInjector(modules = arrayOf(EditExpenseModule::class))
+    @ContributesAndroidInjector(modules = arrayOf(AddExpenseModule::class))
     abstract fun injectEditExpense(): EditExpenseActivity
 
     @ContributesAndroidInjector(modules = arrayOf(MainModule::class, StatisticsModule::class))

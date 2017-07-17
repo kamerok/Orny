@@ -18,12 +18,12 @@ import java.util.*
 import javax.inject.Inject
 
 
-class EditExpenseViewModelImpl @Inject constructor(
+class AddExpenseViewModelImpl @Inject constructor(
         val errorParser: ErrorMessageParser,
-        val router: EditExpenseRouter,
+        val router: AddExpenseRouter,
         val authorsInteractor: GetAuthorsInteractor,
         val createExpenseInteractor: CreateExpenseInteractor
-) : BaseViewModel(), EditExpenseViewModel {
+) : BaseViewModel(), AddExpenseViewModel {
 
     private var authors = emptyList<Author>()
 

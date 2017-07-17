@@ -28,16 +28,16 @@ import org.mockito.junit.MockitoJUnitRunner
 import java.util.*
 
 @RunWith(MockitoJUnitRunner::class)
-class EditExpenseViewModelTest {
+class AddExpenseViewModelTest {
 
     private val PARSED_ERROR = "parsed error"
 
     @Mock lateinit var errorParser: ErrorMessageParser
-    @Mock lateinit var router: EditExpenseRouter
+    @Mock lateinit var router: AddExpenseRouter
     @Mock lateinit var authorsInteractor: GetAuthorsInteractor
     @Mock lateinit var createExpenseInteractor: CreateExpenseInteractor
 
-    private lateinit var viewModel: EditExpenseViewModel
+    private lateinit var viewModel: AddExpenseViewModel
 
     @Before
     fun setUp() {
@@ -260,7 +260,7 @@ class EditExpenseViewModelTest {
     }
 
     private fun createViewModel() {
-        viewModel = EditExpenseViewModelImpl(errorParser, router, authorsInteractor, createExpenseInteractor)
+        viewModel = AddExpenseViewModelImpl(errorParser, router, authorsInteractor, createExpenseInteractor)
     }
 
     private fun createAuthor(index: Int) = Author(id = "$index", position = index, name = "name$index", color = "color$index")

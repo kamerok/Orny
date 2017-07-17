@@ -6,7 +6,7 @@ import com.kamer.orny.presentation.core.SingleLiveEvent
 import java.util.*
 
 
-interface EditExpenseViewModel {
+interface AddExpenseViewModel {
 
     val authorsStream: LiveData<List<Author>>
     val dateStream: LiveData<Date>

@@ -1,7 +1,7 @@
 package com.kamer.orny.presentation.addexpense
 
 
-interface EditExpenseRouter {
+interface AddExpenseRouter {
 
     fun closeScreen()
 

@@ -4,9 +4,9 @@ import com.kamer.orny.data.android.ActivityHolder
 import javax.inject.Inject
 
 
-class EditExpenseRouterImpl @Inject constructor(
+class AddExpenseRouterImpl @Inject constructor(
         val activityHolder: ActivityHolder
-) : EditExpenseRouter {
+) : AddExpenseRouter {
 
     override fun closeScreen() {
         activityHolder.getActivity()?.finish()

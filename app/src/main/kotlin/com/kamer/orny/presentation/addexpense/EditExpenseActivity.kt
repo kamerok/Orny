@@ -40,7 +40,7 @@ class EditExpenseActivity : BaseActivity(), LifecycleOwner {
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    lateinit var viewModel: EditExpenseViewModel
+    lateinit var viewModel: AddExpenseViewModel
 
     private var authors = emptyList<Author>()
     private val adapter by lazy { ArrayAdapter<String>(this, R.layout.item_edit_expense_author) }
@@ -51,7 +51,7 @@ class EditExpenseActivity : BaseActivity(), LifecycleOwner {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_expense)
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(EditExpenseViewModelImpl::class.java)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(AddExpenseViewModelImpl::class.java)
         initViews()
         bindViewModel()
     }

@@ -3,8 +3,7 @@ package com.kamer.orny.presentation.settings
 import android.arch.lifecycle.LiveData
 import android.text.format.DateUtils
 import com.kamer.orny.data.domain.model.PageSettings
-import com.kamer.orny.interaction.settings.GetPageSettingsInteractor
-import com.kamer.orny.interaction.settings.SavePageSettingsInteractor
+import com.kamer.orny.interaction.settings.PageSettingsInteractor
 import com.kamer.orny.presentation.core.ErrorMessageParser
 import com.kamer.orny.presentation.settings.errors.GetSettingsException
 import com.kamer.orny.presentation.settings.errors.SaveSettingsException
@@ -36,8 +35,7 @@ class PageSettingsViewModelTest{
     private val PARSED_ERROR = "parsed error"
 
     @Mock lateinit var errorParser: ErrorMessageParser
-    @Mock lateinit var getInteractor: GetPageSettingsInteractor
-    @Mock lateinit var saveInteractor: SavePageSettingsInteractor
+    @Mock lateinit var interactor: PageSettingsInteractor
 
     private lateinit var viewModel: PageSettingsViewModel
 
@@ -46,12 +44,12 @@ class PageSettingsViewModelTest{
         TestUtils.setupLiveDataExecutor()
         `when`(errorParser.getMessage(any())).thenReturn(PARSED_ERROR)
         initSettings()
-        `when`(saveInteractor.saveSettings(any())).thenReturn(Completable.complete())
+        `when`(interactor.saveSettings(any())).thenReturn(Completable.complete())
     }
 
     @Test
     fun fieldsNotEditableOnStart() {
-        `when`(getInteractor.getSettings()).thenReturn(Single.never())
+        `when`(interactor.getSettings()).thenReturn(Single.never())
 
         createViewModel()
 
@@ -67,7 +65,7 @@ class PageSettingsViewModelTest{
 
     @Test
     fun fieldsNotEditableWhenSettingsLoadingError() {
-        `when`(getInteractor.getSettings()).thenReturn(Single.error(Exception()))
+        `when`(interactor.getSettings()).thenReturn(Single.error(Exception()))
 
         createViewModel()
 
@@ -76,7 +74,7 @@ class PageSettingsViewModelTest{
 
     @Test
     fun fieldsNotEditableWhenSavingInProgress() {
-        `when`(saveInteractor.saveSettings(any())).thenReturn(Completable.never())
+        `when`(interactor.saveSettings(any())).thenReturn(Completable.never())
 
         createViewModel()
         viewModel.budgetChanged("1")
@@ -96,7 +94,7 @@ class PageSettingsViewModelTest{
 
     @Test
     fun fieldsEditableAfterSavingError() {
-        `when`(saveInteractor.saveSettings(any())).thenReturn(Completable.error(Exception()))
+        `when`(interactor.saveSettings(any())).thenReturn(Completable.error(Exception()))
 
         createViewModel()
         viewModel.budgetChanged("1")
@@ -116,7 +114,7 @@ class PageSettingsViewModelTest{
     fun loadSettingsFromInteractor() {
         createViewModel()
 
-        verify(getInteractor).getSettings()
+        verify(interactor).getSettings()
     }
 
     @Test
@@ -133,7 +131,7 @@ class PageSettingsViewModelTest{
     @Test
     fun showProgressOnStart() {
         val subject = PublishSubject.create<PageSettings>()
-        `when`(getInteractor.getSettings()).thenReturn(subject.firstOrError())
+        `when`(interactor.getSettings()).thenReturn(subject.firstOrError())
 
         createViewModel()
         val results = viewModel.loadingProgressStream.getResultValues(2) { subject.onNext(PageSettings(0.0, Date(), 0)) }
@@ -144,7 +142,7 @@ class PageSettingsViewModelTest{
     @Test
     fun showProgressOnStartWithError() {
         val subject = PublishSubject.create<PageSettings>()
-        `when`(getInteractor.getSettings()).thenReturn(subject.firstOrError())
+        `when`(interactor.getSettings()).thenReturn(subject.firstOrError())
 
         createViewModel()
         val results = viewModel.loadingProgressStream.getResultValues(2) { subject.onError(Exception()) }
@@ -154,7 +152,7 @@ class PageSettingsViewModelTest{
 
     @Test
     fun loadSettingsError() {
-        `when`(getInteractor.getSettings()).thenReturn(Single.error(Exception()))
+        `when`(interactor.getSettings()).thenReturn(Single.error(Exception()))
 
         createViewModel()
         val result = viewModel.pageSettingsStream.getResultValue()
@@ -206,14 +204,14 @@ class PageSettingsViewModelTest{
         viewModel.periodChanged("")
         viewModel.saveSettings()
 
-        verify(saveInteractor).saveSettings(captor.capture())
+        verify(interactor).saveSettings(captor.capture())
         assertThat(captor.firstValue.budget).isZero()
         assertThat(captor.firstValue.period).isZero()
     }
 
     @Test
     fun showErrorWhenBudgetChangedBeforeSettingsLoaded() {
-        `when`(getInteractor.getSettings()).thenReturn(Single.never())
+        `when`(interactor.getSettings()).thenReturn(Single.never())
 
         createViewModel()
         viewModel.budgetChanged("2")
@@ -299,7 +297,7 @@ class PageSettingsViewModelTest{
 
     @Test
     fun showErrorWhenStartDateChangedBeforeSettingsLoaded() {
-        `when`(getInteractor.getSettings()).thenReturn(Single.never())
+        `when`(interactor.getSettings()).thenReturn(Single.never())
 
         createViewModel()
         viewModel.startDateChanged(yesterday())
@@ -332,7 +330,7 @@ class PageSettingsViewModelTest{
 
     @Test
     fun showErrorWhenPeriodChangedBeforeSettingsLoaded() {
-        `when`(getInteractor.getSettings()).thenReturn(Single.never())
+        `when`(interactor.getSettings()).thenReturn(Single.never())
 
         createViewModel()
         viewModel.periodChanged("1")
@@ -390,7 +388,7 @@ class PageSettingsViewModelTest{
         viewModel.budgetChanged("1")
         viewModel.saveSettings()
 
-        verify(saveInteractor).saveSettings(captor.capture())
+        verify(interactor).saveSettings(captor.capture())
         assertThat(captor.firstValue).isEqualTo(PageSettings(1.0, Date().dayStart(), 0))
     }
 
@@ -405,7 +403,7 @@ class PageSettingsViewModelTest{
 
     @Test
     fun showSavingProgressError() {
-        `when`(saveInteractor.saveSettings(any())).thenReturn(Completable.error(Exception()))
+        `when`(interactor.saveSettings(any())).thenReturn(Completable.error(Exception()))
 
         createViewModel()
         viewModel.periodChanged("1")
@@ -449,7 +447,7 @@ class PageSettingsViewModelTest{
 
     @Test
     fun showErrorWhenSelectDateBeforeSettingsLoaded() {
-        `when`(getInteractor.getSettings()).thenReturn(Single.never())
+        `when`(interactor.getSettings()).thenReturn(Single.never())
 
         createViewModel()
         viewModel.selectDate()
@@ -460,15 +458,15 @@ class PageSettingsViewModelTest{
     }
 
     private fun initSettings(budget: Double = 0.0, startDate: Date = Date(), period: Int = 0) {
-        `when`(getInteractor.getSettings()).thenReturn(Single.just(PageSettings(budget, startDate, period)))
+        `when`(interactor.getSettings()).thenReturn(Single.just(PageSettings(budget, startDate, period)))
     }
 
     private fun initSettings(pageSettings: PageSettings) {
-        `when`(getInteractor.getSettings()).thenReturn(Single.just(pageSettings))
+        `when`(interactor.getSettings()).thenReturn(Single.just(pageSettings))
     }
 
     private fun createViewModel() {
-        viewModel = PageSettingsViewModelImpl(errorParser, getInteractor, saveInteractor)
+        viewModel = PageSettingsViewModelImpl(errorParser, interactor)
     }
 
     private fun yesterday(): Date = Date().apply { time -= DateUtils.DAY_IN_MILLIS }

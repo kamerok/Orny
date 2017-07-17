@@ -1,9 +1,7 @@
 package com.kamer.orny.di.app.features
 
-import com.kamer.orny.interaction.settings.GetPageSettingsInteractor
-import com.kamer.orny.interaction.settings.GetPageSettingsInteractorImpl
-import com.kamer.orny.interaction.settings.SavePageSettingsInteractor
-import com.kamer.orny.interaction.settings.SavePageSettingsInteractorImpl
+import com.kamer.orny.interaction.settings.PageSettingsInteractor
+import com.kamer.orny.interaction.settings.PageSettingsInteractorImpl
 import com.kamer.orny.presentation.settings.PageSettingsViewModelImpl
 import com.kamer.orny.utils.createFactory
 import dagger.Binds
@@ -27,9 +25,6 @@ abstract class PageSettingsModule {
     }
 
     @Binds
-    abstract fun bindGetInteractor(interactor: GetPageSettingsInteractorImpl): GetPageSettingsInteractor
-
-    @Binds
-    abstract fun bindSaveInteractor(interactor: SavePageSettingsInteractorImpl): SavePageSettingsInteractor
+    abstract fun bindInteractor(interactor: PageSettingsInteractorImpl): PageSettingsInteractor
 
 }

@@ -2,8 +2,7 @@ package com.kamer.orny.presentation.settings
 
 import android.arch.lifecycle.MutableLiveData
 import com.kamer.orny.data.domain.model.PageSettings
-import com.kamer.orny.interaction.settings.GetPageSettingsInteractor
-import com.kamer.orny.interaction.settings.SavePageSettingsInteractor
+import com.kamer.orny.interaction.settings.PageSettingsInteractor
 import com.kamer.orny.presentation.core.BaseViewModel
 import com.kamer.orny.presentation.core.ErrorMessageParser
 import com.kamer.orny.presentation.core.SingleLiveEvent
@@ -19,8 +18,7 @@ import kotlin.properties.Delegates
 
 class PageSettingsViewModelImpl @Inject constructor(
         val errorParser: ErrorMessageParser,
-        getInteractor: GetPageSettingsInteractor,
-        val saveInteractor: SavePageSettingsInteractor
+        val interactor: PageSettingsInteractor
 ) : BaseViewModel(), PageSettingsViewModel {
 
     private var loadedSettings: PageSettings? = null
@@ -41,7 +39,7 @@ class PageSettingsViewModelImpl @Inject constructor(
         fieldsEditableStream.value = false
         saveButtonEnabledStream.value = false
         savingProgressStream.value = false
-        getInteractor
+        interactor
                 .getSettings()
                 .disposeOnDestroy()
                 .doOnSubscribe { loadingProgressStream.value = true }
@@ -105,7 +103,7 @@ class PageSettingsViewModelImpl @Inject constructor(
     }
 
     override fun saveSettings() {
-        saveInteractor
+        interactor
                 .saveSettings(newSettings)
                 .disposeOnDestroy()
                 .doOnSubscribe {

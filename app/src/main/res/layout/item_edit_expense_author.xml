@@ -10,5 +10,5 @@
     android:singleLine="true"
     android:textAlignment="inherit"
     android:textColor="@android:color/black"
-    android:textSize="@dimen/edit_expense_text"
+    android:textSize="@dimen/add_expense_text"
     tools:text="Author"/>

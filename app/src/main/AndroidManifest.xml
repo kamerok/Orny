@@ -24,7 +24,7 @@
         <activity
             android:name=".presentation.shortcut.ShortcutActivity"
             android:icon="@mipmap/ic_add_expense"
-            android:label="@string/edit_expense_add_title">
+            android:label="@string/add_expense_add_title">
             <intent-filter>
                 <action android:name="android.intent.action.CREATE_SHORTCUT"/>
                 <category android:name="android.intent.category.DEFAULT"/>
@@ -32,9 +32,9 @@
         </activity>
 
         <activity
-            android:name=".presentation.addexpense.EditExpenseActivity"
+            android:name=".presentation.addexpense.AddExpenseActivity"
             android:exported="true"
-            android:label="@string/edit_expense_add_title"
+            android:label="@string/add_expense_add_title"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysVisible"/>
 

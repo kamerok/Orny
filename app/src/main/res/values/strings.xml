@@ -18,17 +18,17 @@
     <string name="statistics_total_spent">Total: %1$.1f + %2$.1f = %3$.1f</string>
     <string name="statistics_debt">%1$s → %2$.1f → %3$s</string>
 
-    <!--EditExpense-->
-    <string name="edit_expense_add_title">Add Expense</string>
-    <string name="edit_expense_action_save">Save</string>
-    <string name="edit_expense_exit_dialog_title">Unsaved changes</string>
-    <string name="edit_expense_exit_dialog_message">Save changes?</string>
-    <string name="edit_expense_exit_dialog_save">Save</string>
-    <string name="edit_expense_exit_dialog_exit">Exit</string>
-    <string name="edit_expense_exit_save_progress">Saving expense…</string>
-    <string name="edit_expense_amount_hint">Amount</string>
-    <string name="edit_expense_comment_hint">Comment</string>
-    <string name="edit_expense_off_budget">Off Budget</string>
+    <!--AddExpense-->
+    <string name="add_expense_add_title">Add Expense</string>
+    <string name="add_expense_action_save">Save</string>
+    <string name="add_expense_exit_dialog_title">Unsaved changes</string>
+    <string name="add_expense_exit_dialog_message">Save changes?</string>
+    <string name="add_expense_exit_dialog_save">Save</string>
+    <string name="add_expense_exit_dialog_exit">Exit</string>
+    <string name="add_expense_exit_save_progress">Saving expense…</string>
+    <string name="add_expense_amount_hint">Amount</string>
+    <string name="add_expense_comment_hint">Comment</string>
+    <string name="add_expense_off_budget">Off Budget</string>
 
     <!--Settings-->
     <string name="settings_title">Settings</string>

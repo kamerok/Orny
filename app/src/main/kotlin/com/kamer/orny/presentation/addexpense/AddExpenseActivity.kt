@@ -23,19 +23,19 @@ import com.kamer.orny.utils.onTextChanged
 import com.kamer.orny.utils.safeObserve
 import com.kamer.orny.utils.setupToolbar
 import dagger.android.AndroidInjection
-import kotlinx.android.synthetic.main.activity_edit_expense.*
+import kotlinx.android.synthetic.main.activity_add_expense.*
 import kotlinx.android.synthetic.main.layout_toolbar.*
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
 
-class EditExpenseActivity : BaseActivity(), LifecycleOwner {
+class AddExpenseActivity : BaseActivity(), LifecycleOwner {
 
     companion object {
         private val DATE_FORMAT = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
-        fun getIntent(context: Context) = Intent(context, EditExpenseActivity::class.java)
+        fun getIntent(context: Context) = Intent(context, AddExpenseActivity::class.java)
     }
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -50,7 +50,7 @@ class EditExpenseActivity : BaseActivity(), LifecycleOwner {
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_edit_expense)
+        setContentView(R.layout.activity_add_expense)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(AddExpenseViewModelImpl::class.java)
         initViews()
         bindViewModel()
@@ -61,7 +61,7 @@ class EditExpenseActivity : BaseActivity(), LifecycleOwner {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.edit_expense, menu)
+        menuInflater.inflate(R.menu.add_expense, menu)
         return true
     }
 
@@ -135,7 +135,7 @@ class EditExpenseActivity : BaseActivity(), LifecycleOwner {
     private fun setSavingProgress(isSaving: Boolean) {
         if (isSaving) {
             val dialog = ProgressDialog(this)
-            dialog.setMessage(getString(R.string.edit_expense_exit_save_progress))
+            dialog.setMessage(getString(R.string.add_expense_exit_save_progress))
             dialog.setCancelable(false)
             dialog.setCanceledOnTouchOutside(false)
             dialog.show()
@@ -164,10 +164,10 @@ class EditExpenseActivity : BaseActivity(), LifecycleOwner {
 
     private fun showExitDialog() {
         AlertDialog.Builder(this)
-                .setTitle(R.string.edit_expense_exit_dialog_title)
-                .setMessage(R.string.edit_expense_exit_dialog_message)
-                .setPositiveButton(R.string.edit_expense_exit_dialog_save) { _, _ -> viewModel.saveExpense() }
-                .setNegativeButton(R.string.edit_expense_exit_dialog_exit) { _, _ -> viewModel.confirmExit() }
+                .setTitle(R.string.add_expense_exit_dialog_title)
+                .setMessage(R.string.add_expense_exit_dialog_message)
+                .setPositiveButton(R.string.add_expense_exit_dialog_save) { _, _ -> viewModel.saveExpense() }
+                .setNegativeButton(R.string.add_expense_exit_dialog_exit) { _, _ -> viewModel.confirmExit() }
                 .show()
     }
 

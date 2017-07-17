@@ -35,7 +35,7 @@
         android:layout_marginTop="16dp"
         android:hint="@string/settings_budget_hint"
         android:inputType="numberDecimal"
-        android:textSize="@dimen/edit_expense_text"
+        android:textSize="@dimen/add_expense_text"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/pageSettingsTitle"/>
@@ -43,13 +43,13 @@
     <TextView
         android:id="@+id/dateView"
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/edit_expense_item_height"
+        android:layout_height="@dimen/add_expense_item_height"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:background="?selectableItemBackground"
         android:gravity="center_vertical"
-        android:textSize="@dimen/edit_expense_text"
+        android:textSize="@dimen/add_expense_text"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/budgetView"
         tools:text="15/01/2000"/>
@@ -63,7 +63,7 @@
         android:layout_marginTop="16dp"
         android:hint="@string/settings_period_hint"
         android:inputType="number"
-        android:textSize="@dimen/edit_expense_text"
+        android:textSize="@dimen/add_expense_text"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dateView"/>

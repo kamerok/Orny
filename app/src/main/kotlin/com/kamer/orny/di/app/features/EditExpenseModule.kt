@@ -1,10 +1,10 @@
 package com.kamer.orny.di.app.features
 
 import android.arch.lifecycle.ViewModelProvider
-import com.kamer.orny.interaction.CreateExpenseInteractor
-import com.kamer.orny.interaction.CreateExpenseInteractorImpl
-import com.kamer.orny.interaction.GetAuthorsInteractor
-import com.kamer.orny.interaction.GetAuthorsInteractorImpl
+import com.kamer.orny.interaction.editexpense.CreateExpenseInteractor
+import com.kamer.orny.interaction.editexpense.CreateExpenseInteractorImpl
+import com.kamer.orny.interaction.editexpense.GetAuthorsInteractor
+import com.kamer.orny.interaction.editexpense.GetAuthorsInteractorImpl
 import com.kamer.orny.presentation.editexpense.EditExpenseRouter
 import com.kamer.orny.presentation.editexpense.EditExpenseRouterImpl
 import com.kamer.orny.presentation.editexpense.EditExpenseViewModelImpl
@@ -33,6 +33,6 @@ abstract class EditExpenseModule {
     abstract fun bindGetAuthorsInteractor(interactor: GetAuthorsInteractorImpl): GetAuthorsInteractor
 
     @Binds
-    abstract fun bindSaveExpenseInteractor(interactor: CreateExpenseInteractorImpl): CreateExpenseInteractor
+    abstract fun bindCreateExpenseInteractor(interactor: CreateExpenseInteractorImpl): CreateExpenseInteractor
 
 }

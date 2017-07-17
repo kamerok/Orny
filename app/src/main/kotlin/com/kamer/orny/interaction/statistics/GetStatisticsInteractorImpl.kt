@@ -1,4 +1,4 @@
-package com.kamer.orny.interaction
+package com.kamer.orny.interaction.statistics
 
 import android.text.format.DateUtils
 import com.kamer.orny.data.domain.ExpenseRepo

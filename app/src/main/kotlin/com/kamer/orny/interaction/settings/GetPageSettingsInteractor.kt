@@ -1,4 +1,4 @@
-package com.kamer.orny.interaction
+package com.kamer.orny.interaction.settings
 
 import com.kamer.orny.data.domain.model.PageSettings
 import io.reactivex.Single

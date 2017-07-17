@@ -1,4 +1,4 @@
-package com.kamer.orny.interaction
+package com.kamer.orny.interaction.editexpense
 
 import com.kamer.orny.data.domain.model.Author
 import io.reactivex.Single

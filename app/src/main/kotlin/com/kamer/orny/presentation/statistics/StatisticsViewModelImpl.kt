@@ -1,8 +1,8 @@
 package com.kamer.orny.presentation.statistics
 
 import android.arch.lifecycle.MutableLiveData
-import com.kamer.orny.interaction.GetStatisticsInteractor
 import com.kamer.orny.interaction.model.Statistics
+import com.kamer.orny.interaction.statistics.GetStatisticsInteractor
 import com.kamer.orny.presentation.core.BaseViewModel
 import com.kamer.orny.utils.defaultBackgroundSchedulers
 import timber.log.Timber

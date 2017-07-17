@@ -1,9 +1,9 @@
 package com.kamer.orny.di.app.features
 
-import com.kamer.orny.interaction.GetPageSettingsInteractor
-import com.kamer.orny.interaction.GetPageSettingsInteractorImpl
-import com.kamer.orny.interaction.SavePageSettingsInteractor
-import com.kamer.orny.interaction.SavePageSettingsInteractorImpl
+import com.kamer.orny.interaction.settings.GetPageSettingsInteractor
+import com.kamer.orny.interaction.settings.GetPageSettingsInteractorImpl
+import com.kamer.orny.interaction.settings.SavePageSettingsInteractor
+import com.kamer.orny.interaction.settings.SavePageSettingsInteractorImpl
 import com.kamer.orny.presentation.settings.PageSettingsViewModelImpl
 import com.kamer.orny.utils.createFactory
 import dagger.Binds

@@ -2,8 +2,8 @@ package com.kamer.orny.presentation.settings
 
 import android.arch.lifecycle.MutableLiveData
 import com.kamer.orny.data.domain.model.PageSettings
-import com.kamer.orny.interaction.GetPageSettingsInteractor
-import com.kamer.orny.interaction.SavePageSettingsInteractor
+import com.kamer.orny.interaction.settings.GetPageSettingsInteractor
+import com.kamer.orny.interaction.settings.SavePageSettingsInteractor
 import com.kamer.orny.presentation.core.BaseViewModel
 import com.kamer.orny.presentation.core.ErrorMessageParser
 import com.kamer.orny.presentation.core.SingleLiveEvent

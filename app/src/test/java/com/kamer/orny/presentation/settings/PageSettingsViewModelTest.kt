@@ -3,8 +3,8 @@ package com.kamer.orny.presentation.settings
 import android.arch.lifecycle.LiveData
 import android.text.format.DateUtils
 import com.kamer.orny.data.domain.model.PageSettings
-import com.kamer.orny.interaction.GetPageSettingsInteractor
-import com.kamer.orny.interaction.SavePageSettingsInteractor
+import com.kamer.orny.interaction.settings.GetPageSettingsInteractor
+import com.kamer.orny.interaction.settings.SavePageSettingsInteractor
 import com.kamer.orny.presentation.core.ErrorMessageParser
 import com.kamer.orny.presentation.settings.errors.GetSettingsException
 import com.kamer.orny.presentation.settings.errors.SaveSettingsException

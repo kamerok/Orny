@@ -9,6 +9,8 @@ import com.kamer.orny.data.domain.model.PageSettings
 import com.kamer.orny.interaction.model.Debt
 import com.kamer.orny.interaction.model.Statistics
 import com.kamer.orny.interaction.model.UserStatistics
+import com.kamer.orny.interaction.statistics.GetStatisticsInteractor
+import com.kamer.orny.interaction.statistics.GetStatisticsInteractorImpl
 import com.nhaarman.mockito_kotlin.verify
 import io.reactivex.Observable
 import io.reactivex.observers.TestObserver

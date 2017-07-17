@@ -3,8 +3,8 @@ package com.kamer.orny.presentation.editexpense
 import android.arch.lifecycle.MutableLiveData
 import com.kamer.orny.data.domain.model.Author
 import com.kamer.orny.data.domain.model.NewExpense
-import com.kamer.orny.interaction.CreateExpenseInteractor
-import com.kamer.orny.interaction.GetAuthorsInteractor
+import com.kamer.orny.interaction.editexpense.CreateExpenseInteractor
+import com.kamer.orny.interaction.editexpense.GetAuthorsInteractor
 import com.kamer.orny.presentation.core.BaseViewModel
 import com.kamer.orny.presentation.core.ErrorMessageParser
 import com.kamer.orny.presentation.core.SingleLiveEvent

@@ -1,8 +1,8 @@
 package com.kamer.orny.di.app.features
 
 import android.arch.lifecycle.ViewModelProvider
-import com.kamer.orny.interaction.statistics.GetStatisticsInteractor
-import com.kamer.orny.interaction.statistics.GetStatisticsInteractorImpl
+import com.kamer.orny.interaction.statistics.StatisticsInteractor
+import com.kamer.orny.interaction.statistics.StatisticsInteractorImpl
 import com.kamer.orny.presentation.statistics.StatisticsViewModelImpl
 import com.kamer.orny.utils.createFactory
 import dagger.Binds
@@ -26,6 +26,6 @@ abstract class StatisticsModule {
     }
 
     @Binds
-    abstract fun bindGetStatisticsInteractor(interactor: GetStatisticsInteractorImpl): GetStatisticsInteractor
+    abstract fun bindInteractor(interactor: StatisticsInteractorImpl): StatisticsInteractor
 
 }

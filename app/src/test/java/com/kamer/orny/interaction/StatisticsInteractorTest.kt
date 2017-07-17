@@ -9,8 +9,8 @@ import com.kamer.orny.data.domain.model.PageSettings
 import com.kamer.orny.interaction.model.Debt
 import com.kamer.orny.interaction.model.Statistics
 import com.kamer.orny.interaction.model.UserStatistics
-import com.kamer.orny.interaction.statistics.GetStatisticsInteractor
-import com.kamer.orny.interaction.statistics.GetStatisticsInteractorImpl
+import com.kamer.orny.interaction.statistics.StatisticsInteractor
+import com.kamer.orny.interaction.statistics.StatisticsInteractorImpl
 import com.nhaarman.mockito_kotlin.verify
 import io.reactivex.Observable
 import io.reactivex.observers.TestObserver
@@ -25,19 +25,19 @@ import java.util.*
 
 
 @RunWith(MockitoJUnitRunner::class)
-class GetStatisticsInteractorTest {
+class StatisticsInteractorTest {
 
     @Mock lateinit var pageRepo: PageRepo
     @Mock lateinit var expenseRepo: ExpenseRepo
 
-    private lateinit var interactor: GetStatisticsInteractor
+    private lateinit var interactor: StatisticsInteractor
 
     @Before
     fun setUp() {
         initSettings()
         initAuthors()
         initExpenses()
-        interactor = GetStatisticsInteractorImpl(pageRepo, expenseRepo)
+        interactor = StatisticsInteractorImpl(pageRepo, expenseRepo)
     }
 
     @Test

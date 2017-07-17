@@ -13,10 +13,10 @@ import java.util.*
 import javax.inject.Inject
 
 
-class GetStatisticsInteractorImpl @Inject constructor(
+class StatisticsInteractorImpl @Inject constructor(
         val pageRepo: PageRepo,
         val expenseRepo: ExpenseRepo
-) : GetStatisticsInteractor {
+) : StatisticsInteractor {
 
     override fun getStatistics(): Observable<Statistics> = Observable
             .zip(pageRepo.getPageSettings(), pageRepo.getPageAuthors(), expenseRepo.getAllExpenses(), Function3 {

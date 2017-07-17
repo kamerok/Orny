@@ -4,7 +4,7 @@ import com.kamer.orny.interaction.model.Statistics
 import io.reactivex.Observable
 
 
-interface GetStatisticsInteractor {
+interface StatisticsInteractor {
 
     fun getStatistics(): Observable<Statistics>
 

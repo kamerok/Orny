@@ -197,6 +197,21 @@ class PageSettingsViewModelTest{
     }
 
     @Test
+    fun treatEmptyValuesAsZeros() {
+        initSettings(budget = 1.0, period = 1)
+        val captor = argumentCaptor<PageSettings>()
+
+        createViewModel()
+        viewModel.budgetChanged("")
+        viewModel.periodChanged("")
+        viewModel.saveSettings()
+
+        verify(saveInteractor).saveSettings(captor.capture())
+        assertThat(captor.firstValue.budget).isZero()
+        assertThat(captor.firstValue.period).isZero()
+    }
+
+    @Test
     fun showErrorWhenBudgetChangedBeforeSettingsLoaded() {
         `when`(getInteractor.getSettings()).thenReturn(Single.never())
 
@@ -397,6 +412,15 @@ class PageSettingsViewModelTest{
         viewModel.saveSettings()
 
         assertError(viewModel.errorStream, SaveSettingsException::class)
+    }
+
+    @Test
+    fun newSettingsIsDefaultAfterSaving() {
+        createViewModel()
+        viewModel.periodChanged("1")
+        viewModel.saveSettings()
+
+        assertThat(viewModel.saveButtonEnabledStream.getResultValue()).isFalse()
     }
 
     @Test

@@ -24,18 +24,18 @@ class PageSettingsViewModelImpl @Inject constructor(
 ) : BaseViewModel(), PageSettingsViewModel {
 
     private var loadedSettings: PageSettings? = null
-    private var newSettings: PageSettings by Delegates.observable(PageSettings(0.0, Date().dayStart(), 0)) { _, _, new ->
-        saveButtonEnabledStream.value = loadedSettings != null && new != loadedSettings
+    private var newSettings: PageSettings by Delegates.observable(PageSettings(0.0, Date().dayStart(), 0)) { _, _, _ ->
+        updateSaveButtonState()
     }
 
     override val fieldsEditableStream = MutableLiveData<Boolean>()
+
     override val saveButtonEnabledStream = MutableLiveData<Boolean>()
     override val loadingProgressStream = MutableLiveData<Boolean>()
     override val savingProgressStream = MutableLiveData<Boolean>()
     override val pageSettingsStream = MutableLiveData<PageSettings>()
     override val showDatePickerStream = SingleLiveEvent<Date>()
     override val errorStream = SingleLiveEvent<String>()
-
     init {
         fieldsEditableStream.value = false
         saveButtonEnabledStream.value = false
@@ -61,7 +61,7 @@ class PageSettingsViewModelImpl @Inject constructor(
             errorStream.value = errorParser.getMessage(GetSettingsException("Edit budget before loading"))
             return
         }
-        val parsedBudget = budget.toDoubleOrNull()
+        val parsedBudget = if (budget.isEmpty()) 0.0 else budget.toDoubleOrNull()
         when {
             parsedBudget == null -> errorStream.value = errorParser.getMessage(WrongBudgetFormatException("Budget not a number"))
             parsedBudget < 0 -> errorStream.value = errorParser.getMessage(WrongBudgetFormatException("Budget can't be negative"))
@@ -83,7 +83,7 @@ class PageSettingsViewModelImpl @Inject constructor(
             errorStream.value = errorParser.getMessage(GetSettingsException("Edit period before loading"))
             return
         }
-        val parsedPeriod = period.toIntOrNull()
+        val parsedPeriod = if (period.isEmpty()) 0 else period.toIntOrNull()
         when {
             parsedPeriod == null -> errorStream.value = errorParser.getMessage(WrongPeriodFormatException("Period not a number"))
             parsedPeriod < 0 -> errorStream.value = errorParser.getMessage(WrongPeriodFormatException("Period can't be negative"))
@@ -99,6 +99,10 @@ class PageSettingsViewModelImpl @Inject constructor(
         showDatePickerStream.value = newSettings.startDate
     }
 
+    private fun updateSaveButtonState() {
+        saveButtonEnabledStream.value = loadedSettings != null && newSettings != loadedSettings
+    }
+
     override fun saveSettings() {
         saveInteractor
                 .saveSettings(newSettings)
@@ -111,7 +115,10 @@ class PageSettingsViewModelImpl @Inject constructor(
                     savingProgressStream.value = false
                     fieldsEditableStream.value = true
                 }
-                .subscribe({}, {
+                .subscribe({
+                    loadedSettings = newSettings
+                    updateSaveButtonState()
+                }, {
                     errorStream.value = errorParser.getMessage(SaveSettingsException(it))
                 })
     }

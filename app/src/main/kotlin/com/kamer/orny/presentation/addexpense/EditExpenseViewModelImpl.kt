@@ -1,17 +1,17 @@
-package com.kamer.orny.presentation.editexpense
+package com.kamer.orny.presentation.addexpense
 
 import android.arch.lifecycle.MutableLiveData
 import com.kamer.orny.data.domain.model.Author
 import com.kamer.orny.data.domain.model.NewExpense
-import com.kamer.orny.interaction.editexpense.CreateExpenseInteractor
-import com.kamer.orny.interaction.editexpense.GetAuthorsInteractor
+import com.kamer.orny.interaction.addexpense.CreateExpenseInteractor
+import com.kamer.orny.interaction.addexpense.GetAuthorsInteractor
 import com.kamer.orny.presentation.core.BaseViewModel
 import com.kamer.orny.presentation.core.ErrorMessageParser
 import com.kamer.orny.presentation.core.SingleLiveEvent
-import com.kamer.orny.presentation.editexpense.errors.GetAuthorsException
-import com.kamer.orny.presentation.editexpense.errors.NoChangesException
-import com.kamer.orny.presentation.editexpense.errors.SaveExpenseException
-import com.kamer.orny.presentation.editexpense.errors.WrongAmountFormatException
+import com.kamer.orny.presentation.addexpense.errors.GetAuthorsException
+import com.kamer.orny.presentation.addexpense.errors.NoChangesException
+import com.kamer.orny.presentation.addexpense.errors.SaveExpenseException
+import com.kamer.orny.presentation.addexpense.errors.WrongAmountFormatException
 import io.reactivex.Single
 import timber.log.Timber
 import java.util.*

@@ -1,4 +1,4 @@
-package com.kamer.orny.presentation.editexpense
+package com.kamer.orny.presentation.addexpense
 
 import com.kamer.orny.data.android.ActivityHolder
 import javax.inject.Inject

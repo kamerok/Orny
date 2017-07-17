@@ -1,4 +1,4 @@
-package com.kamer.orny.presentation.editexpense.errors
+package com.kamer.orny.presentation.addexpense.errors
 
 
 class SaveExpenseException(throwable: Throwable) : Exception(throwable)

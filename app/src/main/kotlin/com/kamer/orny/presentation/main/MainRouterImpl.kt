@@ -1,7 +1,7 @@
 package com.kamer.orny.presentation.main
 
 import com.kamer.orny.data.android.ActivityHolder
-import com.kamer.orny.presentation.editexpense.EditExpenseActivity
+import com.kamer.orny.presentation.addexpense.EditExpenseActivity
 import com.kamer.orny.presentation.settings.SettingsActivity
 import javax.inject.Inject
 

@@ -1,13 +1,13 @@
 package com.kamer.orny.di.app.features
 
 import android.arch.lifecycle.ViewModelProvider
-import com.kamer.orny.interaction.editexpense.CreateExpenseInteractor
-import com.kamer.orny.interaction.editexpense.CreateExpenseInteractorImpl
-import com.kamer.orny.interaction.editexpense.GetAuthorsInteractor
-import com.kamer.orny.interaction.editexpense.GetAuthorsInteractorImpl
-import com.kamer.orny.presentation.editexpense.EditExpenseRouter
-import com.kamer.orny.presentation.editexpense.EditExpenseRouterImpl
-import com.kamer.orny.presentation.editexpense.EditExpenseViewModelImpl
+import com.kamer.orny.interaction.addexpense.CreateExpenseInteractor
+import com.kamer.orny.interaction.addexpense.CreateExpenseInteractorImpl
+import com.kamer.orny.interaction.addexpense.GetAuthorsInteractor
+import com.kamer.orny.interaction.addexpense.GetAuthorsInteractorImpl
+import com.kamer.orny.presentation.addexpense.EditExpenseRouter
+import com.kamer.orny.presentation.addexpense.EditExpenseRouterImpl
+import com.kamer.orny.presentation.addexpense.EditExpenseViewModelImpl
 import com.kamer.orny.utils.createFactory
 import dagger.Binds
 import dagger.Lazy

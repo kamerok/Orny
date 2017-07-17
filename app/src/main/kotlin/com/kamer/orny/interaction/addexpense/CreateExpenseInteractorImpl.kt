@@ -1,4 +1,4 @@
-package com.kamer.orny.interaction.editexpense
+package com.kamer.orny.interaction.addexpense
 
 import com.kamer.orny.data.domain.ExpenseRepo
 import com.kamer.orny.data.domain.model.Expense

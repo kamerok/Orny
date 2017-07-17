@@ -1,4 +1,4 @@
-package com.kamer.orny.presentation.editexpense
+package com.kamer.orny.presentation.addexpense
 
 import android.arch.lifecycle.LiveData
 import com.kamer.orny.data.domain.model.Author

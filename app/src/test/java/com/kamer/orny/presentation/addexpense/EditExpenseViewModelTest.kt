@@ -1,13 +1,13 @@
-package com.kamer.orny.presentation.editexpense
+package com.kamer.orny.presentation.addexpense
 
 import com.kamer.orny.data.domain.model.Author
-import com.kamer.orny.interaction.editexpense.CreateExpenseInteractor
-import com.kamer.orny.interaction.editexpense.GetAuthorsInteractor
+import com.kamer.orny.interaction.addexpense.CreateExpenseInteractor
+import com.kamer.orny.interaction.addexpense.GetAuthorsInteractor
 import com.kamer.orny.presentation.core.ErrorMessageParser
-import com.kamer.orny.presentation.editexpense.errors.GetAuthorsException
-import com.kamer.orny.presentation.editexpense.errors.NoChangesException
-import com.kamer.orny.presentation.editexpense.errors.SaveExpenseException
-import com.kamer.orny.presentation.editexpense.errors.WrongAmountFormatException
+import com.kamer.orny.presentation.addexpense.errors.GetAuthorsException
+import com.kamer.orny.presentation.addexpense.errors.NoChangesException
+import com.kamer.orny.presentation.addexpense.errors.SaveExpenseException
+import com.kamer.orny.presentation.addexpense.errors.WrongAmountFormatException
 import com.kamer.orny.utils.TestUtils
 import com.kamer.orny.utils.getResultValue
 import com.kamer.orny.utils.getResultValues

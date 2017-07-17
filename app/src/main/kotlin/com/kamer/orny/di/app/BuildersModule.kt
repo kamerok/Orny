@@ -4,7 +4,7 @@ import com.kamer.orny.di.app.features.EditExpenseModule
 import com.kamer.orny.di.app.features.MainModule
 import com.kamer.orny.di.app.features.PageSettingsModule
 import com.kamer.orny.di.app.features.StatisticsModule
-import com.kamer.orny.presentation.editexpense.EditExpenseActivity
+import com.kamer.orny.presentation.addexpense.EditExpenseActivity
 import com.kamer.orny.presentation.launch.LoginActivity
 import com.kamer.orny.presentation.main.MainActivity
 import com.kamer.orny.presentation.settings.SettingsActivity

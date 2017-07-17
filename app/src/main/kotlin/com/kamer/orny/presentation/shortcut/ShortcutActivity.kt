@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import com.kamer.orny.R
-import com.kamer.orny.presentation.editexpense.EditExpenseActivity
+import com.kamer.orny.presentation.addexpense.EditExpenseActivity
 
 
 class ShortcutActivity : Activity() {

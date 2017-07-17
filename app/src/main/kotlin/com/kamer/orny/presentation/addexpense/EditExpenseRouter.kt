@@ -1,4 +1,4 @@
-package com.kamer.orny.presentation.editexpense
+package com.kamer.orny.presentation.addexpense
 
 
 interface EditExpenseRouter {

@@ -32,7 +32,7 @@
         </activity>
 
         <activity
-            android:name=".presentation.editexpense.EditExpenseActivity"
+            android:name=".presentation.addexpense.EditExpenseActivity"
             android:exported="true"
             android:label="@string/edit_expense_add_title"
             android:theme="@style/AppTheme.NoActionBar"

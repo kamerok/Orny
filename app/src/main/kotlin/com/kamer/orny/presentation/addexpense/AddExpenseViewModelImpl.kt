@@ -3,15 +3,14 @@ package com.kamer.orny.presentation.addexpense
 import android.arch.lifecycle.MutableLiveData
 import com.kamer.orny.data.domain.model.Author
 import com.kamer.orny.data.domain.model.NewExpense
-import com.kamer.orny.interaction.addexpense.CreateExpenseInteractor
-import com.kamer.orny.interaction.addexpense.GetAuthorsInteractor
-import com.kamer.orny.presentation.core.BaseViewModel
-import com.kamer.orny.presentation.core.ErrorMessageParser
-import com.kamer.orny.presentation.core.SingleLiveEvent
+import com.kamer.orny.interaction.addexpense.AddExpenseInteractor
 import com.kamer.orny.presentation.addexpense.errors.GetAuthorsException
 import com.kamer.orny.presentation.addexpense.errors.NoChangesException
 import com.kamer.orny.presentation.addexpense.errors.SaveExpenseException
 import com.kamer.orny.presentation.addexpense.errors.WrongAmountFormatException
+import com.kamer.orny.presentation.core.BaseViewModel
+import com.kamer.orny.presentation.core.ErrorMessageParser
+import com.kamer.orny.presentation.core.SingleLiveEvent
 import io.reactivex.Single
 import timber.log.Timber
 import java.util.*
@@ -21,8 +20,7 @@ import javax.inject.Inject
 class AddExpenseViewModelImpl @Inject constructor(
         val errorParser: ErrorMessageParser,
         val router: AddExpenseRouter,
-        val authorsInteractor: GetAuthorsInteractor,
-        val createExpenseInteractor: CreateExpenseInteractor
+        val interactor: AddExpenseInteractor
 ) : BaseViewModel(), AddExpenseViewModel {
 
     private var authors = emptyList<Author>()
@@ -102,7 +100,7 @@ class AddExpenseViewModelImpl @Inject constructor(
     }
 
     private fun loadAuthors() {
-        authorsInteractor
+        interactor
                 .getAuthors()
                 .disposeOnDestroy()
                 .subscribe(
@@ -125,7 +123,7 @@ class AddExpenseViewModelImpl @Inject constructor(
                         NewExpense(comment, date, isOffBudget, amount, author)
                     }
                 }
-                .flatMapCompletable { createExpenseInteractor.createExpense(it) }
+                .flatMapCompletable { interactor.createExpense(it) }
                 .disposeOnDestroy()
                 .doOnSubscribe { savingProgressStream.value = true }
                 .doFinally { savingProgressStream.value = false }

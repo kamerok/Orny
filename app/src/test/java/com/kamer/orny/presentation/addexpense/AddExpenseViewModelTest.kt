@@ -1,13 +1,12 @@
 package com.kamer.orny.presentation.addexpense
 
 import com.kamer.orny.data.domain.model.Author
-import com.kamer.orny.interaction.addexpense.CreateExpenseInteractor
-import com.kamer.orny.interaction.addexpense.GetAuthorsInteractor
-import com.kamer.orny.presentation.core.ErrorMessageParser
+import com.kamer.orny.interaction.addexpense.AddExpenseInteractor
 import com.kamer.orny.presentation.addexpense.errors.GetAuthorsException
 import com.kamer.orny.presentation.addexpense.errors.NoChangesException
 import com.kamer.orny.presentation.addexpense.errors.SaveExpenseException
 import com.kamer.orny.presentation.addexpense.errors.WrongAmountFormatException
+import com.kamer.orny.presentation.core.ErrorMessageParser
 import com.kamer.orny.utils.TestUtils
 import com.kamer.orny.utils.getResultValue
 import com.kamer.orny.utils.getResultValues
@@ -34,8 +33,7 @@ class AddExpenseViewModelTest {
 
     @Mock lateinit var errorParser: ErrorMessageParser
     @Mock lateinit var router: AddExpenseRouter
-    @Mock lateinit var authorsInteractor: GetAuthorsInteractor
-    @Mock lateinit var createExpenseInteractor: CreateExpenseInteractor
+    @Mock lateinit var interactor: AddExpenseInteractor
 
     private lateinit var viewModel: AddExpenseViewModel
 
@@ -43,8 +41,8 @@ class AddExpenseViewModelTest {
     fun setUp() {
         TestUtils.setupLiveDataExecutor()
         `when`(errorParser.getMessage(any())).thenReturn(PARSED_ERROR)
-        `when`(authorsInteractor.getAuthors()).thenReturn(Single.just(listOf(createAuthor(0))))
-        `when`(createExpenseInteractor.createExpense(any())).thenReturn(Completable.complete())
+        `when`(interactor.getAuthors()).thenReturn(Single.just(listOf(createAuthor(0))))
+        `when`(interactor.createExpense(any())).thenReturn(Completable.complete())
 
         createViewModel()
     }
@@ -52,7 +50,7 @@ class AddExpenseViewModelTest {
     @Test
     fun setAuthorsOnStart() {
         val authors = listOf(createAuthor(0), createAuthor(1))
-        `when`(authorsInteractor.getAuthors()).thenReturn(Single.just(authors))
+        `when`(interactor.getAuthors()).thenReturn(Single.just(authors))
 
         createViewModel()
         val result = viewModel.authorsStream.getResultValue()
@@ -78,7 +76,7 @@ class AddExpenseViewModelTest {
 
     @Test
     fun showGetAuthorsError() {
-        `when`(authorsInteractor.getAuthors()).thenReturn(Single.error(Exception()))
+        `when`(interactor.getAuthors()).thenReturn(Single.error(Exception()))
         val captor = argumentCaptor<Exception>()
 
         createViewModel()
@@ -146,7 +144,7 @@ class AddExpenseViewModelTest {
     fun firstAuthorNotCountAsChange() {
         val firstAuthor = createAuthor(0)
         val authors = listOf(firstAuthor, createAuthor(1))
-        `when`(authorsInteractor.getAuthors()).thenReturn(Single.just(authors))
+        `when`(interactor.getAuthors()).thenReturn(Single.just(authors))
 
         createViewModel()
         viewModel.authorSelected(firstAuthor)
@@ -224,7 +222,7 @@ class AddExpenseViewModelTest {
         viewModel.amountChanged("1")
         viewModel.saveExpense()
 
-        verify(createExpenseInteractor).createExpense(any())
+        verify(interactor).createExpense(any())
     }
 
     @Test
@@ -247,7 +245,7 @@ class AddExpenseViewModelTest {
 
     @Test
     fun showSavingError() {
-        `when`(createExpenseInteractor.createExpense(any())).thenReturn(Completable.error(Exception()))
+        `when`(interactor.createExpense(any())).thenReturn(Completable.error(Exception()))
         val captor = argumentCaptor<Exception>()
 
         viewModel.amountChanged("1")
@@ -260,7 +258,7 @@ class AddExpenseViewModelTest {
     }
 
     private fun createViewModel() {
-        viewModel = AddExpenseViewModelImpl(errorParser, router, authorsInteractor, createExpenseInteractor)
+        viewModel = AddExpenseViewModelImpl(errorParser, router, interactor)
     }
 
     private fun createAuthor(index: Int) = Author(id = "$index", position = index, name = "name$index", color = "color$index")

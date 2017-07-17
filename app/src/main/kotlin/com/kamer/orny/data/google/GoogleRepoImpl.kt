@@ -5,10 +5,7 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.services.sheets.v4.Sheets
-import com.google.api.services.sheets.v4.model.AppendCellsRequest
-import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest
-import com.google.api.services.sheets.v4.model.Request
-import com.google.api.services.sheets.v4.model.RowData
+import com.google.api.services.sheets.v4.model.*
 import com.kamer.orny.data.android.ReactiveActivities
 import com.kamer.orny.data.google.exceptions.NotSupportedSheetException
 import com.kamer.orny.data.google.model.GoogleExpense
@@ -34,8 +31,12 @@ class GoogleRepoImpl @Inject constructor(
         private const val APP_PAGE_ID = "AppSupportedSheet"
 
         private const val SPREADSHEET_ID = "1YsFrfpNzs_gjdtnqVNuAPPYl3NRjeo8GgEWAOD7BdOg"
-        private const val SHEET_NAME = "Июнь"
+        private const val SHEET_NAME = "Тест"
         private const val SHEET_ID = 1549946213
+        private const val RANGE_SUPPORT_MARK = "!A1"
+        private const val RANGE_SETTINGS = "!A2:C2"
+        private const val RANGE_AUTHORS = "!D10:H10"
+        private const val RANGE_EXPENSES = "!A11:H"
 
         val DATE_FORMAT = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     }
@@ -51,6 +52,13 @@ class GoogleRepoImpl @Inject constructor(
             .flatMap { service ->
                 Single
                         .fromCallable { getPageFromApi(service) }
+                        .retryWhen(this::recoverFromGoogleError)
+            }
+
+    override fun savePageSettings(budget: Double, startDate: Date, period: Int): Completable = getSheetsService()
+            .flatMapCompletable { service ->
+                Completable
+                        .fromAction { saveSettingsToApi(service, budget, startDate, period) }
                         .retryWhen(this::recoverFromGoogleError)
             }
 
@@ -103,10 +111,10 @@ class GoogleRepoImpl @Inject constructor(
         val response = service.spreadsheets().values()
                 .batchGet(SPREADSHEET_ID)
                 .setRanges(listOf(
-                        SHEET_NAME + "!A1",
-                        SHEET_NAME + "!A2:C2",
-                        SHEET_NAME + "!D10:H10",
-                        SHEET_NAME + "!A11:H"
+                        SHEET_NAME + RANGE_SUPPORT_MARK,
+                        SHEET_NAME + RANGE_SETTINGS,
+                        SHEET_NAME + RANGE_AUTHORS,
+                        SHEET_NAME + RANGE_EXPENSES
                 ))
                 .execute()
         Timber.d(response.toString())
@@ -130,6 +138,20 @@ class GoogleRepoImpl @Inject constructor(
 
         return GooglePage(budget, days, date, authors, expenses)
     }
+
+    private fun saveSettingsToApi(service: Sheets, budget: Double, startDate: Date, period: Int) {
+        val writeData: MutableList<MutableList<Any>> = ArrayList()
+        writeData.add(mutableListOf(budget, period, DATE_FORMAT.format(startDate)))
+        val valueRange = ValueRange()
+        valueRange.setValues(writeData)
+        val request = service.spreadsheets().values()
+                .update(SPREADSHEET_ID, SHEET_NAME + RANGE_SETTINGS, valueRange)
+                .setValueInputOption("USER_ENTERED")
+        Timber.d("$request $valueRange")
+        val response = request.execute()
+        Timber.d("$response ${response.updatedCells}")
+    }
+
 
     private fun addExpenseToApi(service: Sheets, expense: GoogleExpense) {
         val rowData = listOf<RowData>(RowData().setValues(expense.toCells()))

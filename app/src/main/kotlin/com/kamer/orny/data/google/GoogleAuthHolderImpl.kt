@@ -9,7 +9,7 @@ import com.kamer.orny.data.android.ActivityHolder
 import com.kamer.orny.data.android.ReactiveActivities
 import com.kamer.orny.di.app.ApplicationScope
 import com.kamer.orny.presentation.launch.LoginActivity
-import com.kamer.orny.utils.Prefs
+import com.kamer.orny.data.android.Prefs
 import com.kamer.orny.utils.hasPermission
 import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.Completable

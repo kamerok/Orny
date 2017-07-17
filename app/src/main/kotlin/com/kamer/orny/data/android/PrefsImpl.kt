@@ -1,4 +1,4 @@
-package com.kamer.orny.utils
+package com.kamer.orny.data.android
 
 import android.content.Context
 import android.content.SharedPreferences

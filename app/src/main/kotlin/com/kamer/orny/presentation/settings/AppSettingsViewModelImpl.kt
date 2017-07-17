@@ -7,6 +7,8 @@ import com.kamer.orny.interaction.settings.AppSettingsInteractor
 import com.kamer.orny.presentation.core.BaseViewModel
 import com.kamer.orny.presentation.core.ErrorMessageParser
 import com.kamer.orny.presentation.core.SingleLiveEvent
+import com.kamer.orny.presentation.settings.errors.LoadAuthorException
+import com.kamer.orny.presentation.settings.errors.SaveAuthorException
 import javax.inject.Inject
 
 
@@ -19,7 +21,25 @@ class AppSettingsViewModelImpl @Inject constructor(
     override val loadingStream: MutableLiveData<Boolean> = MutableLiveData()
     override val errorStream: SingleLiveEvent<String> = SingleLiveEvent()
 
+    init {
+        interactor
+                .getDefaultAuthor()
+                .disposeOnDestroy()
+                .doOnSubscribe { loadingStream.value = true }
+                .doFinally { loadingStream.value = false }
+                .subscribe({
+                    modelStream.value = it
+                }, {
+                    errorStream.value = errorParser.getMessage(LoadAuthorException(it))
+                })
+    }
+
     override fun authorSelected(author: Author) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        interactor
+                .saveDefaultAuthor(author)
+                .disposeOnDestroy()
+                .subscribe({}, {
+                    errorStream.value = errorParser.getMessage(SaveAuthorException(it))
+                })
     }
 }

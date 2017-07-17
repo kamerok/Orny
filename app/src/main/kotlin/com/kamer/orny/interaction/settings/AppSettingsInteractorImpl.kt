@@ -27,7 +27,10 @@ class AppSettingsInteractorImpl @Inject constructor(
                             .defaultBackgroundSchedulers()
                             .firstOrError(),
                     BiFunction { authors, defaultAuthor ->
-                        DefaultAuthor(if (defaultAuthor == Author.EMPTY_AUTHOR) null else defaultAuthor, authors)
+                        DefaultAuthor(
+                                if (defaultAuthor == Author.EMPTY_AUTHOR) authors.first() else defaultAuthor,
+                                authors
+                        )
                     }
             )
 

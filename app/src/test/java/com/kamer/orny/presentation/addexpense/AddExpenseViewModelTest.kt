@@ -56,7 +56,7 @@ class AddExpenseViewModelTest {
         createViewModel()
         val result = viewModel.authorsStream.getResultValue()
 
-        assertThat(result).isEqualTo(authors.authors)
+        assertThat(result).isEqualTo(authors)
     }
 
     @Test
@@ -138,19 +138,6 @@ class AddExpenseViewModelTest {
         val result = viewModel.showAmountErrorStream.getResultValue()
 
         assertThat(result).isNull()
-        verify(router).closeScreen()
-    }
-
-    @Test
-    fun firstAuthorNotCountAsChange() {
-        val firstAuthor = createAuthor(0)
-        val authors = AuthorsWithDefault(authors =  listOf(firstAuthor, createAuthor(1)))
-        `when`(interactor.getAuthorsWithDefault()).thenReturn(Single.just(authors))
-
-        createViewModel()
-        viewModel.authorSelected(firstAuthor)
-        viewModel.exitScreen()
-
         verify(router).closeScreen()
     }
 

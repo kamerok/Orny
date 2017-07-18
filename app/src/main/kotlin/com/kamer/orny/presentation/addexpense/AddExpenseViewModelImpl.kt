@@ -4,6 +4,7 @@ import android.arch.lifecycle.MutableLiveData
 import com.kamer.orny.data.domain.model.Author
 import com.kamer.orny.data.domain.model.NewExpense
 import com.kamer.orny.interaction.addexpense.AddExpenseInteractor
+import com.kamer.orny.interaction.model.AuthorsWithDefault
 import com.kamer.orny.presentation.addexpense.errors.GetAuthorsException
 import com.kamer.orny.presentation.addexpense.errors.NoChangesException
 import com.kamer.orny.presentation.addexpense.errors.SaveExpenseException
@@ -23,15 +24,13 @@ class AddExpenseViewModelImpl @Inject constructor(
         val interactor: AddExpenseInteractor
 ) : BaseViewModel(), AddExpenseViewModel {
 
-    private var authors = emptyList<Author>()
-
     private var comment: String = ""
     private var date = Date()
     private var isOffBudget = false
     private var amount = 0.0
     private var author: Author? = null
 
-    override val authorsStream = MutableLiveData<List<Author>>()
+    override val authorsStream = MutableLiveData<AuthorsWithDefault>()
     override val dateStream = MutableLiveData<Date>().apply { value = date }
     override val savingProgressStream = MutableLiveData<Boolean>()
     override val showDatePickerStream = SingleLiveEvent<Date>()
@@ -105,9 +104,8 @@ class AddExpenseViewModelImpl @Inject constructor(
                 .disposeOnDestroy()
                 .subscribe(
                         {
-                            authorsStream.value = it.authors
-                            author = it.authors.firstOrNull()
-                            authors = it.authors
+                            authorsStream.value = it
+                            author = it.selectedAuthor
                         },
                         { showErrorStream.value = errorParser.getMessage(GetAuthorsException(it)) }
                 )

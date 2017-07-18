@@ -150,7 +150,7 @@ class SettingsActivity : BaseActivity() {
         authors = authorsWithDefault.authors
         adapter.clear()
         adapter.addAll(authorsWithDefault.authors.map { it.name })
-        authorsSpinnerView.setSelection(authorsWithDefault.authors.indexOf(authorsWithDefault.selectedAuthor))
+        authorsSpinnerView.setSelection(authorsWithDefault.selectedIndex)
     }
 
 }

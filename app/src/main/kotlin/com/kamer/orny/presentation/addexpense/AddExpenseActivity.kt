@@ -18,6 +18,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import com.kamer.orny.R
 import com.kamer.orny.data.domain.model.Author
+import com.kamer.orny.interaction.model.AuthorsWithDefault
 import com.kamer.orny.presentation.core.BaseActivity
 import com.kamer.orny.utils.onTextChanged
 import com.kamer.orny.utils.safeObserve
@@ -122,10 +123,11 @@ class AddExpenseActivity : BaseActivity(), LifecycleOwner {
         viewModel.showErrorStream.safeObserve(this, this::showError)
     }
 
-    private fun setAuthors(authors: List<Author>) {
-        this.authors = authors
+    private fun setAuthors(authorsWithDefault: AuthorsWithDefault) {
+        this.authors = authorsWithDefault.authors
         adapter.clear()
         adapter.addAll(authors.map { it.name })
+        authorsSpinnerView.setSelection(authorsWithDefault.selectedIndex)
     }
 
     private fun setDate(date: Date) {

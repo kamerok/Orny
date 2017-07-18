@@ -2,13 +2,14 @@ package com.kamer.orny.presentation.addexpense
 
 import android.arch.lifecycle.LiveData
 import com.kamer.orny.data.domain.model.Author
+import com.kamer.orny.interaction.model.AuthorsWithDefault
 import com.kamer.orny.presentation.core.SingleLiveEvent
 import java.util.*
 
 
 interface AddExpenseViewModel {
 
-    val authorsStream: LiveData<List<Author>>
+    val authorsStream: LiveData<AuthorsWithDefault>
     val dateStream: LiveData<Date>
     val savingProgressStream: LiveData<Boolean>
     val showDatePickerStream: SingleLiveEvent<Date>

@@ -1,28 +1,33 @@
 package com.kamer.orny.di.app.features
 
-import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
+import android.support.v4.app.FragmentActivity
+import com.kamer.orny.presentation.core.VMProvider
 import com.kamer.orny.presentation.main.MainRouter
 import com.kamer.orny.presentation.main.MainRouterImpl
+import com.kamer.orny.presentation.main.MainViewModel
 import com.kamer.orny.presentation.main.MainViewModelImpl
 import com.kamer.orny.utils.createFactory
 import dagger.Binds
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
-import javax.inject.Named
 
 @Module
 abstract class MainModule {
 
     @Module
     companion object {
-        const val MAIN = "Main"
-
         @JvmStatic
-        @Named(MAIN)
         @Provides
-        fun provideViewModelFactory(lazyViewModel: Lazy<MainViewModelImpl>): ViewModelProvider.Factory
-                = createFactory { lazyViewModel.get() }
+        fun provideViewModelProvider(lazyViewModel: Lazy<MainViewModelImpl>): VMProvider<MainViewModel>
+                = object : VMProvider<MainViewModel> {
+            override fun get(fragmentActivity: FragmentActivity): MainViewModel {
+                return ViewModelProviders
+                        .of(fragmentActivity, createFactory { lazyViewModel.get() })
+                        .get(MainViewModelImpl::class.java)
+            }
+        }
 
     }
 

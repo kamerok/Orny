@@ -1,8 +1,6 @@
 package com.kamer.orny.presentation.settings
 
 import android.app.DatePickerDialog
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -13,10 +11,9 @@ import android.widget.ArrayAdapter
 import com.kamer.orny.R
 import com.kamer.orny.data.domain.model.Author
 import com.kamer.orny.data.domain.model.PageSettings
-import com.kamer.orny.di.app.features.AppSettingsModule
-import com.kamer.orny.di.app.features.PageSettingsModule
 import com.kamer.orny.interaction.model.AuthorsWithDefault
 import com.kamer.orny.presentation.core.BaseActivity
+import com.kamer.orny.presentation.core.VMProvider
 import com.kamer.orny.utils.onTextChanged
 import com.kamer.orny.utils.safeObserve
 import com.kamer.orny.utils.setVisible
@@ -27,18 +24,16 @@ import kotlinx.android.synthetic.main.layout_toolbar.*
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
-import javax.inject.Named
 
 
+@JvmSuppressWildcards
 class SettingsActivity : BaseActivity() {
 
-    @field:[Inject Named(PageSettingsModule.PAGE_SETTINGS)]
-    lateinit var pageSettingsViewModelFactory: ViewModelProvider.Factory
-    @field:[Inject Named(AppSettingsModule.APP_SETTINGS)]
-    lateinit var appSettingsViewModelFactory: ViewModelProvider.Factory
+    @Inject lateinit var pageSettingsViewModelProvider: VMProvider<PageSettingsViewModel>
+    @Inject lateinit var appSettingsViewModelProvider: VMProvider<AppSettingsViewModel>
 
-    private lateinit var pageSettingsViewModel: PageSettingsViewModel
-    private lateinit var appSettingsViewModel: AppSettingsViewModel
+    private val pageSettingsViewModel: PageSettingsViewModel by lazy { pageSettingsViewModelProvider.get(this) }
+    private val appSettingsViewModel: AppSettingsViewModel by lazy { appSettingsViewModelProvider.get(this) }
 
     private var ignoreBudgetChange = false
     private var ignorePeriodChange = false
@@ -56,8 +51,6 @@ class SettingsActivity : BaseActivity() {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
-        pageSettingsViewModel = ViewModelProviders.of(this, pageSettingsViewModelFactory).get(PageSettingsViewModelImpl::class.java)
-        appSettingsViewModel = ViewModelProviders.of(this, appSettingsViewModelFactory).get(AppSettingsViewModelImpl::class.java)
         initViews()
         bindViewModels()
     }

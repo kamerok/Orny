@@ -1,28 +1,32 @@
 package com.kamer.orny.di.app.features
 
-import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
+import android.support.v4.app.FragmentActivity
 import com.kamer.orny.interaction.statistics.StatisticsInteractor
 import com.kamer.orny.interaction.statistics.StatisticsInteractorImpl
+import com.kamer.orny.presentation.core.VMProvider
+import com.kamer.orny.presentation.statistics.StatisticsViewModel
 import com.kamer.orny.presentation.statistics.StatisticsViewModelImpl
 import com.kamer.orny.utils.createFactory
 import dagger.Binds
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
-import javax.inject.Named
 
 @Module
 abstract class StatisticsModule {
 
     @Module
     companion object {
-        const val STATISTICS = "Statistics"
-
         @JvmStatic
-        @Named(STATISTICS)
         @Provides
-        fun provideViewModelFactory(lazyViewModel: Lazy<StatisticsViewModelImpl>): ViewModelProvider.Factory
-                = createFactory{ lazyViewModel.get() }
+        fun provideViewModelProvider(lazyViewModel: Lazy<StatisticsViewModelImpl>): VMProvider<StatisticsViewModel>
+                = object : VMProvider<StatisticsViewModel> {
+            override fun get(fragmentActivity: FragmentActivity): StatisticsViewModel =
+                    ViewModelProviders
+                            .of(fragmentActivity, createFactory { lazyViewModel.get() })
+                            .get(StatisticsViewModelImpl::class.java)
+        }
     }
 
     @Binds

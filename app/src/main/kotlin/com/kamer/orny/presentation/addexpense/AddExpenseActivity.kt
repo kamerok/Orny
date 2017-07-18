@@ -4,8 +4,6 @@ import android.app.DatePickerDialog
 import android.app.ProgressDialog
 import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -20,6 +18,7 @@ import com.kamer.orny.R
 import com.kamer.orny.data.domain.model.Author
 import com.kamer.orny.interaction.model.AuthorsWithDefault
 import com.kamer.orny.presentation.core.BaseActivity
+import com.kamer.orny.presentation.core.VMProvider
 import com.kamer.orny.utils.onTextChanged
 import com.kamer.orny.utils.safeObserve
 import com.kamer.orny.utils.setupToolbar
@@ -31,6 +30,7 @@ import java.util.*
 import javax.inject.Inject
 
 
+@JvmSuppressWildcards
 class AddExpenseActivity : BaseActivity(), LifecycleOwner {
 
     companion object {
@@ -39,9 +39,9 @@ class AddExpenseActivity : BaseActivity(), LifecycleOwner {
         fun getIntent(context: Context) = Intent(context, AddExpenseActivity::class.java)
     }
 
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject lateinit var viewModelProvider: VMProvider<AddExpenseViewModel>
 
-    lateinit var viewModel: AddExpenseViewModel
+    private val viewModel: AddExpenseViewModel by lazy { viewModelProvider.get(this) }
 
     private var authors = emptyList<Author>()
     private val adapter by lazy { ArrayAdapter<String>(this, R.layout.item_edit_expense_author) }
@@ -52,7 +52,6 @@ class AddExpenseActivity : BaseActivity(), LifecycleOwner {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_expense)
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(AddExpenseViewModelImpl::class.java)
         initViews()
         bindViewModel()
     }

@@ -1,39 +1,33 @@
 package com.kamer.orny.presentation.main
 
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import com.kamer.orny.R
-import com.kamer.orny.di.app.features.MainModule
-import com.kamer.orny.di.app.features.StatisticsModule
 import com.kamer.orny.interaction.model.Statistics
 import com.kamer.orny.presentation.core.BaseActivity
+import com.kamer.orny.presentation.core.VMProvider
 import com.kamer.orny.presentation.statistics.StatisticsViewModel
-import com.kamer.orny.presentation.statistics.StatisticsViewModelImpl
 import com.kamer.orny.utils.gone
 import com.kamer.orny.utils.safeObserve
 import com.kamer.orny.utils.visible
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
-import javax.inject.Named
 
 
+@JvmSuppressWildcards
 class MainActivity : BaseActivity() {
 
-    @field:[Inject Named(StatisticsModule.STATISTICS)] lateinit var statisticsViewModelFactory: ViewModelProvider.Factory
-    @field:[Inject Named(MainModule.MAIN)] lateinit var mainViewModelFactory: ViewModelProvider.Factory
+    @Inject lateinit var statisticsViewModelProvider: VMProvider<StatisticsViewModel>
+    @Inject lateinit var mainViewModelProvider: VMProvider<MainViewModel>
 
-    private lateinit var statisticsViewModel: StatisticsViewModel
-    private lateinit var mainViewModel: MainViewModel
+    private val statisticsViewModel: StatisticsViewModel by lazy { statisticsViewModelProvider.get(this) }
+    private val mainViewModel: MainViewModel by lazy { mainViewModelProvider.get(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        statisticsViewModel = ViewModelProviders.of(this, statisticsViewModelFactory).get(StatisticsViewModelImpl::class.java)
-        mainViewModel = ViewModelProviders.of(this, mainViewModelFactory).get(MainViewModelImpl::class.java)
         initViews()
         bindViewModels()
     }

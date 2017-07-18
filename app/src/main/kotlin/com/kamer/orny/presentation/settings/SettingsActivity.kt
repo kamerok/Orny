@@ -7,9 +7,15 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import com.kamer.orny.R
+import com.kamer.orny.data.domain.model.Author
 import com.kamer.orny.data.domain.model.PageSettings
+import com.kamer.orny.di.app.features.AppSettingsModule
 import com.kamer.orny.di.app.features.PageSettingsModule
+import com.kamer.orny.interaction.model.DefaultAuthor
 import com.kamer.orny.presentation.core.BaseActivity
 import com.kamer.orny.utils.onTextChanged
 import com.kamer.orny.utils.safeObserve
@@ -26,11 +32,17 @@ class SettingsActivity : BaseActivity() {
 
     @field:[Inject Named(PageSettingsModule.PAGE_SETTINGS)]
     lateinit var pageSettingsViewModelFactory: ViewModelProvider.Factory
+    @field:[Inject Named(AppSettingsModule.APP_SETTINGS)]
+    lateinit var appSettingsViewModelFactory: ViewModelProvider.Factory
 
     private lateinit var pageSettingsViewModel: PageSettingsViewModel
+    private lateinit var appSettingsViewModel: AppSettingsViewModel
 
     private var ignoreBudgetChange = false
     private var ignorePeriodChange = false
+
+    private var authors = emptyList<Author>()
+    private val adapter by lazy { ArrayAdapter<String>(this, R.layout.item_edit_expense_author) }
 
     companion object {
         private val DATE_FORMAT = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
@@ -43,6 +55,7 @@ class SettingsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
         pageSettingsViewModel = ViewModelProviders.of(this, pageSettingsViewModelFactory).get(PageSettingsViewModelImpl::class.java)
+        appSettingsViewModel = ViewModelProviders.of(this, appSettingsViewModelFactory).get(AppSettingsViewModelImpl::class.java)
         initViews()
         bindViewModels()
     }
@@ -58,6 +71,16 @@ class SettingsActivity : BaseActivity() {
             else pageSettingsViewModel.periodChanged(it)
         }
         saveButton.setOnClickListener { pageSettingsViewModel.saveSettings() }
+        authorsSpinnerView.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                appSettingsViewModel.authorSelected(authors[position])
+            }
+        }
+        authorsSpinnerView.adapter = adapter
     }
 
     private fun bindViewModels() {
@@ -68,6 +91,9 @@ class SettingsActivity : BaseActivity() {
         pageSettingsViewModel.pageSettingsStream.safeObserve(this, this::updateSettings)
         pageSettingsViewModel.showDatePickerStream.safeObserve(this, this::showDatePicker)
         pageSettingsViewModel.errorStream.safeObserve(this, this::showError)
+
+        appSettingsViewModel.modelStream.safeObserve(this, this::updateDefaultAuthor)
+        appSettingsViewModel.errorStream.safeObserve(this, this::showError)
     }
 
     private fun setFieldsEditable(isEditable: Boolean) {
@@ -118,6 +144,13 @@ class SettingsActivity : BaseActivity() {
                 .setMessage(message)
                 .setPositiveButton(android.R.string.ok) { _, _ -> }
                 .show()
+    }
+
+    private fun updateDefaultAuthor(defaultAuthor: DefaultAuthor) {
+        authors = defaultAuthor.authors
+        adapter.clear()
+        adapter.addAll(defaultAuthor.authors.map { it.name })
+        authorsSpinnerView.setSelection(defaultAuthor.authors.indexOf(defaultAuthor.selectedAuthor))
     }
 
 }

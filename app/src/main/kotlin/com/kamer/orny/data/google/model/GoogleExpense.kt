@@ -6,6 +6,7 @@ import com.google.api.services.sheets.v4.model.CellFormat
 import com.google.api.services.sheets.v4.model.ExtendedValue
 import com.google.api.services.sheets.v4.model.NumberFormat
 import com.kamer.orny.data.google.GoogleRepoImpl
+import com.kamer.orny.utils.dayStart
 import java.lang.IllegalArgumentException
 import java.util.*
 
@@ -44,9 +45,9 @@ data class GoogleExpense(
         if (date == null) {
             cellsData.add(CellData().apply { userEnteredValue = ExtendedValue().setStringValue("") })
         } else {
-            val startCalendar = Calendar.getInstance().apply { set(1899, 12, 30) }
+            val startCalendar = Calendar.getInstance().apply { set(1899, Calendar.DECEMBER, 29) }
             val current = Calendar.getInstance().apply { timeInMillis = date.time }
-            val days: Double = ((current.timeInMillis - startCalendar.timeInMillis) / DateUtils.DAY_IN_MILLIS).toDouble() + 1
+            val days: Double = daysBetween(startCalendar, current).toDouble()
             cellsData.add(CellData().apply {
                 userEnteredValue = ExtendedValue().setNumberValue(days)
                 userEnteredFormat = CellFormat().setNumberFormat(NumberFormat().setType("DATE"))
@@ -61,6 +62,12 @@ data class GoogleExpense(
             }
         }
         return cellsData
+    }
+
+    private fun daysBetween(c1: Calendar, c2: Calendar): Int {
+        val day1 = c1.dayStart().timeInMillis / DateUtils.DAY_IN_MILLIS
+        val day2 = c2.dayStart().timeInMillis / DateUtils.DAY_IN_MILLIS
+        return (day2 - day1).toInt()
     }
 
 }

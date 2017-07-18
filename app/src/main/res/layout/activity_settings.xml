@@ -7,6 +7,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <include layout="@layout/layout_toolbar"/>
+
     <TextView
         android:id="@+id/pageSettingsTitle"
         android:layout_width="wrap_content"
@@ -14,7 +16,7 @@
         android:layout_margin="8dp"
         android:text="@string/settings_page_settings"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/toolbarView"/>
 
     <ProgressBar
         android:id="@+id/loadingProgressView"

@@ -20,8 +20,10 @@ import com.kamer.orny.presentation.core.BaseActivity
 import com.kamer.orny.utils.onTextChanged
 import com.kamer.orny.utils.safeObserve
 import com.kamer.orny.utils.setVisible
+import com.kamer.orny.utils.setupToolbar
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_settings.*
+import kotlinx.android.synthetic.main.layout_toolbar.*
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -61,6 +63,7 @@ class SettingsActivity : BaseActivity() {
     }
 
     private fun initViews() {
+        setupToolbar(toolbarView)
         budgetView.onTextChanged {
             if (ignoreBudgetChange) ignoreBudgetChange = false
             else pageSettingsViewModel.budgetChanged(it)

@@ -65,7 +65,7 @@ fun Calendar.dayStart() = this.apply {
     set(Calendar.MILLISECOND, 0)
 }
 
-fun Date.dayStart() = Calendar
+fun Date.dayStart(): Date = Calendar
         .getInstance()
         .apply {
             time = this@dayStart

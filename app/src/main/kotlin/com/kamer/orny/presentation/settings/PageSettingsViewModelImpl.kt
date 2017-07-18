@@ -26,19 +26,15 @@ class PageSettingsViewModelImpl @Inject constructor(
         updateSaveButtonState()
     }
 
-    override val fieldsEditableStream = MutableLiveData<Boolean>()
-
-    override val saveButtonEnabledStream = MutableLiveData<Boolean>()
+    override val fieldsEditableStream = MutableLiveData<Boolean>().apply { value = false }
+    override val saveButtonEnabledStream = MutableLiveData<Boolean>().apply { value = false }
     override val loadingProgressStream = MutableLiveData<Boolean>()
-    override val savingProgressStream = MutableLiveData<Boolean>()
+    override val savingProgressStream = MutableLiveData<Boolean>().apply { value = false }
     override val pageSettingsStream = MutableLiveData<PageSettings>()
     override val showDatePickerStream = SingleLiveEvent<Date>()
     override val errorStream = SingleLiveEvent<String>()
 
     init {
-        fieldsEditableStream.value = false
-        saveButtonEnabledStream.value = false
-        savingProgressStream.value = false
         interactor
                 .getSettings()
                 .disposeOnDestroy()

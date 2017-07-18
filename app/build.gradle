@@ -11,7 +11,7 @@ repositories {
 android {
 
     def appName = "Orny"
-    def build = 1
+    def build = 2
 
     compileSdkVersion 25
     buildToolsVersion "25.0.2"

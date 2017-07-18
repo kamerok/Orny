@@ -101,13 +101,13 @@ class AddExpenseViewModelImpl @Inject constructor(
 
     private fun loadAuthors() {
         interactor
-                .getAuthors()
+                .getAuthorsWithDefault()
                 .disposeOnDestroy()
                 .subscribe(
                         {
-                            authorsStream.value = it
-                            author = it.firstOrNull()
-                            authors = it
+                            authorsStream.value = it.authors
+                            author = it.authors.firstOrNull()
+                            authors = it.authors
                         },
                         { showErrorStream.value = errorParser.getMessage(GetAuthorsException(it)) }
                 )

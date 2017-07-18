@@ -2,6 +2,7 @@ package com.kamer.orny.presentation.addexpense
 
 import com.kamer.orny.data.domain.model.Author
 import com.kamer.orny.interaction.addexpense.AddExpenseInteractor
+import com.kamer.orny.interaction.model.AuthorsWithDefault
 import com.kamer.orny.presentation.addexpense.errors.GetAuthorsException
 import com.kamer.orny.presentation.addexpense.errors.NoChangesException
 import com.kamer.orny.presentation.addexpense.errors.SaveExpenseException
@@ -41,7 +42,7 @@ class AddExpenseViewModelTest {
     fun setUp() {
         TestUtils.setupLiveDataExecutor()
         `when`(errorParser.getMessage(any())).thenReturn(PARSED_ERROR)
-        `when`(interactor.getAuthors()).thenReturn(Single.just(listOf(createAuthor(0))))
+        `when`(interactor.getAuthorsWithDefault()).thenReturn(Single.just(AuthorsWithDefault(authors =  listOf(createAuthor(0)))))
         `when`(interactor.createExpense(any())).thenReturn(Completable.complete())
 
         createViewModel()
@@ -49,13 +50,13 @@ class AddExpenseViewModelTest {
 
     @Test
     fun setAuthorsOnStart() {
-        val authors = listOf(createAuthor(0), createAuthor(1))
-        `when`(interactor.getAuthors()).thenReturn(Single.just(authors))
+        val authors = AuthorsWithDefault(authors =  listOf(createAuthor(0), createAuthor(1)))
+        `when`(interactor.getAuthorsWithDefault()).thenReturn(Single.just(authors))
 
         createViewModel()
         val result = viewModel.authorsStream.getResultValue()
 
-        assertThat(result).isEqualTo(authors)
+        assertThat(result).isEqualTo(authors.authors)
     }
 
     @Test
@@ -76,7 +77,7 @@ class AddExpenseViewModelTest {
 
     @Test
     fun showGetAuthorsError() {
-        `when`(interactor.getAuthors()).thenReturn(Single.error(Exception()))
+        `when`(interactor.getAuthorsWithDefault()).thenReturn(Single.error(Exception()))
         val captor = argumentCaptor<Exception>()
 
         createViewModel()
@@ -143,8 +144,8 @@ class AddExpenseViewModelTest {
     @Test
     fun firstAuthorNotCountAsChange() {
         val firstAuthor = createAuthor(0)
-        val authors = listOf(firstAuthor, createAuthor(1))
-        `when`(interactor.getAuthors()).thenReturn(Single.just(authors))
+        val authors = AuthorsWithDefault(authors =  listOf(firstAuthor, createAuthor(1)))
+        `when`(interactor.getAuthorsWithDefault()).thenReturn(Single.just(authors))
 
         createViewModel()
         viewModel.authorSelected(firstAuthor)

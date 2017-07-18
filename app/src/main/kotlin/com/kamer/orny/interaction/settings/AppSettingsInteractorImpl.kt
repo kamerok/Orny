@@ -3,7 +3,7 @@ package com.kamer.orny.interaction.settings
 import com.kamer.orny.data.domain.AppSettingsRepo
 import com.kamer.orny.data.domain.PageRepo
 import com.kamer.orny.data.domain.model.Author
-import com.kamer.orny.interaction.model.DefaultAuthor
+import com.kamer.orny.interaction.model.AuthorsWithDefault
 import com.kamer.orny.utils.defaultBackgroundSchedulers
 import io.reactivex.Completable
 import io.reactivex.Single
@@ -16,7 +16,7 @@ class AppSettingsInteractorImpl @Inject constructor(
         val appSettingsRepo: AppSettingsRepo
 ) : AppSettingsInteractor {
 
-    override fun getDefaultAuthor(): Single<DefaultAuthor> = Single
+    override fun getAuthorsWithDefault(): Single<AuthorsWithDefault> = Single
             .zip(
                     pageRepo
                             .getPageAuthors()
@@ -27,7 +27,7 @@ class AppSettingsInteractorImpl @Inject constructor(
                             .defaultBackgroundSchedulers()
                             .firstOrError(),
                     BiFunction { authors, defaultAuthor ->
-                        DefaultAuthor(
+                        AuthorsWithDefault(
                                 if (defaultAuthor == Author.EMPTY_AUTHOR) authors.first() else defaultAuthor,
                                 authors
                         )

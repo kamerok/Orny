@@ -2,7 +2,7 @@ package com.kamer.orny.presentation.settings
 
 import android.arch.lifecycle.LiveData
 import com.kamer.orny.data.domain.model.Author
-import com.kamer.orny.interaction.model.DefaultAuthor
+import com.kamer.orny.interaction.model.AuthorsWithDefault
 import com.kamer.orny.interaction.settings.AppSettingsInteractor
 import com.kamer.orny.presentation.core.ErrorMessageParser
 import com.kamer.orny.presentation.settings.errors.LoadAuthorException
@@ -40,7 +40,7 @@ class AppSettingsViewModelTest {
     fun setUp() {
         TestUtils.setupLiveDataExecutor()
         `when`(errorParser.getMessage(any())).thenReturn(PARSED_ERROR)
-        `when`(interactor.getDefaultAuthor()).thenReturn(Single.just(DefaultAuthor()))
+        `when`(interactor.getAuthorsWithDefault()).thenReturn(Single.just(AuthorsWithDefault()))
         `when`(interactor.saveDefaultAuthor(any())).thenReturn(Completable.complete())
     }
 
@@ -48,12 +48,12 @@ class AppSettingsViewModelTest {
     fun requestDefaultAuthorOnStart() {
         createViewModel()
 
-        verify(interactor).getDefaultAuthor()
+        verify(interactor).getAuthorsWithDefault()
     }
 
     @Test
     fun showLoadingProgress() {
-        `when`(interactor.getDefaultAuthor()).thenReturn(Single.never())
+        `when`(interactor.getAuthorsWithDefault()).thenReturn(Single.never())
         createViewModel()
 
         assertThat(viewModel.loadingStream.getResultValue()).isTrue()
@@ -68,7 +68,7 @@ class AppSettingsViewModelTest {
 
     @Test
     fun hideLoadingProgressOnError() {
-        `when`(interactor.getDefaultAuthor()).thenReturn(Single.error(Exception()))
+        `when`(interactor.getAuthorsWithDefault()).thenReturn(Single.error(Exception()))
         createViewModel()
 
         assertThat(viewModel.loadingStream.getResultValue()).isFalse()
@@ -76,8 +76,8 @@ class AppSettingsViewModelTest {
 
     @Test
     fun postLoadedAuthor() {
-        val author = DefaultAuthor()
-        `when`(interactor.getDefaultAuthor()).thenReturn(Single.just(author))
+        val author = AuthorsWithDefault()
+        `when`(interactor.getAuthorsWithDefault()).thenReturn(Single.just(author))
         createViewModel()
 
         assertThat(viewModel.modelStream.getResultValue()).isEqualTo(author)
@@ -85,7 +85,7 @@ class AppSettingsViewModelTest {
 
     @Test
     fun showLoadingError() {
-        `when`(interactor.getDefaultAuthor()).thenReturn(Single.error(Exception()))
+        `when`(interactor.getAuthorsWithDefault()).thenReturn(Single.error(Exception()))
         createViewModel()
 
         assertError(viewModel.errorStream, LoadAuthorException::class)

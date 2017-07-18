@@ -15,7 +15,7 @@ import com.kamer.orny.data.domain.model.Author
 import com.kamer.orny.data.domain.model.PageSettings
 import com.kamer.orny.di.app.features.AppSettingsModule
 import com.kamer.orny.di.app.features.PageSettingsModule
-import com.kamer.orny.interaction.model.DefaultAuthor
+import com.kamer.orny.interaction.model.AuthorsWithDefault
 import com.kamer.orny.presentation.core.BaseActivity
 import com.kamer.orny.utils.onTextChanged
 import com.kamer.orny.utils.safeObserve
@@ -92,7 +92,7 @@ class SettingsActivity : BaseActivity() {
         pageSettingsViewModel.showDatePickerStream.safeObserve(this, this::showDatePicker)
         pageSettingsViewModel.errorStream.safeObserve(this, this::showError)
 
-        appSettingsViewModel.modelStream.safeObserve(this, this::updateDefaultAuthor)
+        appSettingsViewModel.modelStream.safeObserve(this, this::updateAuthors)
         appSettingsViewModel.errorStream.safeObserve(this, this::showError)
     }
 
@@ -146,11 +146,11 @@ class SettingsActivity : BaseActivity() {
                 .show()
     }
 
-    private fun updateDefaultAuthor(defaultAuthor: DefaultAuthor) {
-        authors = defaultAuthor.authors
+    private fun updateAuthors(authorsWithDefault: AuthorsWithDefault) {
+        authors = authorsWithDefault.authors
         adapter.clear()
-        adapter.addAll(defaultAuthor.authors.map { it.name })
-        authorsSpinnerView.setSelection(defaultAuthor.authors.indexOf(defaultAuthor.selectedAuthor))
+        adapter.addAll(authorsWithDefault.authors.map { it.name })
+        authorsSpinnerView.setSelection(authorsWithDefault.authors.indexOf(authorsWithDefault.selectedAuthor))
     }
 
 }

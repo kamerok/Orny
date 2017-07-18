@@ -2,7 +2,7 @@ package com.kamer.orny.presentation.settings
 
 import android.arch.lifecycle.MutableLiveData
 import com.kamer.orny.data.domain.model.Author
-import com.kamer.orny.interaction.model.DefaultAuthor
+import com.kamer.orny.interaction.model.AuthorsWithDefault
 import com.kamer.orny.interaction.settings.AppSettingsInteractor
 import com.kamer.orny.presentation.core.BaseViewModel
 import com.kamer.orny.presentation.core.ErrorMessageParser
@@ -17,13 +17,13 @@ class AppSettingsViewModelImpl @Inject constructor(
         val interactor: AppSettingsInteractor
 ) : BaseViewModel(), AppSettingsViewModel {
 
-    override val modelStream: MutableLiveData<DefaultAuthor> = MutableLiveData()
+    override val modelStream: MutableLiveData<AuthorsWithDefault> = MutableLiveData()
     override val loadingStream: MutableLiveData<Boolean> = MutableLiveData()
     override val errorStream: SingleLiveEvent<String> = SingleLiveEvent()
 
     init {
         interactor
-                .getDefaultAuthor()
+                .getAuthorsWithDefault()
                 .disposeOnDestroy()
                 .doOnSubscribe { loadingStream.value = true }
                 .doFinally { loadingStream.value = false }

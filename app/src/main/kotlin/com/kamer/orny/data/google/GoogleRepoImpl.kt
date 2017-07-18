@@ -31,8 +31,8 @@ class GoogleRepoImpl @Inject constructor(
         private const val APP_PAGE_ID = "AppSupportedSheet"
 
         private const val SPREADSHEET_ID = "1YsFrfpNzs_gjdtnqVNuAPPYl3NRjeo8GgEWAOD7BdOg"
-        private const val SHEET_NAME = "Тест"
-        private const val SHEET_ID = 1549946213
+        private const val SHEET_NAME = "Июль"
+        private const val SHEET_ID = 145345954
         private const val RANGE_SUPPORT_MARK = "!A1"
         private const val RANGE_SETTINGS = "!A2:C2"
         private const val RANGE_AUTHORS = "!D10:H10"

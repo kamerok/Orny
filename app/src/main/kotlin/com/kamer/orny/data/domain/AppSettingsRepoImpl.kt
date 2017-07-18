@@ -2,6 +2,7 @@ package com.kamer.orny.data.domain
 
 import com.kamer.orny.data.android.Prefs
 import com.kamer.orny.data.domain.model.Author
+import com.kamer.orny.utils.defaultBackgroundSchedulers
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
@@ -16,6 +17,7 @@ class AppSettingsRepoImpl @Inject constructor(
     private val subject = BehaviorSubject.create<Author>().apply {
         pageRepo
                 .getPageAuthors()
+                .defaultBackgroundSchedulers()
                 .subscribe { authors ->
                     val selectedId = prefs.defaultAuthorId
                     if (selectedId.isEmpty()) {

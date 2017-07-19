@@ -2,9 +2,9 @@ package com.kamer.orny.data.domain
 
 import com.kamer.orny.data.android.Prefs
 import com.kamer.orny.data.domain.model.Author
-import com.kamer.orny.utils.defaultBackgroundSchedulers
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.functions.BiFunction
 import io.reactivex.subjects.BehaviorSubject
 import javax.inject.Inject
 
@@ -14,26 +14,24 @@ class AppSettingsRepoImpl @Inject constructor(
         val pageRepo: PageRepo
 ) : AppSettingsRepo {
 
-    private val subject = BehaviorSubject.create<Author>().apply {
-        pageRepo
-                .getPageAuthors()
-                .defaultBackgroundSchedulers()
-                .subscribe { authors ->
-                    val selectedId = prefs.defaultAuthorId
-                    if (selectedId.isEmpty()) {
-                        onNext(Author.EMPTY_AUTHOR)
-                    } else {
-                        onNext(authors.filter { it.id == selectedId }.first())
-                    }
-                }
-    }
+    private val selectedIdSubject = BehaviorSubject.create<String>().apply { onNext(prefs.defaultAuthorId) }
 
-    override fun getDefaultAuthor(): Observable<Author> = subject
+    override fun getDefaultAuthor(): Observable<Author> = pageRepo
+            .getPageAuthors()
+            .zipWith(
+                    selectedIdSubject,
+                    BiFunction { authors, id ->
+                        return@BiFunction if (id.isEmpty()) {
+                            Author.EMPTY_AUTHOR
+                        } else {
+                            authors.filter { it.id == id }.first()
+                        }
+                    })
 
     override fun setDefaultAuthor(author: Author): Completable = Completable
             .fromAction {
                 prefs.defaultAuthorId = author.id
-                subject.onNext(author)
+                selectedIdSubject.onNext(author.id)
             }
 
 }

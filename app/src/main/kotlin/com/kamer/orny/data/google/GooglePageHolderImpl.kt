@@ -27,20 +27,13 @@ class GooglePageHolderImpl @Inject constructor(
                 .toCompletable()
     }
 
-    private val pageObservable by lazy {
-        if (pageSubject.hasValue()) {
-            pageSubject
-        } else {
-            updateCompletable
-                    .andThen(pageSubject)
-        }
-                .share()
-                .replay(1)
-                .autoConnect()
-    }
-
-
-    override fun getPage(): Observable<GooglePage> = pageObservable
+    override fun getPage(): Observable<GooglePage> =
+            if (pageSubject.hasValue()) {
+                pageSubject
+            } else {
+                updateCompletable
+                        .andThen(pageSubject)
+            }
 
     override fun updatePage(): Completable = updateCompletable
 

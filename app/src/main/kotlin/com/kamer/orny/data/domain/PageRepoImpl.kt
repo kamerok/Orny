@@ -7,6 +7,7 @@ import com.kamer.orny.data.google.GoogleRepo
 import com.kamer.orny.di.app.ApplicationScope
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.subjects.PublishSubject
 import javax.inject.Inject
 
 
@@ -16,12 +17,25 @@ class PageRepoImpl @Inject constructor(
         val googleRepo: GoogleRepo
 ) : PageRepo {
 
-    override fun getPageSettings(): Observable<PageSettings> = googlePageHolder
-            .getPage()
-            .map { (budget, periodDays, startDate) -> PageSettings(budget, startDate, periodDays) }
+    private val settingsSubject = PublishSubject.create<PageSettings>()
+
+    private val settingsObservable by lazy {
+        googlePageHolder
+                .getPage()
+                .map { (budget, periodDays, startDate) -> PageSettings(budget, startDate, periodDays) }
+                .mergeWith(settingsSubject)
+                .share()
+                .replay(1)
+                .autoConnect()
+    }
+
+    override fun getPageSettings(): Observable<PageSettings> = settingsObservable
 
     override fun savePageSettings(pageSettings: PageSettings): Completable = googleRepo
             .savePageSettings(pageSettings.budget, pageSettings.startDate, pageSettings.period)
+            .doOnComplete {
+                settingsSubject.onNext(pageSettings)
+            }
 
     override fun getPageAuthors(): Observable<List<Author>> = googlePageHolder
             .getPage()

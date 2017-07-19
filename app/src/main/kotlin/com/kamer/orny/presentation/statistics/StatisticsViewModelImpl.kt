@@ -22,7 +22,7 @@ class StatisticsViewModelImpl @Inject constructor(
                 .defaultBackgroundSchedulers()
                 .disposeOnDestroy()
                 .doOnSubscribe { showLoadingStream.value = true }
-                .doFinally { showLoadingStream.value = false }
+                .doOnNext { showLoadingStream.value = false }
                 .subscribe({
                     statisticsStream.value = it
                 }, {

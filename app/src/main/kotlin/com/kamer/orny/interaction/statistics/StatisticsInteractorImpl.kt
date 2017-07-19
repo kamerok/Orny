@@ -19,7 +19,7 @@ class StatisticsInteractorImpl @Inject constructor(
 ) : StatisticsInteractor {
 
     override fun getStatistics(): Observable<Statistics> = Observable
-            .zip(pageRepo.getPageSettings(), pageRepo.getPageAuthors(), expenseRepo.getAllExpenses(), Function3 {
+            .combineLatest(pageRepo.getPageSettings(), pageRepo.getPageAuthors(), expenseRepo.getAllExpenses(), Function3 {
                 (budget, startDate, period), authors, expenses ->
 
                 var spendTotal = 0.0

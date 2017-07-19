@@ -29,6 +29,8 @@ class PageRepoImpl @Inject constructor(
                 .autoConnect()
     }
 
+    override fun updatePage(): Completable = googlePageHolder.updatePage()
+
     override fun getPageSettings(): Observable<PageSettings> = settingsObservable
 
     override fun savePageSettings(pageSettings: PageSettings): Completable = googleRepo

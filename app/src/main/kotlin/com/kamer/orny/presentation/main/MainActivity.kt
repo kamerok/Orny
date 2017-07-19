@@ -39,7 +39,8 @@ class MainActivity : BaseActivity() {
     }
 
     private fun bindViewModels() {
-        statisticsViewModel.showLoadingStream.safeObserve(this, this::setLoading)
+        mainViewModel.updateProgressStream.safeObserve(this, this::setLoading)
+
         statisticsViewModel.statisticsStream.safeObserve(this, this::updateStatistics)
     }
 

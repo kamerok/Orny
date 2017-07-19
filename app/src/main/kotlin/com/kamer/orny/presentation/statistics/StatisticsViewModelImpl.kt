@@ -13,7 +13,6 @@ class StatisticsViewModelImpl @Inject constructor(
         interactor: StatisticsInteractor
 ) : BaseViewModel(), StatisticsViewModel {
 
-    override val showLoadingStream = MutableLiveData<Boolean>()
     override val statisticsStream = MutableLiveData<Statistics>()
 
     init {
@@ -21,8 +20,6 @@ class StatisticsViewModelImpl @Inject constructor(
                 .getStatistics()
                 .defaultBackgroundSchedulers()
                 .disposeOnDestroy()
-                .doOnSubscribe { showLoadingStream.value = true }
-                .doOnNext { showLoadingStream.value = false }
                 .subscribe({
                     statisticsStream.value = it
                 }, {

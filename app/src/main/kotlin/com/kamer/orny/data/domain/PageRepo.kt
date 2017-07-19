@@ -8,6 +8,8 @@ import io.reactivex.Observable
 
 interface PageRepo {
 
+    fun updatePage(): Completable
+
     fun getPageSettings(): Observable<PageSettings>
 
     fun savePageSettings(pageSettings: PageSettings): Completable

@@ -2,6 +2,8 @@ package com.kamer.orny.di.app.features
 
 import android.arch.lifecycle.ViewModelProviders
 import android.support.v4.app.FragmentActivity
+import com.kamer.orny.interaction.main.MainInteractor
+import com.kamer.orny.interaction.main.MainInteractorImpl
 import com.kamer.orny.presentation.core.VMProvider
 import com.kamer.orny.presentation.main.MainRouter
 import com.kamer.orny.presentation.main.MainRouterImpl
@@ -33,5 +35,8 @@ abstract class MainModule {
 
     @Binds
     abstract fun bindRouter(router: MainRouterImpl): MainRouter
+
+    @Binds
+    abstract fun bindInteractor(interactor: MainInteractorImpl): MainInteractor
 
 }

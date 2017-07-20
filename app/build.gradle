@@ -11,7 +11,7 @@ repositories {
 android {
 
     def appName = "Orny"
-    def build = 2
+    def build = 3
 
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
@@ -34,12 +34,18 @@ android {
         debug {
             applicationIdSuffix ".debug"
             versionNameSuffix '-SNAPSHOT'
+
+            buildConfigField "String", "SHEET_NAME", "\"Тест\""
+            buildConfigField "int", "SHEET_ID", "1549946213"
         }
 
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.debug
+
+            buildConfigField "String", "SHEET_NAME", "\"Июль\""
+            buildConfigField "int", "SHEET_ID", "145345954"
         }
 
         applicationVariants.all { variant ->

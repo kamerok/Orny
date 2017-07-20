@@ -6,6 +6,7 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecovera
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.*
+import com.kamer.orny.BuildConfig
 import com.kamer.orny.data.android.ReactiveActivities
 import com.kamer.orny.data.google.exceptions.NotSupportedSheetException
 import com.kamer.orny.data.google.model.GoogleExpense
@@ -31,8 +32,8 @@ class GoogleRepoImpl @Inject constructor(
         private const val APP_PAGE_ID = "AppSupportedSheet"
 
         private const val SPREADSHEET_ID = "1YsFrfpNzs_gjdtnqVNuAPPYl3NRjeo8GgEWAOD7BdOg"
-        private const val SHEET_NAME = "Тест"
-        private const val SHEET_ID = 1549946213
+        private const val SHEET_NAME = BuildConfig.SHEET_NAME
+        private const val SHEET_ID = BuildConfig.SHEET_ID
         private const val RANGE_SUPPORT_MARK = "!A1"
         private const val RANGE_SETTINGS = "!A2:C2"
         private const val RANGE_AUTHORS = "!D10:H10"

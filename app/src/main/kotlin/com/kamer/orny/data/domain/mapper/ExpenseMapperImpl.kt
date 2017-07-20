@@ -14,7 +14,7 @@ class ExpenseMapperImpl @Inject constructor() : ExpenseMapper {
     override fun toGoogleExpense(expense: Expense): GoogleExpense {
         val values = mutableListOf<Double>()
         for ((key, value) in expense.values) {
-            while (values.size < key.position + 1) {
+            while (values.size < key.position) {
                 values.add(0.0)
             }
             values.add(key.position, value)

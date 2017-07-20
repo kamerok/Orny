@@ -37,9 +37,32 @@ class GooglePageRepoImpl @Inject constructor(
 
     override fun updatePage(): Completable = updateCompletable
 
-    override fun addExpense(expense: GoogleExpense): Completable = googleRepo.addExpense(expense)
+    override fun addExpense(expense: GoogleExpense): Completable =
+            googleRepo
+                    .addExpense(expense)
+                    .andThen(pageSubject)
+                    .firstElement()
+                    .flatMapCompletable {
+                        Completable
+                                .fromAction {
+                                    pageSubject.onNext(it.copy(expenses = it.expenses.plus(expense)))
+                                }
+                    }
 
     override fun savePageSettings(budget: Double, startDate: Date, period: Int): Completable =
-            googleRepo.savePageSettings(budget, startDate, period)
+            googleRepo
+                    .savePageSettings(budget, startDate, period)
+                    .andThen(pageSubject)
+                    .firstElement()
+                    .flatMapCompletable {
+                        Completable
+                                .fromAction {
+                                    pageSubject.onNext(it.copy(
+                                            budget = budget,
+                                            startDate = startDate,
+                                            periodDays = period
+                                    ))
+                                }
+                    }
 
 }

@@ -4,7 +4,6 @@ import com.kamer.orny.data.google.model.GooglePage
 import com.kamer.orny.di.app.ApplicationScope
 import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.Single
 import io.reactivex.subjects.BehaviorSubject
 import javax.inject.Inject
 
@@ -21,7 +20,6 @@ class GooglePageHolderImpl @Inject constructor(
                 .getPage()
                 .toObservable()
                 .share()
-                .flatMapSingle { Single.just(it) }
                 .firstOrError()
                 .doOnSuccess { pageSubject.onNext(it) }
                 .toCompletable()

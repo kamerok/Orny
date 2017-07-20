@@ -18,7 +18,7 @@ class GooglePageHolderTest {
 
     @Mock lateinit var googleRepo: GoogleRepo
 
-    private lateinit var holder: GooglePageHolder
+    lateinit var holder: GooglePageHolder
 
     @Before
     fun setUp() {
@@ -116,5 +116,5 @@ class GooglePageHolderTest {
         testObserver.assertValues(page1, page2)
     }
 
-    private fun googlePage() = GooglePage(0.0, 0, Date(), emptyList())
+    fun googlePage() = GooglePage(0.0, 0, Date(), emptyList())
 }

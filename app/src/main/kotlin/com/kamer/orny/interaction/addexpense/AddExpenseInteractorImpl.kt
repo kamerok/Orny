@@ -19,7 +19,7 @@ class AddExpenseInteractorImpl @Inject constructor(
     override fun getAuthorsWithDefault(): Single<AuthorsWithDefault> = getAuthorsUseCase.get()
 
     override fun createExpense(expense: NewExpense): Completable = expenseRepo
-            .saveExpense(Expense(
+            .addExpense(Expense(
                     id = Expense.NO_ID,
                     comment = expense.comment,
                     date = expense.date,

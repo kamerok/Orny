@@ -3,7 +3,6 @@ package com.kamer.orny.data.domain
 import com.kamer.orny.data.domain.mapper.ExpenseMapper
 import com.kamer.orny.data.domain.model.Expense
 import com.kamer.orny.data.google.GooglePageRepo
-import com.kamer.orny.data.google.GoogleRepo
 import com.kamer.orny.di.app.ApplicationScope
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -14,13 +13,12 @@ import javax.inject.Inject
 @ApplicationScope
 class ExpenseRepoImpl @Inject constructor(
         val googlePageRepo: GooglePageRepo,
-        val googleRepo: GoogleRepo,
         val pageRepo: PageRepo,
         val expenseMapper: ExpenseMapper
 ) : ExpenseRepo {
 
-    override fun saveExpense(expense: Expense): Completable =
-            googleRepo
+    override fun addExpense(expense: Expense): Completable =
+            googlePageRepo
                     .addExpense(expenseMapper.toGoogleExpense(expense))
 
     override fun getAllExpenses(): Observable<List<Expense>> =

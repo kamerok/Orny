@@ -7,7 +7,7 @@ import io.reactivex.Observable
 
 interface ExpenseRepo {
 
-    fun saveExpense(expense: Expense): Completable
+    fun addExpense(expense: Expense): Completable
 
     fun getAllExpenses(): Observable<List<Expense>>
 

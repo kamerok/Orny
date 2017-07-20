@@ -1,10 +1,12 @@
 package com.kamer.orny.data.google
 
+import com.kamer.orny.data.google.model.GoogleExpense
 import com.kamer.orny.data.google.model.GooglePage
 import com.kamer.orny.di.app.ApplicationScope
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
+import java.util.*
 import javax.inject.Inject
 
 
@@ -34,5 +36,10 @@ class GooglePageRepoImpl @Inject constructor(
             }
 
     override fun updatePage(): Completable = updateCompletable
+
+    override fun addExpense(expense: GoogleExpense): Completable = googleRepo.addExpense(expense)
+
+    override fun savePageSettings(budget: Double, startDate: Date, period: Int): Completable =
+            googleRepo.savePageSettings(budget, startDate, period)
 
 }

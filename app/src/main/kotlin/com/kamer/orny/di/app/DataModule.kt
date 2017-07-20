@@ -37,7 +37,7 @@ abstract class DataModule {
 
     @Binds
     @ApplicationScope
-    abstract fun bindGooglePageHolder(googlePageHolder: GooglePageHolderImpl): GooglePageHolder
+    abstract fun bindGooglePageHolder(googlePageHolder: GooglePageRepoImpl): GooglePageRepo
 
     //Domain
 

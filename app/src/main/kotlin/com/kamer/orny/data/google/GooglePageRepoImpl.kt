@@ -9,9 +9,9 @@ import javax.inject.Inject
 
 
 @ApplicationScope
-class GooglePageHolderImpl @Inject constructor(
+class GooglePageRepoImpl @Inject constructor(
         val googleRepo: GoogleRepo
-) : GooglePageHolder {
+) : GooglePageRepo {
 
     private val pageSubject = BehaviorSubject.create<GooglePage>()
 

@@ -2,7 +2,7 @@ package com.kamer.orny.data.domain
 
 import com.kamer.orny.data.domain.model.Author
 import com.kamer.orny.data.domain.model.PageSettings
-import com.kamer.orny.data.google.GooglePageHolder
+import com.kamer.orny.data.google.GooglePageRepo
 import com.kamer.orny.data.google.GoogleRepo
 import com.kamer.orny.di.app.ApplicationScope
 import io.reactivex.Completable
@@ -13,14 +13,14 @@ import javax.inject.Inject
 
 @ApplicationScope
 class PageRepoImpl @Inject constructor(
-        val googlePageHolder: GooglePageHolder,
+        val googlePageRepo: GooglePageRepo,
         val googleRepo: GoogleRepo
 ) : PageRepo {
 
     private val settingsSubject = PublishSubject.create<PageSettings>()
 
     private val settingsObservable by lazy {
-        googlePageHolder
+        googlePageRepo
                 .getPage()
                 .map { (budget, periodDays, startDate) -> PageSettings(budget, startDate, periodDays) }
                 .mergeWith(settingsSubject)
@@ -29,7 +29,7 @@ class PageRepoImpl @Inject constructor(
                 .autoConnect()
     }
 
-    override fun updatePage(): Completable = googlePageHolder.updatePage()
+    override fun updatePage(): Completable = googlePageRepo.updatePage()
 
     override fun getPageSettings(): Observable<PageSettings> = settingsObservable
 
@@ -39,7 +39,7 @@ class PageRepoImpl @Inject constructor(
                 settingsSubject.onNext(pageSettings)
             }
 
-    override fun getPageAuthors(): Observable<List<Author>> = googlePageHolder
+    override fun getPageAuthors(): Observable<List<Author>> = googlePageRepo
             .getPage()
             .map { page ->
                 val authorsNames = page.authors

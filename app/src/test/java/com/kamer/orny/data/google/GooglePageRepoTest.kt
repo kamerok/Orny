@@ -14,16 +14,16 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 @RunWith(MockitoJUnitRunner::class)
-class GooglePageHolderTest {
+class GooglePageRepoTest {
 
     @Mock lateinit var googleRepo: GoogleRepo
 
-    lateinit var holder: GooglePageHolder
+    lateinit var repo: GooglePageRepo
 
     @Before
     fun setUp() {
         whenever(googleRepo.getPage()).thenReturn(Single.just(googlePage()))
-        holder = GooglePageHolderImpl(googleRepo)
+        repo = GooglePageRepoImpl(googleRepo)
     }
 
     @Test
@@ -36,8 +36,8 @@ class GooglePageHolderTest {
         var subscribeCount = 0
         whenever(googleRepo.getPage()).thenReturn(Single.just(googlePage()).delay(1, TimeUnit.SECONDS).doOnSubscribe { subscribeCount++ })
 
-        holder.updatePage().subscribe()
-        holder.updatePage().subscribe()
+        repo.updatePage().subscribe()
+        repo.updatePage().subscribe()
 
         assertThat(subscribeCount).isEqualTo(1)
     }
@@ -47,8 +47,8 @@ class GooglePageHolderTest {
         var subscribeCount = 0
         whenever(googleRepo.getPage()).thenReturn(Single.just(googlePage()).doOnSubscribe { subscribeCount++ })
 
-        holder.updatePage().subscribe()
-        holder.updatePage().subscribe()
+        repo.updatePage().subscribe()
+        repo.updatePage().subscribe()
 
         assertThat(subscribeCount).isEqualTo(2)
     }
@@ -58,8 +58,8 @@ class GooglePageHolderTest {
         var subscribeCount = 0
         whenever(googleRepo.getPage()).thenReturn(Single.just(googlePage()).delay(1, TimeUnit.SECONDS).doOnSubscribe { subscribeCount++ })
 
-        holder.getPage().subscribe()
-        holder.updatePage().subscribe()
+        repo.getPage().subscribe()
+        repo.updatePage().subscribe()
 
         assertThat(subscribeCount).isEqualTo(1)
     }
@@ -69,7 +69,7 @@ class GooglePageHolderTest {
         var subscribeCount = 0
         whenever(googleRepo.getPage()).thenReturn(Single.just(googlePage()).doOnSubscribe { subscribeCount++ })
 
-        holder.getPage().subscribe()
+        repo.getPage().subscribe()
 
         assertThat(subscribeCount).isEqualTo(1)
     }
@@ -79,8 +79,8 @@ class GooglePageHolderTest {
         var subscribeCount = 0
         whenever(googleRepo.getPage()).thenReturn(Single.just(googlePage()).doOnSubscribe { subscribeCount++ })
 
-        holder.getPage().subscribe()
-        holder.getPage().subscribe()
+        repo.getPage().subscribe()
+        repo.getPage().subscribe()
 
         assertThat(subscribeCount).isEqualTo(1)
     }
@@ -90,8 +90,8 @@ class GooglePageHolderTest {
         var subscribeCount = 0
         whenever(googleRepo.getPage()).thenReturn(Single.just(googlePage()).doOnSubscribe { subscribeCount++ })
 
-        holder.updatePage().subscribe()
-        holder.getPage().subscribe()
+        repo.updatePage().subscribe()
+        repo.getPage().subscribe()
 
         assertThat(subscribeCount).isEqualTo(1)
     }
@@ -110,8 +110,8 @@ class GooglePageHolderTest {
             }
         })
 
-        val testObserver = holder.getPage().test()
-        holder.updatePage().subscribe()
+        val testObserver = repo.getPage().test()
+        repo.updatePage().subscribe()
 
         testObserver.assertValues(page1, page2)
     }

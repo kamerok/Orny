@@ -5,7 +5,7 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 
 
-interface GooglePageHolder {
+interface GooglePageRepo {
 
     fun getPage(): Observable<GooglePage>
 

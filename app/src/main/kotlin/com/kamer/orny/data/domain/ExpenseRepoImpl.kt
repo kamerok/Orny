@@ -19,12 +19,17 @@ class ExpenseRepoImpl @Inject constructor(
         val expenseMapper: ExpenseMapper
 ) : ExpenseRepo {
 
-    override fun saveExpense(expense: Expense): Completable = googleRepo.addExpense(expenseMapper.toGoogleExpense(expense))
+    override fun saveExpense(expense: Expense): Completable =
+            googleRepo
+                    .addExpense(expenseMapper.toGoogleExpense(expense))
 
-    override fun getAllExpenses(): Observable<List<Expense>> = googlePageHolder
-            .getPage()
-            .zipWith(pageRepo.getPageAuthors(), BiFunction { page, authors ->
-                page.expenses.map { expenseMapper.toExpense(it, authors.sortedBy { it.position }) }
-            })
+    override fun getAllExpenses(): Observable<List<Expense>> =
+            Observable.combineLatest(
+                    googlePageHolder.getPage(),
+                    pageRepo.getPageAuthors(),
+                    BiFunction { page, authors ->
+                        page.expenses.map { expenseMapper.toExpense(it, authors.sortedBy { it.position }) }
+                    }
+            )
 
 }

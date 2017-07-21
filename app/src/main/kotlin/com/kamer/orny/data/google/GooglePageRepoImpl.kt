@@ -1,7 +1,10 @@
 package com.kamer.orny.data.google
 
 import com.kamer.orny.data.google.model.GooglePage
+import com.kamer.orny.data.room.AuthorDao
+import com.kamer.orny.data.room.Database
 import com.kamer.orny.data.room.ExpenseDao
+import com.kamer.orny.data.room.model.DbAuthor
 import com.kamer.orny.data.room.model.DbExpense
 import com.kamer.orny.di.app.ApplicationScope
 import io.reactivex.Completable
@@ -14,7 +17,9 @@ import javax.inject.Inject
 @ApplicationScope
 class GooglePageRepoImpl @Inject constructor(
         val googleRepo: GoogleRepo,
-        val expenseDao: ExpenseDao
+        val expenseDao: ExpenseDao,
+        val authorDao: AuthorDao,
+        val database: Database
 ) : GooglePageRepo {
 
     private val pageSubject = BehaviorSubject.create<GooglePage>()
@@ -59,15 +64,26 @@ class GooglePageRepoImpl @Inject constructor(
                     }
 
     private fun savePageToDb(page: GooglePage) {
-        expenseDao.deleteAllExpenses()
-        expenseDao.insertAll(page.expenses.mapIndexed { id, (comment, date, isOffBudget, values) ->
-            DbExpense(
-                    comment = comment.orEmpty(),
-                    date = date ?: Date(),
-                    isOffBudget = isOffBudget,
-                    values = values
-            )
-        })
+        database.runInTransaction {
+            expenseDao.deleteAllExpenses()
+            expenseDao.insertAll(page.expenses.map { (comment, date, isOffBudget, values) ->
+                DbExpense(
+                        comment = comment.orEmpty(),
+                        date = date ?: Date(),
+                        isOffBudget = isOffBudget,
+                        values = values
+                )
+            })
+            authorDao.deleteAllAuthors()
+            authorDao.insertAll(page.authors.mapIndexed { index, name ->
+                DbAuthor(
+                        id = index.toString(),
+                        position = index,
+                        name = name,
+                        color = ""
+                )
+            })
+        }
     }
 
 }

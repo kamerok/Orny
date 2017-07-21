@@ -3,15 +3,18 @@ package com.kamer.orny.data.domain
 import com.kamer.orny.data.domain.model.Author
 import com.kamer.orny.data.domain.model.PageSettings
 import com.kamer.orny.data.google.GooglePageRepo
+import com.kamer.orny.data.room.AuthorDao
 import com.kamer.orny.di.app.ApplicationScope
 import io.reactivex.Completable
 import io.reactivex.Observable
+import timber.log.Timber
 import javax.inject.Inject
 
 
 @ApplicationScope
 class PageRepoImpl @Inject constructor(
-        val googlePageRepo: GooglePageRepo
+        val googlePageRepo: GooglePageRepo,
+        val authorDao: AuthorDao
 ) : PageRepo {
 
     override fun updatePage(): Completable = googlePageRepo.updatePage()
@@ -26,13 +29,10 @@ class PageRepoImpl @Inject constructor(
                     .savePageSettings(pageSettings.budget, pageSettings.startDate, pageSettings.period)
 
     override fun getPageAuthors(): Observable<List<Author>> =
-            googlePageRepo
-                    .getPage()
-                    .map { page ->
-                        val authorsNames = page.authors
-                        val authors = mutableListOf<Author>()
-                        authorsNames.indices.mapTo(authors) { Author("$it", it, authorsNames[it], "") }
-                        return@map authors
-                    }
+            authorDao
+                    .getAllAuthors()
+                    .toObservable()
+                    .doOnNext { Timber.d("authors: ${it.size}") }
+                    .map { it.map { Author(it.id, it.position, it.name, it.color) } }
 
 }

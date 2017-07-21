@@ -41,7 +41,7 @@ class ExpenseRepoImpl @Inject constructor(
                     expenseDao
                             .getAllExpenses()
                             .toObservable()
-                            .doOnNext { Timber.e(it.size.toString()) }
+                            .doOnNext { Timber.d("expenses ${it.size}") }
                             .map {
                                 it.map {
                                     GoogleExpense(

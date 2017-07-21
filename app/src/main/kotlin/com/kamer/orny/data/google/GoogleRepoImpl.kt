@@ -42,13 +42,6 @@ class GoogleRepoImpl @Inject constructor(
         val DATE_FORMAT = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     }
 
-    override fun getAllExpenses(): Single<List<GoogleExpense>> = getSheetsService()
-            .flatMap { service ->
-                Single
-                        .fromCallable { getAllExpensesFromApi(service) }
-                        .retryWhen(this::recoverFromGoogleError)
-            }
-
     override fun getPage(): Single<GooglePage> = getSheetsService()
             .flatMap { service ->
                 Single
@@ -89,23 +82,6 @@ class GoogleRepoImpl @Inject constructor(
         val transport = AndroidHttp.newCompatibleTransport()
         val jsonFactory = JacksonFactory.getDefaultInstance()
         return Sheets.Builder(transport, jsonFactory, credential).build()
-    }
-
-    private fun getAllExpensesFromApi(service: Sheets): List<GoogleExpense> {
-        val response = service.spreadsheets().values()
-                .get(SPREADSHEET_ID, SHEET_NAME + "!A11:E")
-                .execute()
-        val list = mutableListOf<GoogleExpense>()
-        for (value in response.getValues()) {
-            Timber.d(value.toString())
-            if (value.isNotEmpty()) {
-                val expense = GoogleExpense.fromList(value)
-                Timber.d(expense.toString())
-                list.add(expense)
-            }
-        }
-
-        return list
     }
 
     private fun getPageFromApi(service: Sheets): GooglePage {

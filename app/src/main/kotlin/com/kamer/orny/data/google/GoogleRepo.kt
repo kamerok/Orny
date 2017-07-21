@@ -8,8 +8,6 @@ import java.util.*
 
 interface GoogleRepo {
 
-    fun getAllExpenses(): Single<List<GoogleExpense>>
-
     fun getPage(): Single<GooglePage>
 
     fun savePageSettings(budget: Double, startDate: Date, period: Int): Completable

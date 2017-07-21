@@ -15,7 +15,8 @@ data class GoogleExpense(
         val comment: String?,
         val date: Date?,
         val isOffBudget: Boolean,
-        val values: List<Double>) {
+        val values: List<Double>
+) {
 
     companion object {
         fun fromList(list: MutableList<Any>): GoogleExpense {

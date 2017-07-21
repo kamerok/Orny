@@ -1,7 +1,8 @@
 package com.kamer.orny.data.google
 
-import com.kamer.orny.data.google.model.GoogleExpense
 import com.kamer.orny.data.google.model.GooglePage
+import com.kamer.orny.data.room.ExpenseDao
+import com.kamer.orny.data.room.model.DbExpense
 import com.kamer.orny.di.app.ApplicationScope
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -12,7 +13,8 @@ import javax.inject.Inject
 
 @ApplicationScope
 class GooglePageRepoImpl @Inject constructor(
-        val googleRepo: GoogleRepo
+        val googleRepo: GoogleRepo,
+        val expenseDao: ExpenseDao
 ) : GooglePageRepo {
 
     private val pageSubject = BehaviorSubject.create<GooglePage>()
@@ -20,6 +22,9 @@ class GooglePageRepoImpl @Inject constructor(
     private val updateCompletable by lazy {
         googleRepo
                 .getPage()
+                .doOnSuccess {
+                    savePageToDb(it)
+                }
                 .toObservable()
                 .share()
                 .firstOrError()
@@ -37,18 +42,6 @@ class GooglePageRepoImpl @Inject constructor(
 
     override fun updatePage(): Completable = updateCompletable
 
-    override fun addExpense(expense: GoogleExpense): Completable =
-            googleRepo
-                    .addExpense(expense)
-                    .andThen(pageSubject)
-                    .firstElement()
-                    .flatMapCompletable {
-                        Completable
-                                .fromAction {
-                                    pageSubject.onNext(it.copy(expenses = it.expenses.plus(expense)))
-                                }
-                    }
-
     override fun savePageSettings(budget: Double, startDate: Date, period: Int): Completable =
             googleRepo
                     .savePageSettings(budget, startDate, period)
@@ -64,5 +57,17 @@ class GooglePageRepoImpl @Inject constructor(
                                     ))
                                 }
                     }
+
+    private fun savePageToDb(page: GooglePage) {
+        expenseDao.deleteAllExpenses()
+        expenseDao.insertAll(page.expenses.mapIndexed { id, (comment, date, isOffBudget, values) ->
+            DbExpense(
+                    comment = comment.orEmpty(),
+                    date = date ?: Date(),
+                    isOffBudget = isOffBudget,
+                    values = values
+            )
+        })
+    }
 
 }

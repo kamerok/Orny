@@ -1,12 +1,18 @@
 package com.kamer.orny.di.app
 
+import android.arch.persistence.room.Room
+import android.content.Context
 import com.kamer.orny.data.android.*
 import com.kamer.orny.data.domain.*
 import com.kamer.orny.data.domain.mapper.ExpenseMapper
 import com.kamer.orny.data.domain.mapper.ExpenseMapperImpl
 import com.kamer.orny.data.google.*
+import com.kamer.orny.data.room.AuthorDao
+import com.kamer.orny.data.room.Database
+import com.kamer.orny.data.room.ExpenseDao
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 
 @Module
 abstract class DataModule {
@@ -38,6 +44,28 @@ abstract class DataModule {
     @Binds
     @ApplicationScope
     abstract fun bindGooglePageHolder(googlePageHolder: GooglePageRepoImpl): GooglePageRepo
+
+    //Room
+
+    @Module
+    companion object {
+        @JvmStatic
+        @Provides
+        @ApplicationScope
+        fun provideDatabase(context: Context): Database = Room
+                .databaseBuilder(context, Database::class.java, "database")
+                .build()
+
+        @JvmStatic
+        @Provides
+        @ApplicationScope
+        fun provideExpenseDao(database: Database): ExpenseDao = database.expenseDao()
+
+        @JvmStatic
+        @Provides
+        @ApplicationScope
+        fun provideAuthorDao(database: Database): AuthorDao = database.authorDao()
+    }
 
     //Domain
 

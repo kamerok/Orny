@@ -6,15 +6,16 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 import com.google.api.client.util.ExponentialBackOff
 import com.google.api.services.sheets.v4.SheetsScopes
 import com.kamer.orny.data.android.ActivityHolder
+import com.kamer.orny.data.android.Prefs
 import com.kamer.orny.data.android.ReactiveActivities
 import com.kamer.orny.di.app.ApplicationScope
 import com.kamer.orny.presentation.launch.LoginActivity
-import com.kamer.orny.data.android.Prefs
 import com.kamer.orny.utils.hasPermission
 import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.util.*
 import javax.inject.Inject
@@ -89,12 +90,15 @@ class GoogleAuthHolderImpl @Inject constructor(
                 }
             }
 
-    private fun checkPermission(): Completable {
+    private fun checkPermission(): Completable = Single.just("").flatMapCompletable {
         val activity = activityHolder.getActivity()
-        return when {
+        return@flatMapCompletable when {
+            context.hasPermission(Manifest.permission.GET_ACCOUNTS) -> Completable.complete()
             activity != null -> Observable
                     .just("")
-                    .compose(RxPermissions(activity).ensure(Manifest.permission.GET_ACCOUNTS))
+                    .observeOn(AndroidSchedulers.mainThread())
+                    //create RxPermissions() instance only when needed
+                    .flatMap { Observable.just("").compose(RxPermissions(activity).ensure(Manifest.permission.GET_ACCOUNTS)) }
                     .observeOn(Schedulers.io())
                     .flatMapCompletable { granted ->
                         if (granted) {
@@ -103,8 +107,9 @@ class GoogleAuthHolderImpl @Inject constructor(
                             Completable.error(SecurityException("Permission denied"))
                         }
                     }
-            context.hasPermission(Manifest.permission.GET_ACCOUNTS) -> Completable.complete()
             else -> Completable.error(Exception("No activity to check permission"))
         }
     }
+
+
 }

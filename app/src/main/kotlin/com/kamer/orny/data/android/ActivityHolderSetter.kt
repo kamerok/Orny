@@ -1,12 +1,17 @@
 package com.kamer.orny.data.android
 
+import android.app.Activity
+import android.content.Intent
+
 
 interface ActivityHolderSetter {
 
-    fun onActivityResumed(activity: android.app.Activity)
+    fun onActivityCreated(activity: Activity)
 
-    fun onActivityDestroyed(activity: android.app.Activity)
+    fun onActivityResumed(activity: Activity)
 
-    fun passActivityResult(requestCode: Int, resultCode: Int, data: android.content.Intent?)
+    fun onActivityDestroyed(activity: Activity)
+
+    fun passActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
 
 }

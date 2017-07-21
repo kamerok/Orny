@@ -12,6 +12,12 @@ class ActivityHolderImpl @Inject constructor() : ActivityHolder, ActivityHolderS
     private var activityRef: WeakReference<Activity>? = null
     private var resultHandlers = mutableListOf<ActivityHolder.ActivityResultHandler>()
 
+    override fun onActivityCreated(activity: Activity) {
+        if (activityRef == null || activityRef?.get() == null) {
+            activityRef = WeakReference(activity)
+        }
+    }
+
     override fun onActivityResumed(activity: Activity) {
         if (activityRef?.get() != activity) {
             activityRef = WeakReference(activity)

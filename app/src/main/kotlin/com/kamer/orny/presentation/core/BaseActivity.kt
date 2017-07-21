@@ -3,6 +3,7 @@ package com.kamer.orny.presentation.core
 import android.arch.lifecycle.LifecycleRegistry
 import android.arch.lifecycle.LifecycleRegistryOwner
 import android.content.Intent
+import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.kamer.orny.data.android.ActivityHolderSetter
 import io.reactivex.Completable
@@ -24,6 +25,11 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleRegistryOwner {
     protected fun <T> Single<T>.disposeOnDestroy(): Single<T> = doOnSubscribe { compositeDisposable.add(it) }
     protected fun <T> Observable<T>.disposeOnDestroy(): Observable<T> = doOnSubscribe { compositeDisposable.add(it) }
     protected fun Completable.disposeOnDestroy(): Completable = doOnSubscribe { compositeDisposable.add(it) }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        activityHolderSetter.onActivityCreated(this)
+    }
 
     override fun onResume() {
         super.onResume()

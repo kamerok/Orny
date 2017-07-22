@@ -4,11 +4,12 @@ import com.kamer.orny.data.google.model.GooglePage
 import com.kamer.orny.data.room.AuthorDao
 import com.kamer.orny.data.room.Database
 import com.kamer.orny.data.room.ExpenseDao
+import com.kamer.orny.data.room.SettingsDao
 import com.kamer.orny.data.room.model.DbAuthor
 import com.kamer.orny.data.room.model.DbExpense
+import com.kamer.orny.data.room.model.DbPageSettings
 import com.kamer.orny.di.app.ApplicationScope
 import io.reactivex.Completable
-import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import java.util.*
 import javax.inject.Inject
@@ -19,6 +20,7 @@ class GooglePageRepoImpl @Inject constructor(
         val googleRepo: GoogleRepo,
         val expenseDao: ExpenseDao,
         val authorDao: AuthorDao,
+        val settingsDao: SettingsDao,
         val database: Database
 ) : GooglePageRepo {
 
@@ -37,31 +39,7 @@ class GooglePageRepoImpl @Inject constructor(
                 .toCompletable()
     }
 
-    override fun getPage(): Observable<GooglePage> =
-            if (pageSubject.hasValue()) {
-                pageSubject
-            } else {
-                updateCompletable
-                        .andThen(pageSubject)
-            }
-
     override fun updatePage(): Completable = updateCompletable
-
-    override fun savePageSettings(budget: Double, startDate: Date, period: Int): Completable =
-            googleRepo
-                    .savePageSettings(budget, startDate, period)
-                    .andThen(pageSubject)
-                    .firstElement()
-                    .flatMapCompletable {
-                        Completable
-                                .fromAction {
-                                    pageSubject.onNext(it.copy(
-                                            budget = budget,
-                                            startDate = startDate,
-                                            periodDays = period
-                                    ))
-                                }
-                    }
 
     private fun savePageToDb(page: GooglePage) {
         database.runInTransaction {
@@ -83,6 +61,11 @@ class GooglePageRepoImpl @Inject constructor(
                         color = ""
                 )
             })
+            settingsDao.setPageSettings(DbPageSettings(
+                    budget = page.budget,
+                    startDate = page.startDate,
+                    period = page.periodDays
+            ))
         }
     }
 

@@ -10,6 +10,7 @@ import com.kamer.orny.data.google.*
 import com.kamer.orny.data.room.AuthorDao
 import com.kamer.orny.data.room.Database
 import com.kamer.orny.data.room.ExpenseDao
+import com.kamer.orny.data.room.SettingsDao
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -65,6 +66,11 @@ abstract class DataModule {
         @Provides
         @ApplicationScope
         fun provideAuthorDao(database: Database): AuthorDao = database.authorDao()
+
+        @JvmStatic
+        @Provides
+        @ApplicationScope
+        fun provideSettingsDao(database: Database): SettingsDao = database.settingsDao()
     }
 
     //Domain

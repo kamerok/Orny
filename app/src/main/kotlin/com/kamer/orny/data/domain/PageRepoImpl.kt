@@ -3,7 +3,10 @@ package com.kamer.orny.data.domain
 import com.kamer.orny.data.domain.model.Author
 import com.kamer.orny.data.domain.model.PageSettings
 import com.kamer.orny.data.google.GooglePageRepo
+import com.kamer.orny.data.google.GoogleRepo
 import com.kamer.orny.data.room.AuthorDao
+import com.kamer.orny.data.room.SettingsDao
+import com.kamer.orny.data.room.model.DbPageSettings
 import com.kamer.orny.di.app.ApplicationScope
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -13,20 +16,31 @@ import javax.inject.Inject
 
 @ApplicationScope
 class PageRepoImpl @Inject constructor(
+        val googleRepo: GoogleRepo,
         val googlePageRepo: GooglePageRepo,
-        val authorDao: AuthorDao
+        val authorDao: AuthorDao,
+        val settingsDao: SettingsDao
 ) : PageRepo {
 
     override fun updatePage(): Completable = googlePageRepo.updatePage()
 
     override fun getPageSettings(): Observable<PageSettings> =
-            googlePageRepo
-                    .getPage()
-                    .map { (budget, periodDays, startDate) -> PageSettings(budget, startDate, periodDays) }
+            settingsDao
+                    .getPageSettings()
+                    .toObservable()
+                    .doOnNext { Timber.d(it.toString()) }
+                    .map { PageSettings(it.budget, it.startDate, it.period) }
 
     override fun savePageSettings(pageSettings: PageSettings): Completable =
-            googlePageRepo
+            googleRepo
                     .savePageSettings(pageSettings.budget, pageSettings.startDate, pageSettings.period)
+                    .doOnComplete {
+                        settingsDao.setPageSettings(DbPageSettings(
+                                budget = pageSettings.budget,
+                                startDate = pageSettings.startDate,
+                                period = pageSettings.period
+                        ))
+                    }
 
     override fun getPageAuthors(): Observable<List<Author>> =
             authorDao

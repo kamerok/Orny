@@ -29,17 +29,13 @@ class PageRepoImpl @Inject constructor(
                     .getPageSettings()
                     .toObservable()
                     .doOnNext { Timber.d(it.toString()) }
-                    .map { PageSettings(it.budget, it.startDate, it.period) }
+                    .map { it.toPageSettings() }
 
     override fun savePageSettings(pageSettings: PageSettings): Completable =
             googleRepo
                     .savePageSettings(pageSettings.budget, pageSettings.startDate, pageSettings.period)
                     .doOnComplete {
-                        settingsDao.setPageSettings(DbPageSettings(
-                                budget = pageSettings.budget,
-                                startDate = pageSettings.startDate,
-                                period = pageSettings.period
-                        ))
+                        settingsDao.setPageSettings(DbPageSettings.fromPageSettings(pageSettings))
                     }
 
     override fun getPageAuthors(): Observable<List<Author>> =
@@ -47,6 +43,6 @@ class PageRepoImpl @Inject constructor(
                     .getAllAuthors()
                     .toObservable()
                     .doOnNext { Timber.d("authors: ${it.size}") }
-                    .map { it.map { Author(it.id, it.position, it.name, it.color) } }
+                    .map { it.map { dbAuthor ->  dbAuthor.toAuthor() } }
 
 }

@@ -12,6 +12,7 @@ import com.kamer.orny.presentation.addexpense.errors.WrongAmountFormatException
 import com.kamer.orny.presentation.core.BaseViewModel
 import com.kamer.orny.presentation.core.ErrorMessageParser
 import com.kamer.orny.presentation.core.SingleLiveEvent
+import com.kamer.orny.utils.defaultBackgroundSchedulers
 import io.reactivex.Single
 import timber.log.Timber
 import java.util.*
@@ -102,6 +103,7 @@ class AddExpenseViewModelImpl @Inject constructor(
         interactor
                 .getAuthorsWithDefault()
                 .disposeOnDestroy()
+                .defaultBackgroundSchedulers()
                 .subscribe(
                         {
                             authorsStream.value = it

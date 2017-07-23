@@ -15,9 +15,13 @@ class AppSettingsInteractorImpl @Inject constructor(
         val getAuthorsUserCase: GetAuthorsWithDefaultSingleUseCase
 ) : AppSettingsInteractor {
 
-    override fun getAuthorsWithDefault(): Single<AuthorsWithDefault> = getAuthorsUserCase.get()
+    override fun getAuthorsWithDefault(): Single<AuthorsWithDefault> =
+            getAuthorsUserCase
+                    .get()
+                    .defaultBackgroundSchedulers()
 
-    override fun saveDefaultAuthor(author: Author): Completable = appSettingsRepo
-            .setDefaultAuthor(author)
-            .defaultBackgroundSchedulers()
+    override fun saveDefaultAuthor(author: Author): Completable =
+            appSettingsRepo
+                    .setDefaultAuthor(author)
+                    .defaultBackgroundSchedulers()
 }

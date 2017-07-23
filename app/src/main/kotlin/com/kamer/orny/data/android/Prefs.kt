@@ -5,8 +5,6 @@ interface Prefs {
 
     var accountName: String
 
-    var defaultAuthorId: String
-
     fun clear()
 
 }

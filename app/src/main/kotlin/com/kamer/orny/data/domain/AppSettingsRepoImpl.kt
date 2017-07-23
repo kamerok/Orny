@@ -1,37 +1,38 @@
 package com.kamer.orny.data.domain
 
-import com.kamer.orny.data.android.Prefs
 import com.kamer.orny.data.domain.model.Author
+import com.kamer.orny.data.room.SettingsDao
+import com.kamer.orny.data.room.model.DbAppSettings
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
-import io.reactivex.subjects.BehaviorSubject
+import timber.log.Timber
 import javax.inject.Inject
 
 
 class AppSettingsRepoImpl @Inject constructor(
-        val prefs: Prefs,
-        val pageRepo: PageRepo
+        val pageRepo: PageRepo,
+        val settingsDao: SettingsDao
 ) : AppSettingsRepo {
 
-    private val selectedIdSubject = BehaviorSubject.create<String>().apply { onNext(prefs.defaultAuthorId) }
-
-    override fun getDefaultAuthor(): Observable<Author> = pageRepo
-            .getPageAuthors()
-            .zipWith(
-                    selectedIdSubject,
-                    BiFunction { authors, id ->
-                        return@BiFunction if (id.isEmpty()) {
+    override fun getDefaultAuthor(): Observable<Author> =
+            Observable.combineLatest(
+                    pageRepo.getPageAuthors(),
+                    settingsDao.getAppSettings().toObservable().doOnNext { Timber.d(it.toString()) },
+                    BiFunction { authors, pageSettings ->
+                        return@BiFunction if (pageSettings.defaultAuthorId.isEmpty()) {
                             Author.EMPTY_AUTHOR
                         } else {
-                            authors.filter { it.id == id }.first()
+                            authors.filter { it.id == pageSettings.defaultAuthorId }.first()
                         }
-                    })
+                    }
+            )
 
-    override fun setDefaultAuthor(author: Author): Completable = Completable
-            .fromAction {
-                prefs.defaultAuthorId = author.id
-                selectedIdSubject.onNext(author.id)
-            }
+    override fun setDefaultAuthor(author: Author): Completable =
+            Completable
+                    .fromAction {
+                        settingsDao
+                                .setAppSettings(DbAppSettings(defaultAuthorId = author.id))
+                    }
 
 }

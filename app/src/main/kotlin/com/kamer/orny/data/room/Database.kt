@@ -3,10 +3,10 @@ package com.kamer.orny.data.room
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.TypeConverters
-import com.kamer.orny.data.room.model.DbAppSettings
-import com.kamer.orny.data.room.model.DbAuthor
-import com.kamer.orny.data.room.model.DbExpense
-import com.kamer.orny.data.room.model.DbPageSettings
+import com.kamer.orny.data.room.entity.DbAppSettings
+import com.kamer.orny.data.room.entity.DbAuthor
+import com.kamer.orny.data.room.entity.DbExpense
+import com.kamer.orny.data.room.entity.DbPageSettings
 
 
 @Database(entities = arrayOf(

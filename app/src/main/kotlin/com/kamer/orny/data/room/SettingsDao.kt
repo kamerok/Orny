@@ -4,8 +4,8 @@ import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
-import com.kamer.orny.data.room.model.DbAppSettings
-import com.kamer.orny.data.room.model.DbPageSettings
+import com.kamer.orny.data.room.entity.DbAppSettings
+import com.kamer.orny.data.room.entity.DbPageSettings
 import io.reactivex.Flowable
 
 

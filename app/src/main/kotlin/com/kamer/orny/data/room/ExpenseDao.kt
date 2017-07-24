@@ -3,7 +3,7 @@ package com.kamer.orny.data.room
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.Query
-import com.kamer.orny.data.room.model.DbExpense
+import com.kamer.orny.data.room.entity.DbExpense
 import io.reactivex.Flowable
 
 

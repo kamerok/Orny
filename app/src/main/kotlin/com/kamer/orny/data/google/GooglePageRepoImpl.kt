@@ -5,9 +5,9 @@ import com.kamer.orny.data.room.AuthorDao
 import com.kamer.orny.data.room.Database
 import com.kamer.orny.data.room.ExpenseDao
 import com.kamer.orny.data.room.SettingsDao
-import com.kamer.orny.data.room.model.DbAuthor
-import com.kamer.orny.data.room.model.DbExpense
-import com.kamer.orny.data.room.model.DbPageSettings
+import com.kamer.orny.data.room.entity.DbAuthor
+import com.kamer.orny.data.room.entity.DbExpense
+import com.kamer.orny.data.room.entity.DbPageSettings
 import com.kamer.orny.di.app.ApplicationScope
 import io.reactivex.Completable
 import io.reactivex.subjects.BehaviorSubject

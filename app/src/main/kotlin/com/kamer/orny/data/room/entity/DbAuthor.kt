@@ -1,4 +1,4 @@
-package com.kamer.orny.data.room.model
+package com.kamer.orny.data.room.entity
 
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey

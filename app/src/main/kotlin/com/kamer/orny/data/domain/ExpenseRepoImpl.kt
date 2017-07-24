@@ -5,7 +5,7 @@ import com.kamer.orny.data.domain.model.Expense
 import com.kamer.orny.data.google.GoogleRepo
 import com.kamer.orny.data.google.model.GoogleExpense
 import com.kamer.orny.data.room.ExpenseDao
-import com.kamer.orny.data.room.model.DbExpense
+import com.kamer.orny.data.room.entity.DbExpense
 import com.kamer.orny.di.app.ApplicationScope
 import io.reactivex.Completable
 import io.reactivex.Observable

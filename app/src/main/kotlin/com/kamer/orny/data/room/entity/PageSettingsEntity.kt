@@ -8,14 +8,14 @@ import java.util.*
 
 
 @Entity(tableName = "page_settings")
-data class DbPageSettings(
+data class PageSettingsEntity(
         @PrimaryKey val id: Int = 0,
         val budget: Double,
         @ColumnInfo(name = "start_date") val startDate: Date,
         val period: Int
 ) {
     companion object {
-        fun fromPageSettings(settings: PageSettings) = DbPageSettings(
+        fun fromPageSettings(settings: PageSettings) = PageSettingsEntity(
                 budget = settings.budget,
                 startDate = settings.startDate,
                 period = settings.period

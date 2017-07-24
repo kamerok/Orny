@@ -6,7 +6,7 @@ import com.kamer.orny.data.google.GooglePageRepo
 import com.kamer.orny.data.google.GoogleRepo
 import com.kamer.orny.data.room.AuthorDao
 import com.kamer.orny.data.room.SettingsDao
-import com.kamer.orny.data.room.entity.DbPageSettings
+import com.kamer.orny.data.room.entity.PageSettingsEntity
 import com.kamer.orny.di.app.ApplicationScope
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -35,7 +35,7 @@ class PageRepoImpl @Inject constructor(
             googleRepo
                     .savePageSettings(pageSettings.budget, pageSettings.startDate, pageSettings.period)
                     .doOnComplete {
-                        settingsDao.setPageSettings(DbPageSettings.fromPageSettings(pageSettings))
+                        settingsDao.setPageSettings(PageSettingsEntity.fromPageSettings(pageSettings))
                     }
 
     override fun getPageAuthors(): Observable<List<Author>> =

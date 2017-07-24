@@ -5,9 +5,9 @@ import com.kamer.orny.data.room.AuthorDao
 import com.kamer.orny.data.room.Database
 import com.kamer.orny.data.room.ExpenseDao
 import com.kamer.orny.data.room.SettingsDao
-import com.kamer.orny.data.room.entity.DbAuthor
-import com.kamer.orny.data.room.entity.DbExpense
-import com.kamer.orny.data.room.entity.DbPageSettings
+import com.kamer.orny.data.room.entity.AuthorEntity
+import com.kamer.orny.data.room.entity.ExpenseEntity
+import com.kamer.orny.data.room.entity.PageSettingsEntity
 import com.kamer.orny.di.app.ApplicationScope
 import io.reactivex.Completable
 import io.reactivex.subjects.BehaviorSubject
@@ -45,7 +45,7 @@ class GooglePageRepoImpl @Inject constructor(
         database.runInTransaction {
             expenseDao.deleteAllExpenses()
             expenseDao.insertAll(page.expenses.map { (comment, date, isOffBudget, values) ->
-                DbExpense(
+                ExpenseEntity(
                         comment = comment.orEmpty(),
                         date = date ?: Date(),
                         isOffBudget = isOffBudget,
@@ -54,14 +54,14 @@ class GooglePageRepoImpl @Inject constructor(
             })
             authorDao.deleteAllAuthors()
             authorDao.insertAll(page.authors.mapIndexed { index, name ->
-                DbAuthor(
+                AuthorEntity(
                         id = index.toString(),
                         position = index,
                         name = name,
                         color = ""
                 )
             })
-            settingsDao.setPageSettings(DbPageSettings(
+            settingsDao.setPageSettings(PageSettingsEntity(
                     budget = page.budget,
                     startDate = page.startDate,
                     period = page.periodDays

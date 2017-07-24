@@ -5,7 +5,7 @@ import com.kamer.orny.data.domain.model.Expense
 import com.kamer.orny.data.google.GoogleRepo
 import com.kamer.orny.data.google.model.GoogleExpense
 import com.kamer.orny.data.room.ExpenseDao
-import com.kamer.orny.data.room.entity.DbExpense
+import com.kamer.orny.data.room.entity.ExpenseEntity
 import com.kamer.orny.di.app.ApplicationScope
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -27,7 +27,7 @@ class ExpenseRepoImpl @Inject constructor(
                     .addExpense(expenseMapper.toGoogleExpense(expense))
                     .andThen(
                             Completable.fromAction {
-                                expenseDao.insert(DbExpense(
+                                expenseDao.insert(ExpenseEntity(
                                         comment = expense.comment,
                                         date = expense.date,
                                         isOffBudget = expense.isOffBudget,

@@ -2,7 +2,7 @@ package com.kamer.orny.data.domain
 
 import com.kamer.orny.data.domain.model.Author
 import com.kamer.orny.data.room.SettingsDao
-import com.kamer.orny.data.room.entity.DbAppSettings
+import com.kamer.orny.data.room.entity.AppSettingsEntity
 import io.reactivex.Completable
 import io.reactivex.Observable
 import javax.inject.Inject
@@ -28,7 +28,7 @@ class AppSettingsRepoImpl @Inject constructor(
             Completable
                     .fromAction {
                         settingsDao
-                                .setAppSettings(DbAppSettings(defaultAuthorId = author.id))
+                                .setAppSettings(AppSettingsEntity(defaultAuthorId = author.id))
                     }
 
 }

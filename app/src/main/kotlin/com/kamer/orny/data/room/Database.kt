@@ -3,17 +3,17 @@ package com.kamer.orny.data.room
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.TypeConverters
-import com.kamer.orny.data.room.entity.DbAppSettings
-import com.kamer.orny.data.room.entity.DbAuthor
-import com.kamer.orny.data.room.entity.DbExpense
-import com.kamer.orny.data.room.entity.DbPageSettings
+import com.kamer.orny.data.room.entity.AppSettingsEntity
+import com.kamer.orny.data.room.entity.AuthorEntity
+import com.kamer.orny.data.room.entity.ExpenseEntity
+import com.kamer.orny.data.room.entity.PageSettingsEntity
 
 
 @Database(entities = arrayOf(
-        DbExpense::class,
-        DbAuthor::class,
-        DbPageSettings::class,
-        DbAppSettings::class
+        ExpenseEntity::class,
+        AuthorEntity::class,
+        PageSettingsEntity::class,
+        AppSettingsEntity::class
 ), version = 1)
 @TypeConverters(Converters::class)
 abstract class Database : RoomDatabase() {

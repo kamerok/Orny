@@ -7,7 +7,7 @@ import java.util.*
 
 
 @Entity(tableName = "expenses")
-data class DbExpense(
+data class ExpenseEntity(
         @PrimaryKey(autoGenerate = true) val id: Int = 0,
         val comment: String,
         val date: Date,

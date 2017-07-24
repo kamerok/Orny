@@ -6,7 +6,7 @@ import android.arch.persistence.room.PrimaryKey
 
 
 @Entity(tableName = "app_settings")
-data class DbAppSettings(
+data class AppSettingsEntity(
         @PrimaryKey val id: Int = 0,
         @ColumnInfo(name = "default_author_id") val defaultAuthorId: String
 )

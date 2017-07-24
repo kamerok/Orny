@@ -6,7 +6,7 @@ import com.kamer.orny.data.domain.model.Author
 
 
 @Entity(tableName = "authors")
-data class DbAuthor(
+data class AuthorEntity(
         @PrimaryKey val id: String,
         val position: Int,
         val name: String,

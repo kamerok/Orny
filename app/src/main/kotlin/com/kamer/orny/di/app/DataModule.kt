@@ -1,10 +1,6 @@
 package com.kamer.orny.di.app
 
-import android.arch.persistence.db.SupportSQLiteDatabase
-import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Room
-import android.arch.persistence.room.RoomDatabase
-import android.content.ContentValues
 import android.content.Context
 import com.kamer.orny.data.android.*
 import com.kamer.orny.data.domain.*
@@ -59,14 +55,6 @@ abstract class DataModule {
         @ApplicationScope
         fun provideDatabase(context: Context): Database = Room
                 .databaseBuilder(context, Database::class.java, "database")
-                .addCallback(object : RoomDatabase.Callback() {
-                    override fun onCreate(db: SupportSQLiteDatabase) {
-                        val contentValues = ContentValues()
-                        contentValues.put("id", 0)
-                        contentValues.put("default_author_id", "")
-                        db.insert("app_settings", OnConflictStrategy.IGNORE, contentValues)
-                    }
-                })
                 .build()
 
         @JvmStatic

@@ -13,15 +13,6 @@ data class DbAuthor(
         val color: String
 ) {
 
-    companion object {
-        fun fromAuthor(author: Author) = DbAuthor(
-                id = author.id,
-                position = author.position,
-                name = author.name,
-                color = author.color
-        )
-    }
-
     fun toAuthor() = Author(
             id = id,
             position = position,

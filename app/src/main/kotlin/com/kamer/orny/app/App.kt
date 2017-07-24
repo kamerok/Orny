@@ -3,6 +3,7 @@ package com.kamer.orny.app
 import android.app.Activity
 import android.app.Application
 import com.kamer.orny.di.app.DaggerAppComponent
+import com.kamer.orny.utils.installStetho
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
@@ -15,6 +16,8 @@ class App : Application(), HasActivityInjector {
 
     override fun onCreate() {
         super.onCreate()
+
+        installStetho()
 
         DaggerAppComponent
                 .builder()

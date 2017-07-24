@@ -97,7 +97,7 @@ dependencies {
     kapt "android.arch.lifecycle:compiler:$arch"
 
     implementation "android.arch.persistence.room:runtime:$arch"
-    compile "android.arch.persistence.room:rxjava2:$arch"
+    implementation "android.arch.persistence.room:rxjava2:$arch"
     kapt "android.arch.persistence.room:compiler:$arch"
 
     implementation "com.google.dagger:dagger:$dagger"

@@ -123,7 +123,3 @@ dependencies {
     implementation 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.4@aar'
     implementation 'com.jakewharton.timber:timber:4.5.1'
 }
-
-kapt {
-    generateStubs = true
-}

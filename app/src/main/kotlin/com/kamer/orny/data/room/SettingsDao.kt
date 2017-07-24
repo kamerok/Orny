@@ -19,10 +19,7 @@ interface SettingsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun setPageSettings(settings: PageSettingsEntity)
 
-    @Query("SELECT authors.id, authors.name, authors.position, authors.color FROM authors " +
-            "JOIN app_settings ON authors.id = app_settings.default_author_id " +
-            "WHERE app_settings.id = 0 " +
-            "LIMIT 1")
+    @Query("SELECT authors.* FROM authors JOIN app_settings ON authors.id = app_settings.default_author_id")
     fun getDefaultAuthor(): Flowable<List<AuthorEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

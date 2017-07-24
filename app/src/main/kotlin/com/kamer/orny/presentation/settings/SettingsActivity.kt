@@ -37,6 +37,7 @@ class SettingsActivity : BaseActivity() {
 
     private var ignoreBudgetChange = false
     private var ignorePeriodChange = false
+    private var ignoreAuthorSelection = false
 
     private var authors = emptyList<Author>()
     private val adapter by lazy { ArrayAdapter<String>(this, R.layout.item_edit_expense_author) }
@@ -73,7 +74,11 @@ class SettingsActivity : BaseActivity() {
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                appSettingsViewModel.authorSelected(authors[position])
+                if (ignoreAuthorSelection) {
+                    ignoreAuthorSelection = false
+                } else {
+                    appSettingsViewModel.authorSelected(authors[position])
+                }
             }
         }
         authorsSpinnerView.adapter = adapter
@@ -146,6 +151,7 @@ class SettingsActivity : BaseActivity() {
         authors = authorsWithDefault.authors
         adapter.clear()
         adapter.addAll(authorsWithDefault.authors.map { it.name })
+        ignoreAuthorSelection = true
         authorsSpinnerView.setSelection(authorsWithDefault.selectedIndex)
     }
 

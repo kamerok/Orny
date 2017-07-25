@@ -56,10 +56,10 @@ class GoogleRepoImpl @Inject constructor(
                         .retryWhen(this::recoverFromGoogleError)
             }
 
-    override fun addExpense(googleExpense: GoogleExpense): Completable = getSheetsService()
-            .flatMapCompletable { service ->
-                Completable
-                        .fromAction { addExpenseToApi(service, googleExpense) }
+    override fun addExpense(googleExpense: GoogleExpense): Single<String> = getSheetsService()
+            .flatMap { service ->
+                Single
+                        .fromCallable { addExpenseToApi(service, googleExpense) }
                         .retryWhen(this::recoverFromGoogleError)
             }
 
@@ -130,7 +130,7 @@ class GoogleRepoImpl @Inject constructor(
     }
 
 
-    private fun addExpenseToApi(service: Sheets, expense: GoogleExpense) {
+    private fun addExpenseToApi(service: Sheets, expense: GoogleExpense): String {
         val rowData = listOf<RowData>(RowData().setValues(expense.toCells()))
 
         val appendCellRequest = AppendCellsRequest().apply {
@@ -148,6 +148,7 @@ class GoogleRepoImpl @Inject constructor(
 
         val response = request.execute()
         Timber.d("$response")
+        return UUID.randomUUID().toString()
     }
 
 }

@@ -12,6 +12,7 @@ import java.util.*
 
 
 data class GoogleExpense(
+        val id: String,
         val comment: String?,
         val date: Date?,
         val isOffBudget: Boolean,
@@ -32,6 +33,7 @@ data class GoogleExpense(
                     .map { it.toString() }
                     .map { it.toDoubleOrNull() ?: 0.0 }
             return GoogleExpense(
+                    id = UUID.randomUUID().toString(),
                     comment = comment,
                     date = date,
                     isOffBudget = isOffBudget,

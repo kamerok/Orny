@@ -12,6 +12,6 @@ interface GoogleRepo {
 
     fun savePageSettings(budget: Double, startDate: Date, period: Int): Completable
 
-    fun addExpense(googleExpense: GoogleExpense): Completable
+    fun addExpense(googleExpense: GoogleExpense): Single<String>
 
 }

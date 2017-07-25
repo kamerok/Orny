@@ -6,6 +6,7 @@ import com.kamer.orny.data.google.GoogleRepo
 import com.kamer.orny.data.google.model.GoogleExpense
 import com.kamer.orny.data.room.ExpenseDao
 import com.kamer.orny.data.room.entity.ExpenseEntity
+import com.kamer.orny.data.room.entity.ExpenseEntryEntity
 import com.kamer.orny.di.app.ApplicationScope
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -25,30 +26,41 @@ class ExpenseRepoImpl @Inject constructor(
     override fun addExpense(expense: Expense): Completable =
             googleRepo
                     .addExpense(expenseMapper.toGoogleExpense(expense))
-                    .andThen(
-                            Completable.fromAction {
-                                expenseDao.insert(ExpenseEntity(
-                                        comment = expense.comment,
-                                        date = expense.date,
-                                        isOffBudget = expense.isOffBudget,
-                                        values = expense.values.map { it.value }
-                                ))
-                            }
-                    )
+                    .flatMapCompletable {
+                        Completable.fromAction {
+                            expenseDao.insert(ExpenseEntity(
+                                    id = it,
+                                    comment = expense.comment,
+                                    date = expense.date,
+                                    isOffBudget = expense.isOffBudget
+                            ))
+                            expenseDao.insertAllEntries(
+                                    expense.values
+                                            .map {
+                                                ExpenseEntryEntity(
+                                                        expenseId = expense.id,
+                                                        amount = it.value
+                                                )
+                                            }
+                            )
+                        }
+                    }
 
     override fun getAllExpenses(): Observable<List<Expense>> =
             Observable.combineLatest(
                     expenseDao
                             .getAllExpenses()
                             .toObservable()
-                            .doOnNext { Timber.d("expenses ${it.size}") }
+                            .doOnNext { Timber.d("$it") }
                             .map {
                                 it.map {
                                     GoogleExpense(
-                                            comment = it.comment,
-                                            date = it.date,
-                                            isOffBudget = it.isOffBudget,
-                                            values = it.values)
+                                            id = it.expense.id,
+                                            comment = it.expense.comment,
+                                            date = it.expense.date,
+                                            isOffBudget = it.expense.isOffBudget,
+                                            values = it.entries.map { it.amount }
+                                    )
                                 }
                             },
                     pageRepo.getPageAuthors(),

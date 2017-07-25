@@ -7,6 +7,7 @@ import com.kamer.orny.data.room.ExpenseDao
 import com.kamer.orny.data.room.SettingsDao
 import com.kamer.orny.data.room.entity.AuthorEntity
 import com.kamer.orny.data.room.entity.ExpenseEntity
+import com.kamer.orny.data.room.entity.ExpenseEntryEntity
 import com.kamer.orny.data.room.entity.PageSettingsEntity
 import com.kamer.orny.di.app.ApplicationScope
 import io.reactivex.Completable
@@ -44,14 +45,22 @@ class GooglePageRepoImpl @Inject constructor(
     private fun savePageToDb(page: GooglePage) {
         database.runInTransaction {
             expenseDao.deleteAllExpenses()
-            expenseDao.insertAll(page.expenses.map { (comment, date, isOffBudget, values) ->
+            expenseDao.insertAll(page.expenses.map { (id, comment, date, isOffBudget) ->
                 ExpenseEntity(
+                        id = id,
                         comment = comment.orEmpty(),
                         date = date ?: Date(),
-                        isOffBudget = isOffBudget,
-                        values = values
+                        isOffBudget = isOffBudget
                 )
             })
+            page.expenses.forEach { expense ->
+                expenseDao.insertAllEntries(expense.values.map {
+                    ExpenseEntryEntity(
+                            expenseId = expense.id,
+                            amount = it
+                    )
+                })
+            }
             authorDao.deleteAllAuthors()
             authorDao.insertAll(page.authors.mapIndexed { index, name ->
                 AuthorEntity(

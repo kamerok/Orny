@@ -3,14 +3,12 @@ package com.kamer.orny.data.room
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.TypeConverters
-import com.kamer.orny.data.room.entity.AppSettingsEntity
-import com.kamer.orny.data.room.entity.AuthorEntity
-import com.kamer.orny.data.room.entity.ExpenseEntity
-import com.kamer.orny.data.room.entity.PageSettingsEntity
+import com.kamer.orny.data.room.entity.*
 
 
 @Database(entities = arrayOf(
         ExpenseEntity::class,
+        ExpenseEntryEntity::class,
         AuthorEntity::class,
         PageSettingsEntity::class,
         AppSettingsEntity::class

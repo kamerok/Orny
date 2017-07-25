@@ -19,5 +19,5 @@ import android.arch.persistence.room.PrimaryKey
 )
 data class AppSettingsEntity(
         @PrimaryKey val id: Int = 0,
-        @ColumnInfo(name = "default_author_id") val defaultAuthorId: String?
+        @ColumnInfo(name = "default_author_id", index = true) val defaultAuthorId: String?
 )

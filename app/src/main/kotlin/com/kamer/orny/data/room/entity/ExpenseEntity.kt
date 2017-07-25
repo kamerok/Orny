@@ -8,9 +8,8 @@ import java.util.*
 
 @Entity(tableName = "expenses")
 data class ExpenseEntity(
-        @PrimaryKey(autoGenerate = true) val id: Int = 0,
+        @PrimaryKey val id: String,
         val comment: String,
         val date: Date,
-        @ColumnInfo(name = "is_off_budget") val isOffBudget: Boolean,
-        val values: List<Double>
+        @ColumnInfo(name = "is_off_budget") val isOffBudget: Boolean
 )

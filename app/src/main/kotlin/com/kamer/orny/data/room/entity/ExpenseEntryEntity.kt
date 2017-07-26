@@ -8,12 +8,13 @@ import android.arch.persistence.room.PrimaryKey
 @Entity(
         tableName = "expenses_entries",
         foreignKeys = arrayOf(
-                /*ForeignKey(
+                ForeignKey(
                         entity = AuthorEntity::class,
                         parentColumns = arrayOf("id"),
                         childColumns = arrayOf("author_id"),
-                        onDelete = ForeignKey.CASCADE
-                ),*/
+                        onDelete = ForeignKey.CASCADE,
+                        deferred = true
+                ),
                 ForeignKey(
                         entity = ExpenseEntity::class,
                         parentColumns = arrayOf("id"),
@@ -25,7 +26,7 @@ import android.arch.persistence.room.PrimaryKey
 )
 data class ExpenseEntryEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-//    @ColumnInfo(name = "author_id", index = true) val authorId: String,
+    @ColumnInfo(name = "author_id", index = true) val authorId: String,
     @ColumnInfo(name = "expense_id", index = true) val expenseId: String,
     val amount: Double
 )

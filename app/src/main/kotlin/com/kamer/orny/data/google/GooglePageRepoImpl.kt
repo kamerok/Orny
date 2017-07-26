@@ -44,23 +44,6 @@ class GooglePageRepoImpl @Inject constructor(
 
     private fun savePageToDb(page: GooglePage) {
         database.runInTransaction {
-            expenseDao.deleteAllExpenses()
-            expenseDao.insertAll(page.expenses.map { (id, comment, date, isOffBudget) ->
-                ExpenseEntity(
-                        id = id,
-                        comment = comment.orEmpty(),
-                        date = date ?: Date(),
-                        isOffBudget = isOffBudget
-                )
-            })
-            page.expenses.forEach { expense ->
-                expenseDao.insertAllEntries(expense.values.map {
-                    ExpenseEntryEntity(
-                            expenseId = expense.id,
-                            amount = it
-                    )
-                })
-            }
             authorDao.deleteAllAuthors()
             authorDao.insertAll(page.authors.mapIndexed { index, name ->
                 AuthorEntity(
@@ -70,6 +53,27 @@ class GooglePageRepoImpl @Inject constructor(
                         color = ""
                 )
             })
+            expenseDao.deleteAllExpenses()
+            expenseDao.insertAll(page.expenses.map { (id, comment, date, isOffBudget) ->
+                ExpenseEntity(
+                        id = id,
+                        comment = comment.orEmpty(),
+                        date = date ?: Date(),
+                        isOffBudget = isOffBudget
+                )
+            })
+            val entries = mutableListOf<ExpenseEntryEntity>()
+            page.expenses.forEach { expense ->
+                entries.addAll(expense.values.mapIndexed { index, amount ->
+                    ExpenseEntryEntity(
+                            authorId = index.toString(),
+                            expenseId = expense.id,
+                            amount = amount
+                    )
+                })
+            }
+            expenseDao.deleteAllEntries()
+            expenseDao.insertAllEntries(entries)
             settingsDao.setPageSettings(PageSettingsEntity(
                     budget = page.budget,
                     startDate = page.startDate,

@@ -24,10 +24,13 @@ interface ExpenseDao {
     @Insert
     fun insert(expense: ExpenseEntity)
 
-    @Insert
-    fun insertAllEntries(expenses: List<ExpenseEntryEntity>)
+    @Query("DELETE FROM expenses_entries")
+    fun deleteAllEntries()
 
     @Insert
-    fun insertEntry(expense: ExpenseEntryEntity)
+    fun insertAllEntries(entries: List<ExpenseEntryEntity>)
+
+    @Insert
+    fun insertEntry(entry: ExpenseEntryEntity)
 
 }

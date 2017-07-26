@@ -38,6 +38,7 @@ class ExpenseRepoImpl @Inject constructor(
                                     expense.values
                                             .map {
                                                 ExpenseEntryEntity(
+                                                        authorId = it.key.id,
                                                         expenseId = expense.id,
                                                         amount = it.value
                                                 )

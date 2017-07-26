@@ -15,6 +15,11 @@ public class ExpenseQuery {
     @Relation(parentColumn = "id", entityColumn = "expense_id")
     private List<ExpenseEntryEntity> entries;
 
+    @Override
+    public String toString() {
+        return expense.toString() + " " + entries.toString();
+    }
+
     public ExpenseEntity getExpense() {
         return expense;
     }

@@ -6,7 +6,10 @@ import com.kamer.orny.data.android.*
 import com.kamer.orny.data.domain.*
 import com.kamer.orny.data.domain.mapper.ExpenseMapper
 import com.kamer.orny.data.domain.mapper.ExpenseMapperImpl
-import com.kamer.orny.data.google.*
+import com.kamer.orny.data.google.GoogleAuthHolder
+import com.kamer.orny.data.google.GoogleAuthHolderImpl
+import com.kamer.orny.data.google.GoogleRepo
+import com.kamer.orny.data.google.GoogleRepoImpl
 import com.kamer.orny.data.room.*
 import dagger.Binds
 import dagger.Module
@@ -38,10 +41,6 @@ abstract class DataModule {
     @Binds
     @ApplicationScope
     abstract fun bindGoogleRepo(googleRepo: GoogleRepoImpl): GoogleRepo
-
-    @Binds
-    @ApplicationScope
-    abstract fun bindGooglePageHolder(googlePageHolder: GooglePageRepoImpl): GooglePageRepo
 
     //Room
 

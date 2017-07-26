@@ -18,6 +18,7 @@ class DatabaseGatewayImpl @Inject constructor(
             settingsDao
                     .getDefaultAuthor()
                     .toObservable()
+                    .distinctUntilChanged()
 
     override fun setAppSettings(appSettingsEntity: AppSettingsEntity): Completable =
             Completable.fromAction {
@@ -46,6 +47,7 @@ class DatabaseGatewayImpl @Inject constructor(
             settingsDao
                     .getPageSettings()
                     .toObservable()
+                    .distinctUntilChanged()
 
     override fun setPageSettings(pageSettingsEntity: PageSettingsEntity): Completable =
             Completable.fromAction {
@@ -65,9 +67,11 @@ class DatabaseGatewayImpl @Inject constructor(
             expenseDao
                     .getAllExpenses()
                     .toObservable()
+                    .distinctUntilChanged()
 
     override fun getAllAuthors(): Observable<List<AuthorEntity>> =
             authorDao
                     .getAllAuthors()
                     .toObservable()
+                    .distinctUntilChanged()
 }

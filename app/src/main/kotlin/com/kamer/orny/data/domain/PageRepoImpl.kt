@@ -80,13 +80,16 @@ class PageRepoImpl @Inject constructor(
                             },
                             mutableListOf<ExpenseEntryEntity>().apply {
                                 page.expenses.forEach { expense ->
-                                    addAll(expense.values.mapIndexed { index, amount ->
-                                        ExpenseEntryEntity(
-                                                authorId = index.toString(),
-                                                expenseId = expense.id,
-                                                amount = amount
-                                        )
-                                    })
+                                    addAll(expense.values
+                                            .mapIndexed { index, amount ->
+                                                ExpenseEntryEntity(
+                                                        authorId = index.toString(),
+                                                        expenseId = expense.id,
+                                                        amount = amount
+                                                )
+                                            }
+                                            .filter { it.amount != 0.0 }
+                                    )
                                 }
                             }
                     )

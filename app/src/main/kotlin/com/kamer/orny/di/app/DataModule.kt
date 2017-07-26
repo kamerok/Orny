@@ -7,10 +7,7 @@ import com.kamer.orny.data.domain.*
 import com.kamer.orny.data.domain.mapper.ExpenseMapper
 import com.kamer.orny.data.domain.mapper.ExpenseMapperImpl
 import com.kamer.orny.data.google.*
-import com.kamer.orny.data.room.AuthorDao
-import com.kamer.orny.data.room.Database
-import com.kamer.orny.data.room.ExpenseDao
-import com.kamer.orny.data.room.SettingsDao
+import com.kamer.orny.data.room.*
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -47,6 +44,10 @@ abstract class DataModule {
     abstract fun bindGooglePageHolder(googlePageHolder: GooglePageRepoImpl): GooglePageRepo
 
     //Room
+
+    @Binds
+    @ApplicationScope
+    abstract fun bindDatabaseGateway(gateway: DatabaseGatewayImpl): DatabaseGateway
 
     @Module
     companion object {

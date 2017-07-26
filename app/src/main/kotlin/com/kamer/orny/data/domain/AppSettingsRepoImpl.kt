@@ -1,7 +1,7 @@
 package com.kamer.orny.data.domain
 
 import com.kamer.orny.data.domain.model.Author
-import com.kamer.orny.data.room.SettingsDao
+import com.kamer.orny.data.room.DatabaseGateway
 import com.kamer.orny.data.room.entity.AppSettingsEntity
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -9,13 +9,12 @@ import javax.inject.Inject
 
 
 class AppSettingsRepoImpl @Inject constructor(
-        val settingsDao: SettingsDao
+        val databaseGateway: DatabaseGateway
 ) : AppSettingsRepo {
 
     override fun getDefaultAuthor(): Observable<Author> =
-            settingsDao
+            databaseGateway
                     .getDefaultAuthor()
-                    .toObservable()
                     .map {
                         if (it.isEmpty()) {
                             return@map Author.EMPTY_AUTHOR
@@ -25,10 +24,7 @@ class AppSettingsRepoImpl @Inject constructor(
                     }
 
     override fun setDefaultAuthor(author: Author): Completable =
-            Completable
-                    .fromAction {
-                        settingsDao
-                                .setAppSettings(AppSettingsEntity(defaultAuthorId = author.id))
-                    }
+            databaseGateway
+                    .setAppSettings(AppSettingsEntity(defaultAuthorId = author.id))
 
 }

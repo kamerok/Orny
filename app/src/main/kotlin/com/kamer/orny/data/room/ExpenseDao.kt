@@ -5,7 +5,7 @@ import android.arch.persistence.room.Insert
 import android.arch.persistence.room.Query
 import com.kamer.orny.data.room.entity.ExpenseEntity
 import com.kamer.orny.data.room.entity.ExpenseEntryEntity
-import com.kamer.orny.data.room.query.ExpenseQuery
+import com.kamer.orny.data.room.query.ExpenseWithEntities
 import io.reactivex.Flowable
 
 
@@ -16,7 +16,7 @@ interface ExpenseDao {
     fun deleteAllExpenses()
 
     @Query("SELECT * FROM expenses")
-    fun getAllExpenses(): Flowable<List<ExpenseQuery>>
+    fun getAllExpenses(): Flowable<List<ExpenseWithEntities>>
 
     @Insert
     fun insertAll(expenses: List<ExpenseEntity>)

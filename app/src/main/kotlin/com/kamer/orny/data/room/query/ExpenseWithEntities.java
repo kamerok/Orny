@@ -9,11 +9,19 @@ import com.kamer.orny.data.room.entity.ExpenseEntryEntity;
 
 import java.util.List;
 
-public class ExpenseQuery {
+public class ExpenseWithEntities {
 
     @Embedded private ExpenseEntity expense;
     @Relation(parentColumn = "id", entityColumn = "expense_id")
     private List<ExpenseEntryEntity> entries;
+
+    public ExpenseWithEntities() {
+    }
+
+    public ExpenseWithEntities(ExpenseEntity expense, List<ExpenseEntryEntity> entries) {
+        this.expense = expense;
+        this.entries = entries;
+    }
 
     @Override
     public String toString() {

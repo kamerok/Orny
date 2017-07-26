@@ -1,10 +1,10 @@
 package com.kamer.orny.data.domain.mapper
 
-import com.kamer.orny.data.domain.model.Author
 import com.kamer.orny.data.domain.model.Expense
 import com.kamer.orny.data.google.model.GoogleExpense
+import com.kamer.orny.data.room.entity.AuthorEntity
+import com.kamer.orny.data.room.query.ExpenseWithEntities
 import com.kamer.orny.di.app.ApplicationScope
-import java.util.*
 import javax.inject.Inject
 
 
@@ -28,14 +28,13 @@ class ExpenseMapperImpl @Inject constructor() : ExpenseMapper {
         )
     }
 
-    override fun toExpense(googleExpense: GoogleExpense, authors: List<Author>): Expense {
-        val values = mutableMapOf<Author, Double>()
-        googleExpense.values.forEachIndexed { index, value -> values.put(authors[index], value) }
+    override fun toExpense(expenseWithEntities: ExpenseWithEntities, authorsByIds: Map<String, AuthorEntity>): Expense {
         return Expense(
-                comment = googleExpense.comment ?: "",
-                isOffBudget = googleExpense.isOffBudget,
-                date = googleExpense.date ?: Date(),
-                values = values
+                id = expenseWithEntities.expense.id,
+                comment = expenseWithEntities.expense.comment,
+                isOffBudget = expenseWithEntities.expense.isOffBudget,
+                date = expenseWithEntities.expense.date,
+                values = expenseWithEntities.entries.associate { authorsByIds[it.authorId]!!.toAuthor() to it.amount }
         )
     }
 }

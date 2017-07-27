@@ -1,5 +1,6 @@
 package com.kamer.orny.presentation.launch
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -35,6 +36,7 @@ class LoginActivity : BaseActivity() {
                 .disposeOnDestroy()
                 .defaultBackgroundSchedulers()
                 .subscribe({
+                    setResult(Activity.RESULT_OK)
                     finish()
                 }, { error ->
                     Timber.e(error.message, error)

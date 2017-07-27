@@ -8,6 +8,8 @@ import io.reactivex.Single
 
 interface ReactiveActivities {
 
+    fun login(): Completable
+
     fun recoverGoogleAuthException(exception: UserRecoverableAuthIOException): Completable
 
     fun chooseGoogleAccount(credential: GoogleAccountCredential): Single<String>

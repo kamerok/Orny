@@ -9,7 +9,6 @@ import com.kamer.orny.data.android.ActivityHolder
 import com.kamer.orny.data.android.Prefs
 import com.kamer.orny.data.android.ReactiveActivities
 import com.kamer.orny.di.app.ApplicationScope
-import com.kamer.orny.presentation.launch.LoginActivity
 import com.kamer.orny.utils.hasPermission
 import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.Completable
@@ -68,16 +67,15 @@ class GoogleAuthHolderImpl @Inject constructor(
         return@fromCallable accountCredential
     }
 
-    private fun launchSignInActivity() {
-        val activity = activityHolder.getActivity()
-        activity?.startActivity(LoginActivity.getIntent(activity))
-    }
-
     private fun checkAuth(): Completable = Completable
             .fromAction {
                 if (prefs.accountName.isEmpty()) {
-                    launchSignInActivity()
                     throw Exception("Not logged")
+                }
+            }
+            .retryWhen { errorStream ->
+                errorStream.flatMap {
+                    reactiveActivities.login().toSingleDefault("").toFlowable()
                 }
             }
 
@@ -85,8 +83,12 @@ class GoogleAuthHolderImpl @Inject constructor(
             .fromAction {
                 if (context.hasPermission(Manifest.permission.GET_ACCOUNTS) && credential.selectedAccountName.isNullOrEmpty()) {
                     prefs.accountName = ""
-                    launchSignInActivity()
                     throw Exception("Account not exist")
+                }
+            }
+            .retryWhen { errorStream ->
+                errorStream.flatMap {
+                    reactiveActivities.login().toSingleDefault("").toFlowable()
                 }
             }
 

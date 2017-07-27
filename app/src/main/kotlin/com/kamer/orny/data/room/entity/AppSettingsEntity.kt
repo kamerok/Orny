@@ -12,8 +12,7 @@ import android.arch.persistence.room.PrimaryKey
                 ForeignKey(
                         entity = AuthorEntity::class,
                         parentColumns = arrayOf("id"),
-                        childColumns = arrayOf("default_author_id"),
-                        onDelete = ForeignKey.SET_NULL
+                        childColumns = arrayOf("default_author_id")
                 )
         )
 )

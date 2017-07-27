@@ -12,7 +12,7 @@ import java.util.*
 
 
 data class GoogleExpense(
-        val id: String,
+        val row: Int,
         val comment: String?,
         val date: Date?,
         val isOffBudget: Boolean,
@@ -20,7 +20,7 @@ data class GoogleExpense(
 ) {
 
     companion object {
-        fun fromList(list: MutableList<Any>): GoogleExpense {
+        fun fromList(rowNumber: Int, list: MutableList<Any>): GoogleExpense {
             val comment = list[0].toString()
             val date = try {
                 GoogleRepoImpl.DATE_FORMAT.parse(list[1].toString())
@@ -33,7 +33,7 @@ data class GoogleExpense(
                     .map { it.toString() }
                     .map { it.toDoubleOrNull() ?: 0.0 }
             return GoogleExpense(
-                    id = UUID.randomUUID().toString(),
+                    row = rowNumber,
                     comment = comment,
                     date = date,
                     isOffBudget = isOffBudget,

@@ -37,7 +37,8 @@ class GoogleRepoImpl @Inject constructor(
         private const val RANGE_SUPPORT_MARK = "!A1"
         private const val RANGE_SETTINGS = "!A2:C2"
         private const val RANGE_AUTHORS = "!D10:H10"
-        private const val RANGE_EXPENSES = "!A11:H"
+        private const val EXPENSES_START_ROW = 11
+        private const val RANGE_EXPENSES = "!A$EXPENSES_START_ROW:H"
 
         val DATE_FORMAT = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     }
@@ -111,7 +112,9 @@ class GoogleRepoImpl @Inject constructor(
 
         val authors = response.valueRanges[2].getValues().first().map { it.toString() }
 
-        val expenses = response.valueRanges[3].getValues().map { GoogleExpense.fromList(it) }
+        val expenses = response.valueRanges[3].getValues().mapIndexed { index, list ->
+            GoogleExpense.fromList(EXPENSES_START_ROW + index, list)
+        }
 
         return GooglePage(budget, days, date, authors, expenses)
     }

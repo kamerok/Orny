@@ -20,7 +20,7 @@ class ExpenseMapperImpl @Inject constructor() : ExpenseMapper {
             values.add(key.position, value)
         }
         return GoogleExpense(
-                id = expense.id,
+                row = expense.id.toIntOrNull() ?: 0,
                 comment = expense.comment,
                 date = expense.date,
                 isOffBudget = expense.isOffBudget,

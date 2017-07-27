@@ -70,9 +70,9 @@ class PageRepoImpl @Inject constructor(
                                         color = ""
                                 )
                             },
-                            page.expenses.map { (id, comment, date, isOffBudget) ->
+                            page.expenses.map { (row, comment, date, isOffBudget) ->
                                 ExpenseEntity(
-                                        id = id,
+                                        id = row.toString(),
                                         comment = comment.orEmpty(),
                                         date = date ?: Date(),
                                         isOffBudget = isOffBudget
@@ -84,7 +84,7 @@ class PageRepoImpl @Inject constructor(
                                             .mapIndexed { index, amount ->
                                                 ExpenseEntryEntity(
                                                         authorId = index.toString(),
-                                                        expenseId = expense.id,
+                                                        expenseId = expense.row.toString(),
                                                         amount = amount
                                                 )
                                             }

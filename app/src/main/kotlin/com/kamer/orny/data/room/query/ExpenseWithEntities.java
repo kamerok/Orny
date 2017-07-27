@@ -3,6 +3,7 @@ package com.kamer.orny.data.room.query;
 
 import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.Relation;
+import android.support.annotation.NonNull;
 
 import com.kamer.orny.data.room.entity.ExpenseEntity;
 import com.kamer.orny.data.room.entity.ExpenseEntryEntity;
@@ -18,9 +19,27 @@ public class ExpenseWithEntities {
     public ExpenseWithEntities() {
     }
 
-    public ExpenseWithEntities(ExpenseEntity expense, List<ExpenseEntryEntity> entries) {
+    public ExpenseWithEntities(@NonNull ExpenseEntity expense, @NonNull List<ExpenseEntryEntity> entries) {
         this.expense = expense;
         this.entries = entries;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ExpenseWithEntities)) return false;
+
+        ExpenseWithEntities that = (ExpenseWithEntities) o;
+
+        if (!expense.equals(that.expense)) return false;
+        return entries.equals(that.entries);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = expense.hashCode();
+        result = 31 * result + entries.hashCode();
+        return result;
     }
 
     @Override

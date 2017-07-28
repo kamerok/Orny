@@ -13,7 +13,10 @@ import com.kamer.orny.interaction.statistics.StatisticsInteractor
 import com.kamer.orny.interaction.statistics.StatisticsInteractorImpl
 import com.nhaarman.mockito_kotlin.verify
 import io.reactivex.Observable
+import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.observers.TestObserver
+import io.reactivex.plugins.RxJavaPlugins
+import io.reactivex.schedulers.Schedulers
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -34,6 +37,8 @@ class StatisticsInteractorTest {
 
     @Before
     fun setUp() {
+        RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.trampoline() }
+        RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
         initSettings()
         initAuthors()
         initExpenses()

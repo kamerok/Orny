@@ -4,7 +4,6 @@ import android.arch.lifecycle.MutableLiveData
 import com.kamer.orny.interaction.model.Statistics
 import com.kamer.orny.interaction.statistics.StatisticsInteractor
 import com.kamer.orny.presentation.core.BaseViewModel
-import com.kamer.orny.utils.defaultBackgroundSchedulers
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -18,7 +17,6 @@ class StatisticsViewModelImpl @Inject constructor(
     init {
         interactor
                 .getStatistics()
-                .defaultBackgroundSchedulers()
                 .disposeOnDestroy()
                 .subscribe({
                     statisticsStream.value = it

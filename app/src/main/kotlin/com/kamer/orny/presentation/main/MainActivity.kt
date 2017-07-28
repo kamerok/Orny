@@ -47,6 +47,7 @@ class MainActivity : BaseActivity() {
     private fun setLoading(isLoading: Boolean) = loadingProgressView.run { if (isLoading) visible() else gone() }
 
     private fun updateStatistics(statistics: Statistics) {
+        if (statistics.usersStatistics.isEmpty()) return
         daysView.text = getString(R.string.statistics_days, statistics.currentDay, statistics.daysTotal)
         budgetLeftView.text = getString(R.string.statistics_budget, statistics.budgetLeft, statistics.budgetLimit)
         budgetDifferenceView.text = String.format("%.1f", statistics.budgetDifference)

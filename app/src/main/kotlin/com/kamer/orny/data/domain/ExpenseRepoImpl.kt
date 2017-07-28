@@ -48,6 +48,7 @@ class ExpenseRepoImpl @Inject constructor(
                     databaseGateway.getAllExpensesWithEntities(),
                     databaseGateway.getAllAuthors(),
                     BiFunction { expenses, authors ->
+                        if (expenses.isEmpty() || authors.isEmpty()) return@BiFunction emptyList()
                         expenses.map { expenseMapper.toExpense(it, authors.associate { it.id to it }) }
                     }
             )

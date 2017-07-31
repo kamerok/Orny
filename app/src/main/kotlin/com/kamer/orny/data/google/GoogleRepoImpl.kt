@@ -112,9 +112,10 @@ class GoogleRepoImpl @Inject constructor(
 
         val authors = response.valueRanges[2].getValues().first().map { it.toString() }
 
-        val expenses = response.valueRanges[3].getValues().mapIndexed { index, list ->
+        val values = response.valueRanges[3].getValues()
+        val expenses = values?.mapIndexed { index, list ->
             GoogleExpense.fromList(EXPENSES_START_ROW + index, list)
-        }
+        } ?: emptyList<GoogleExpense>()
 
         return GooglePage(budget, days, date, authors, expenses)
     }

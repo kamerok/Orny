@@ -16,7 +16,10 @@ class AddExpenseInteractorImpl @Inject constructor(
         val getAuthorsUseCase: GetAuthorsWithDefaultSingleUseCase
 ) : AddExpenseInteractor {
 
-    override fun getAuthorsWithDefault(): Single<AuthorsWithDefault> = getAuthorsUseCase.get()
+    override fun getAuthorsWithDefault(): Single<AuthorsWithDefault> =
+            getAuthorsUseCase
+                    .get()
+                    .defaultBackgroundSchedulers()
 
     override fun createExpense(expense: NewExpense): Completable = expenseRepo
             .addExpense(Expense(

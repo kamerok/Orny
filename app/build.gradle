@@ -44,8 +44,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.debug
 
-            buildConfigField "String", "SHEET_NAME", "\"Июль\""
-            buildConfigField "int", "SHEET_ID", "145345954"
+            buildConfigField "String", "SHEET_NAME", "\"Август\""
+            buildConfigField "int", "SHEET_ID", "434088439"
         }
 
         applicationVariants.all { variant ->

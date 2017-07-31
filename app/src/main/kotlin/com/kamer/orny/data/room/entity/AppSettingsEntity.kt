@@ -12,7 +12,8 @@ import android.arch.persistence.room.PrimaryKey
                 ForeignKey(
                         entity = AuthorEntity::class,
                         parentColumns = arrayOf("id"),
-                        childColumns = arrayOf("default_author_id")
+                        childColumns = arrayOf("default_author_id"),
+                        deferred = true
                 )
         )
 )
